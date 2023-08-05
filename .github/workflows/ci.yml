@@ -5,7 +5,7 @@ on:
       - "*"
 
 jobs:
-  ci:
+  gradle-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Project
