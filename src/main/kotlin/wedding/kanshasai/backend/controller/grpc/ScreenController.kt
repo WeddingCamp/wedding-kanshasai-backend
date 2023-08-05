@@ -6,7 +6,7 @@ import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ScreenServiceGrpcKt.ScreenServiceCoroutineImplBase
 
 @GrpcService
-class ScreenController: ScreenServiceCoroutineImplBase() {
+class ScreenController : ScreenServiceCoroutineImplBase() {
     override suspend fun sendMessage(request: SendMessageRequest): SendMessageResponse {
         TODO("NOT IMPLEMENTED")
     }

@@ -27,6 +27,6 @@ import org.springframework.context.annotation.Configuration
     GrpcServerFactoryAutoConfiguration::class,
     GrpcServerMetricAutoConfiguration::class,
     GrpcServerSecurityAutoConfiguration::class,
-    GrpcServerTraceAutoConfiguration::class
+    GrpcServerTraceAutoConfiguration::class,
 )
 class GrpcConfiguration

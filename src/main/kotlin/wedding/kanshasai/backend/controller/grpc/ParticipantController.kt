@@ -6,7 +6,7 @@ import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ParticipantServiceGrpcKt.ParticipantServiceCoroutineImplBase
 
 @GrpcService
-class ParticipantController: ParticipantServiceCoroutineImplBase() {
+class ParticipantController : ParticipantServiceCoroutineImplBase() {
     override suspend fun listParticipant(request: ListParticipantRequest): ListParticipantResponse {
         TODO("NOT IMPLEMENTED")
     }

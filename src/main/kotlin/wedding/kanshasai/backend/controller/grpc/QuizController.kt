@@ -5,7 +5,7 @@ import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.QuizServiceGrpcKt.QuizServiceCoroutineImplBase
 
 @GrpcService
-class QuizController: QuizServiceCoroutineImplBase() {
+class QuizController : QuizServiceCoroutineImplBase() {
     override suspend fun listQuizzes(request: ListQuizzesRequest): ListQuizzesResponse {
         TODO("NOT IMPLEMENTED")
     }
