@@ -1,11 +1,8 @@
 package wedding.kanshasai.backend.controller.grpc
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.QuizServiceGrpcKt.QuizServiceCoroutineImplBase
-
-private val logger = KotlinLogging.logger {}
 
 @GrpcService
 class QuizController: QuizServiceCoroutineImplBase() {
