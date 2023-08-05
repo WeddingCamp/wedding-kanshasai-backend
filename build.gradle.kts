@@ -25,7 +25,6 @@ repositories {
 dependencies {
 	// Spring
 	implementation("org.springframework.boot:spring-boot-starter")
-//	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("net.devh:grpc-spring-boot-starter:2.14.0.RELEASE")
 
 	// Kotlin
