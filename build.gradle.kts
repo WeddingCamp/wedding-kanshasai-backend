@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.bundling.BootJar
 import java.net.URI
 
 plugins {
@@ -53,6 +54,10 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.getByName<BootJar>("bootJar") {
+    archiveFileName = "backend.jar"
 }
 
 configurations {
