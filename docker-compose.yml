@@ -1,0 +1,12 @@
+version: "3"
+services:
+  backend:
+    build: .
+    ports:
+      - "6565:6565"
+  proxy:
+    image: envoyproxy/envoy-dev
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    ports:
+      - "9000:9000"
