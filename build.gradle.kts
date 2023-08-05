@@ -33,6 +33,7 @@ dependencies {
 	// gRPC
 	implementation("wedding.kanshasai:protobuf:0.0.1")
 
+	// Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
