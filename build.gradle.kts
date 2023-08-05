@@ -33,6 +33,11 @@ dependencies {
 	// gRPC
 	implementation("wedding.kanshasai:protobuf:0.0.1")
 
+	// Logging
+	implementation("ch.qos.logback:logback-classic:1.4.8")
+	implementation("io.github.oshai:kotlin-logging-jvm:5.0.2")
+	implementation("net.logstash.logback:logstash-logback-encoder:7.4")
+
 	// Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
