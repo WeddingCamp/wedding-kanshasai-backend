@@ -1,5 +1,4 @@
-FROM openjdk:17-jdk-slim-bullseye as BUILDER
-
+FROM eclipse-temurin:17-jdk as BUILDER
 COPY . /opt/app
 WORKDIR /opt/app
 RUN ./gradlew build
