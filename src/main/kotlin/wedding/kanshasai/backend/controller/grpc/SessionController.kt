@@ -6,7 +6,7 @@ import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.SessionServiceGrpcKt.SessionServiceCoroutineImplBase
 
 @GrpcService
-class SessionController: SessionServiceCoroutineImplBase() {
+class SessionController : SessionServiceCoroutineImplBase() {
     override suspend fun createSession(request: CreateSessionRequest): CreateSessionResponse {
         TODO("NOT IMPLEMENTED")
     }
