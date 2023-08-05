@@ -5,8 +5,8 @@ services:
     ports:
       - "6565:6565"
   proxy:
-    image: envoyproxy/envoy-dev
+    image: envoyproxy/envoy:distroless-v1.27-latest
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
     ports:
-      - "9000:9000"
+      - "8080:8080"
