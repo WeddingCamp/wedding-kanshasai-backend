@@ -26,7 +26,9 @@ class GrpcLogInterceptor : ServerInterceptor {
                 "grpc" to mapOf(
                     "serviceName" to "${call.methodDescriptor.serviceName}",
                     "methodName" to "${call.methodDescriptor.bareMethodName}",
-                    "headers" to headers.keys().associateWith { key -> headers.get(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER)) },
+                    "headers" to headers.keys().associateWith { key ->
+                        headers.get(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER))
+                    },
                 ),
             )
         }
@@ -53,7 +55,9 @@ class GrpcLogInterceptor : ServerInterceptor {
                             "grpc" to mapOf(
                                 "serviceName" to "${call.methodDescriptor.serviceName}",
                                 "methodName" to "${call.methodDescriptor.bareMethodName}",
-                                "headers" to headers.keys().associateWith { key -> headers.get(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER)) },
+                                "headers" to headers.keys().associateWith { key ->
+                                    headers.get(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER))
+                                },
                             ),
                         )
                     }
@@ -75,7 +79,9 @@ class GrpcLogInterceptor : ServerInterceptor {
                         "grpc" to mapOf(
                             "serviceName" to "${call.methodDescriptor.serviceName}",
                             "methodName" to "${call.methodDescriptor.bareMethodName}",
-                            "headers" to headers.keys().associateWith { key -> headers.get(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER)) },
+                            "headers" to headers.keys().associateWith { key ->
+                                headers.get(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER))
+                            },
                             "messages" to parsedMessage.allFields.mapKeys { field -> field.key.name },
                         ),
                     )
