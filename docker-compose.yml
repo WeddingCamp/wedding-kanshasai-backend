@@ -4,9 +4,29 @@ services:
     build: .
     ports:
       - "6565:6565"
+    depends_on:
+      - proxy
+      - database
+    environment:
+      DATABASE_URL: mysql://database:3306/wedding_kanshasai
+      DATABASE_USERNAME: mysql
+      DATABASE_PASSWORD: mysql
   proxy:
     image: envoyproxy/envoy:distroless-v1.27-latest
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
     ports:
       - "8080:8080"
+  database:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./docker/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: wedding_kanshasai
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+    restart: always
