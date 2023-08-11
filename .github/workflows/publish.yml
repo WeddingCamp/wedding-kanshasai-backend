@@ -24,3 +24,8 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_REGISTRY }}/library/wedding-kanshasai-backend:${{ github.sha }},${{ secrets.DOCKERHUB_REGISTRY }}/library/wedding-kanshasai-backend:latest
+
+      - name: Apply new image
+        shell: bash
+        run: |
+          curl ${{ secrets.DEPLOY_URL }}
