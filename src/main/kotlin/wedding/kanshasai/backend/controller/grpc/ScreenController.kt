@@ -20,17 +20,19 @@ class ScreenController : ScreenServiceCoroutineImplBase() {
     override fun streamScreenEvent(request: StreamScreenEventRequest): Flow<StreamScreenEventResponse> = flow {
         while (true) {
             delay(1000)
-            emit(StreamScreenEventResponse.newBuilder().run {
-                eventType = ScreenEventType.SCREEN_EVENT_TYPE_QUIZ
-                quizEvent = StreamScreenEventResponse.QuizEvent.newBuilder().run {
-                    quizId = UUID.randomUUID().toString()
-                    body = "新婦婦の実家の最寄駅は？"
-                    addAllChoices(listOf("日根野駅","泉佐野駅","熊取駅","鳳駅"))
+            emit(
+                StreamScreenEventResponse.newBuilder().run {
+                    eventType = ScreenEventType.SCREEN_EVENT_TYPE_QUIZ
+                    quizEvent = StreamScreenEventResponse.QuizEvent.newBuilder().run {
+                        quizId = UUID.randomUUID().toString()
+                        body = "新婦婦の実家の最寄駅は？"
+                        addAllChoices(listOf("日根野駅", "泉佐野駅", "熊取駅", "鳳駅"))
+                        build()
+                    }
+                    logger.info { "Send screen event" }
                     build()
-                }
-                logger.info { "Send screen event" }
-                build()
-            })
+                },
+            )
         }
     }
 }
