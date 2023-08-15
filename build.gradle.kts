@@ -28,13 +28,19 @@ repositories {
 dependencies {
     // Spring
     implementation("org.springframework.boot:spring-boot-starter")
-    implementation("net.devh:grpc-spring-boot-starter:2.14.0.RELEASE")
+
+    // Database
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2")
+    implementation("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.5.0")
+    implementation("com.mysql:mysql-connector-j:8.1.0")
+    implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0")
 
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // gRPC
-    implementation("wedding.kanshasai:protobuf:0.0.1")
+    implementation("net.devh:grpc-spring-boot-starter:2.14.0.RELEASE")
+    implementation("wedding.kanshasai:protobuf:0.0.4")
 
     // Logging
     implementation("ch.qos.logback:logback-classic:1.4.8")
@@ -43,6 +49,7 @@ dependencies {
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("com.h2database:h2:2.2.220")
 }
 
 tasks.withType<KotlinCompile> {
