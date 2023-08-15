@@ -51,7 +51,9 @@ interface EventMapper {
             OR is_deleted = #{includeDeleted}
     """,
     )
-    fun listEvents(@Param("includeDeleted") includeDeleted: Boolean = false): List<Event>
+    fun listEvents(
+        @Param("includeDeleted") includeDeleted: Boolean = false,
+    ): List<Event>
 
     @Update(
         """
