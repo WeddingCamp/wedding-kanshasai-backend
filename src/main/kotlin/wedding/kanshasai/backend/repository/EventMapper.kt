@@ -30,14 +30,13 @@ interface EventMapper {
             name
         )
         VALUES (
-            #{id},
-            #{name}
+            #{event.id},
+            #{event.name}
         )
     """,
     )
     fun createEvent(
-        @Param("id") id: ByteArray,
-        @Param("name") name: String,
+        @Param("event") event: Event,
     )
 
     @Select(
