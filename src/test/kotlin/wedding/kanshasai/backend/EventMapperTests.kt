@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
+import wedding.kanshasai.backend.entity.Event
 import wedding.kanshasai.backend.repository.EventMapper
 
 @WeddingKanshasaiSpringBootTest
@@ -24,8 +25,8 @@ class EventMapperTests {
     @Test
     @Order(2)
     fun createEvent_shouldSucceed() = assertDoesNotThrow {
-        eventMapper.createEvent(ULID().nextValue().toBytes(), "Test Event 1")
-        eventMapper.createEvent(ULID().nextValue().toBytes(), "Test Event 2")
+        eventMapper.createEvent(Event.of("Test Event 1"))
+        eventMapper.createEvent(Event.of("Test Event 2"))
     }
 
     @Test
