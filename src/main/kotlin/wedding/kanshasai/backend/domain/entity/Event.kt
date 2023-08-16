@@ -1,4 +1,4 @@
-package wedding.kanshasai.backend.entity
+package wedding.kanshasai.backend.domain.entity
 
 import de.huxhorn.sulky.ulid.ULID
 import java.sql.Timestamp

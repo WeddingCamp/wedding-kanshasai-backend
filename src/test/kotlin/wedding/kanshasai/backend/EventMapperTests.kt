@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
-import wedding.kanshasai.backend.entity.Event
+import wedding.kanshasai.backend.domain.entity.Event
 import wedding.kanshasai.backend.repository.EventMapper
 
 @WeddingKanshasaiSpringBootTest
