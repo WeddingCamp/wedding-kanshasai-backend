@@ -5,44 +5,44 @@ import wedding.kanshasai.backend.exception.InvalidStateTransitionException
 
 private val logger = KotlinLogging.logger {}
 
-enum class SessionState {
-    BEFORE_START {
+enum class SessionState(val id: Int) {
+    BEFORE_START(1) {
         override val nextStateList
             get() = listOf(EXPLAINING)
     },
-    EXPLAINING {
+    EXPLAINING(10) {
         override val nextStateList
             get() = listOf(QUIZ_WAITING)
     },
-    QUIZ_WAITING {
+    QUIZ_WAITING(20) {
         override val nextStateList
             get() = listOf(QUIZ_ANSWERING, INTERIM_ANNOUNCEMENT)
     },
-    QUIZ_ANSWERING {
+    QUIZ_ANSWERING(30) {
         override val nextStateList
             get() = listOf(QUIZ_DEADLINE_PASSED)
     },
-    QUIZ_DEADLINE_PASSED {
+    QUIZ_DEADLINE_PASSED(40) {
         override val nextStateList
             get() = listOf(QUIZ_CORRECT_ANSWER)
     },
-    QUIZ_CORRECT_ANSWER {
+    QUIZ_CORRECT_ANSWER(50) {
         override val nextStateList
             get() = listOf(QUIZ_FASTEST_RANKING)
     },
-    QUIZ_FASTEST_RANKING {
+    QUIZ_FASTEST_RANKING(60) {
         override val nextStateList
             get() = listOf(FINAL_RESULT_ANNOUNCEMENT, QUIZ_WAITING)
     },
-    FINAL_RESULT_ANNOUNCEMENT {
+    FINAL_RESULT_ANNOUNCEMENT(70) {
         override val nextStateList
             get() = listOf(FINISHED)
     },
-    FINISHED {
+    FINISHED(9999) {
         override val nextStateList
             get() = listOf<SessionState>()
     },
-    INTERIM_ANNOUNCEMENT {
+    INTERIM_ANNOUNCEMENT(1000) {
         override val nextStateList
             get() = listOf(QUIZ_WAITING)
     },
