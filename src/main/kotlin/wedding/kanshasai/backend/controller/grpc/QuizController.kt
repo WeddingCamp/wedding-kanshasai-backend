@@ -14,14 +14,60 @@ class QuizController : QuizServiceCoroutineImplBase() {
                     ListQuizzesResponse.Quiz.newBuilder().run {
                         quizId = UUID.randomUUID().toString()
                         body = "新婦婦の実家の最寄駅は？"
-                        addAllChoices(listOf("日根野駅", "泉佐野駅", "熊取駅", "鳳駅"))
+                        addAllChoices(
+                            listOf(
+                                ListQuizzesResponse.Choice.newBuilder().run {
+                                    choiceId = UUID.randomUUID().toString()
+                                    body = "日根野駅"
+                                    build()
+                                },
+                                ListQuizzesResponse.Choice.newBuilder().run {
+                                    choiceId = UUID.randomUUID().toString()
+                                    body = "泉佐野駅"
+                                    build()
+                                },
+                                ListQuizzesResponse.Choice.newBuilder().run {
+                                    choiceId = UUID.randomUUID().toString()
+                                    body = "熊取駅"
+                                    build()
+                                },
+                                ListQuizzesResponse.Choice.newBuilder().run {
+                                    choiceId = UUID.randomUUID().toString()
+                                    body = "鳳駅"
+                                    build()
+                                },
+                            ),
+                        )
                         correctAnswer = "{\"answer_id\": 1}"
                         build()
                     },
                     ListQuizzesResponse.Quiz.newBuilder().run {
                         quizId = UUID.randomUUID().toString()
                         body = "最寄りのスーパーはどこ？"
-                        addAllChoices(listOf("ライフ", "イオン", "イズミヤ", "イトーヨーカドー"))
+                        addAllChoices(
+                            listOf(
+                                ListQuizzesResponse.Choice.newBuilder().run {
+                                    choiceId = UUID.randomUUID().toString()
+                                    body = "ライフ"
+                                    build()
+                                },
+                                ListQuizzesResponse.Choice.newBuilder().run {
+                                    choiceId = UUID.randomUUID().toString()
+                                    body = "イオン"
+                                    build()
+                                },
+                                ListQuizzesResponse.Choice.newBuilder().run {
+                                    choiceId = UUID.randomUUID().toString()
+                                    body = "イズミヤ"
+                                    build()
+                                },
+                                ListQuizzesResponse.Choice.newBuilder().run {
+                                    choiceId = UUID.randomUUID().toString()
+                                    body = "イトーヨーカドー"
+                                    build()
+                                },
+                            ),
+                        )
                         correctAnswer = "{\"answer_id\": 1}"
                         build()
                     },
