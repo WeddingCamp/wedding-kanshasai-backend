@@ -4,6 +4,17 @@ on:
     branches:
       - 'main'
   workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prd
+env:
+  environment: ${{ inputs.environment || 'dev' }}
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -28,4 +39,4 @@ jobs:
       - name: Apply new image
         shell: bash
         run: |
-          curl ${{ secrets.DEPLOY_URL }}
+          curl ${{ secrets.DEPLOY_URL }}?env=${{ env.environment }}
