@@ -13,8 +13,6 @@ class ScreenController : ScreenServiceCoroutineImplBase() {
     }
 
     override fun streamScreenEvent(request: StreamScreenEventRequest): Flow<StreamScreenEventResponse> {
-        val a = SessionState.BEFORE_START
-        a.next(SessionState.BEFORE_START).getOrNull()
         TODO("NOT IMPLEMENTED")
     }
 }
