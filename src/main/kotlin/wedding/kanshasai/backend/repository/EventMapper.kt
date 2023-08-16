@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Param
 import org.apache.ibatis.annotations.Select
 import org.apache.ibatis.annotations.Update
-import wedding.kanshasai.backend.entity.Event
+import wedding.kanshasai.backend.domain.entity.Event
 
 @Mapper
 interface EventMapper {

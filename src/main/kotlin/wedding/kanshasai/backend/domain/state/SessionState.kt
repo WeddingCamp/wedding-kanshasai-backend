@@ -1,4 +1,4 @@
-package wedding.kanshasai.backend.domain
+package wedding.kanshasai.backend.domain.state
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import wedding.kanshasai.backend.exception.InvalidStateTransitionException
