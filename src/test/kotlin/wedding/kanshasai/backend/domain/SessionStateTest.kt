@@ -14,7 +14,7 @@ class SessionStateTest {
     @MethodSource("sessionStateProvider")
     fun next_shouldProperlyThrowException(pattern: SessionStatePattern) {
         SessionState.values().forEach {
-            if(it == pattern.sessionState || pattern.validTransitionDestinationList.contains(it)) {
+            if (it == pattern.sessionState || pattern.validTransitionDestinationList.contains(it)) {
                 assertDoesNotThrow {
                     pattern.sessionState.next(it).getOrThrow()
                 }
