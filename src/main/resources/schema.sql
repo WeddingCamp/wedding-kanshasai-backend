@@ -21,4 +21,3 @@ CREATE TABLE IF NOT EXISTS
   );
 
 ALTER TABLE sessions ADD FOREIGN KEY (event_id) REFERENCES events(id);
-
