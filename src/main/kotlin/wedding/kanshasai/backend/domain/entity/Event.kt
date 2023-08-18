@@ -1,31 +1,25 @@
 package wedding.kanshasai.backend.domain.entity
 
-import de.huxhorn.sulky.ulid.ULID
+import wedding.kanshasai.backend.domain.value.UlidId
+import wedding.kanshasai.backend.infra.dto.EventDto
 import java.sql.Timestamp
 
 class Event(
-    val id: ByteArray = ULID().nextValue().toBytes(),
+    val id: UlidId,
     var name: String,
-    var isDeleted: Boolean = false,
-    val createdAt: Timestamp? = null,
-    val updatedAt: Timestamp? = null,
+    var isDeleted: Boolean,
+    val createdAt: Timestamp,
+    val updatedAt: Timestamp,
 ) {
     companion object {
-        fun of(name: String): Event {
-            return Event(name = name)
+        fun of(eventDto: EventDto): Event {
+            return Event(
+                UlidId.of(eventDto.id),
+                eventDto.name,
+                eventDto.isDeleted,
+                eventDto.createdAt,
+                eventDto.updatedAt,
+            )
         }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Event
-
-        return id.contentEquals(other.id)
-    }
-
-    override fun hashCode(): Int {
-        return id.contentHashCode()
     }
 }

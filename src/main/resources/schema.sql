@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS
     id BINARY(16) NOT NULL PRIMARY KEY,
     event_id BINARY(16) NOT NULL,
     name VARCHAR(100) NOT NULL,
-    session_state_id INTEGER NOT NULL DEFAULT 1,
+    state_id INTEGER NOT NULL DEFAULT 1,
     cover_screen_id INTEGER NULL,
     current_quiz_id BINARY(16) NULL,
     is_deleted BOOLEAN NOT NULL DEFAUlT false,

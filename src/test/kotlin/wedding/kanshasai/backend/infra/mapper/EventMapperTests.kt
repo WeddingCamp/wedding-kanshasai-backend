@@ -1,4 +1,4 @@
-package wedding.kanshasai.backend
+package wedding.kanshasai.backend.infra.mapper
 
 import de.huxhorn.sulky.ulid.ULID
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
-import wedding.kanshasai.backend.domain.entity.Event
-import wedding.kanshasai.backend.repository.EventMapper
+import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
+import wedding.kanshasai.backend.domain.value.UlidId
 
 @WeddingKanshasaiSpringBootTest
 class EventMapperTests {
@@ -19,20 +19,22 @@ class EventMapperTests {
     @Test
     @Order(1)
     fun listEvents_shouldReturnArray_listSizeEqualsZero() {
-        assertEquals(eventMapper.listEvents().size, 0)
+        assertEquals(0, eventMapper.listEvents().size)
     }
 
     @Test
     @Order(2)
-    fun createEvent_shouldSucceed() = assertDoesNotThrow {
-        eventMapper.createEvent(Event.of("Test Event 1"))
-        eventMapper.createEvent(Event.of("Test Event 2"))
+    fun createEvent_shouldSucceed() {
+        assertDoesNotThrow {
+            eventMapper.createEvent(UlidId.new().toByteArray(), "Test Event 1")
+            eventMapper.createEvent(UlidId.new().toByteArray(), "Test Event 2")
+        }
     }
 
     @Test
     @Order(3)
     fun listEvents_shouldReturnArray_listSizeEqualsTwo() {
-        assertEquals(eventMapper.listEvents().size, 2)
+        assertEquals(2, eventMapper.listEvents().size)
     }
 
     @Test
@@ -41,29 +43,29 @@ class EventMapperTests {
         val list = eventMapper.listEvents()
         val event = eventMapper.findById(list[0].id)
 
-        assertNotNull(event)
-        assertEquals(ULID.fromBytes(list[0].id), ULID.fromBytes(event?.id))
-        assertEquals(list[0].name, event?.name)
-        assertEquals(list[0].createdAt, event?.createdAt)
-        assertEquals(list[0].updatedAt, event?.updatedAt)
+        assertNotNull(event!!)
+        assertEquals(ULID.fromBytes(list[0].id), ULID.fromBytes(event.id))
+        assertEquals(list[0].name, event.name)
     }
 
     @Test
     @Order(4)
-    fun deleteEvent_shouldSucceed() = assertDoesNotThrow {
-        val list = eventMapper.listEvents()
-        assert(eventMapper.deleteById(list[0].id))
+    fun deleteEvent_shouldSucceed() {
+        assertDoesNotThrow {
+            val list = eventMapper.listEvents()
+            assert(eventMapper.deleteById(list[0].id))
+        }
     }
 
     @Test
     @Order(5)
     fun listEvents_shouldReturnArray_listSizeEqualsOne_whenEventDeleted() {
-        assertEquals(eventMapper.listEvents().size, 1)
+        assertEquals(1, eventMapper.listEvents().size)
     }
 
     @Test
     @Order(5)
     fun listEvents_shouldReturnArray_listSizeEqualsTwo_whenEventDeletedAndIncludeDeleted() {
-        assertEquals(eventMapper.listEvents(true).size, 2)
+        assertEquals(2, eventMapper.listEvents(true).size)
     }
 }

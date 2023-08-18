@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wedding.kanshasai.backend.infra.mapper.EventMapper">
+
+    <select id="findById" resultMap="event">
+        SELECT
+        events.id AS event_id,
+        events.name AS event_name,
+        events.is_deleted AS event_is_deleted,
+        events.created_at AS event_created_at,
+        events.updated_at AS event_updated_at
+        FROM
+        events
+        WHERE
+        id = #{id}
+        AND is_deleted = false
+    </select>
+
+    <insert id="createEvent">
+        INSERT INTO events(
+        id,
+        name
+        )
+        VALUES (
+        #{id},
+        #{name}
+        )
+    </insert>
+
+    <select id="listEvents" resultMap="event">
+        SELECT
+        events.id AS event_id,
+        events.name AS event_name,
+        events.is_deleted AS event_is_deleted,
+        events.created_at AS event_created_at,
+        events.updated_at AS event_updated_at
+        FROM
+        events
+        WHERE
+        is_deleted = false
+        OR is_deleted = #{includeDeleted}
+    </select>
+
+    <update id="deleteById">
+        UPDATE
+        events
+        SET
+        is_deleted = true
+        WHERE
+        id = #{id}
+        AND is_deleted = false
+    </update>
+
+    <resultMap id="event" type="wedding.kanshasai.backend.infra.dto.EventDto">
+        <id property="id" column="event_id"/>
+        <result property="name" column="event_name"/>
+        <result property="isDeleted" column="event_is_deleted"/>
+        <result property="createdAt" column="event_created_at"/>
+        <result property="updatedAt" column="event_updated_at"/>
+    </resultMap>
+</mapper>
