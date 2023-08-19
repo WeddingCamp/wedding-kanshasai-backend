@@ -5,7 +5,6 @@ import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.dto.EventDto
 import wedding.kanshasai.backend.infra.dto.QuizDto
-import wedding.kanshasai.backend.infra.dto.SessionDto
 
 @WeddingKanshasaiSpringBootTest
 class QuizMapperTests : MapperCRUDTest<QuizMapper, QuizDto>() {
