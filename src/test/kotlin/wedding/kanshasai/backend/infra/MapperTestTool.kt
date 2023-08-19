@@ -42,7 +42,7 @@ class MapperTestTool {
         val eventId = UlidId.new()
         return EventDto(
             eventId.toStandardIdentifier(),
-            "Event_$uuid",
+            "Event_$eventId",
         )
     }
 
