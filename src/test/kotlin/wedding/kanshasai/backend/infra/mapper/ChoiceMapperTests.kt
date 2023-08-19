@@ -16,7 +16,7 @@ class ChoiceMapperTests : MapperCRUDTest<ChoiceMapper, ChoiceDto>() {
 
         (0..2).map {
             val quizDto = testTool.createAndInsertQuizDto(eventDto)
-            (0..3).map {
+            (1..4).map {
                 testTool.createChoiceDto(quizDto)
             }
         }.flatten()
