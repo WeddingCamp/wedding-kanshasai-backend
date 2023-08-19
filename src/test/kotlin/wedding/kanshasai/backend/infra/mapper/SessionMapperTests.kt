@@ -12,26 +12,22 @@ class SessionMapperTests : MapperCRUDTest<SessionMapper, SessionDto>() {
     @Autowired
     lateinit var eventMapper: EventMapper
 
-    override fun prepareDto() {
-        dtoList.addAll(
-            (0..9).map {
-                val eventId = UlidId.new()
-                val eventDto = EventDto(
-                    eventId.toByteArray(),
-                    "Event_$eventId",
-                )
-                eventMapper.insert(eventDto)
-                val sessionId = UlidId.new()
-                SessionDto(
-                    sessionId.toByteArray(),
-                    eventId.toByteArray(),
-                    "Session_$sessionId",
-                    it,
-                    100,
-                    null,
-                    event = eventDto,
-                )
-            },
+    override fun stubDtoList() = (0..9).map {
+        val eventId = UlidId.new()
+        val eventDto = EventDto(
+            eventId.toByteArray(),
+            "Event_$eventId",
+        )
+        eventMapper.insert(eventDto)
+        val sessionId = UlidId.new()
+        SessionDto(
+            sessionId.toByteArray(),
+            eventId.toByteArray(),
+            "Session_$sessionId",
+            it,
+            100,
+            null,
+            event = eventDto,
         )
     }
 }

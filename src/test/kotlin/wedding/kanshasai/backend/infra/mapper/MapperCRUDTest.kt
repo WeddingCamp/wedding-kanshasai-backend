@@ -11,13 +11,13 @@ abstract class MapperCRUDTest<MAPPER : MapperCRUDBase<DTO>, DTO : IdentifiableDt
     @Autowired
     lateinit var mapper: MAPPER
 
-    protected val dtoList = mutableListOf<DTO>()
+    private val dtoList = mutableListOf<DTO>()
 
-    abstract fun prepareDto()
+    abstract fun stubDtoList(): List<DTO>
 
     @BeforeAll
     fun beforeAll() {
-        prepareDto()
+        dtoList.addAll(stubDtoList())
     }
 
     @Test

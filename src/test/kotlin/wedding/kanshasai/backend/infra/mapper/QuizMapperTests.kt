@@ -12,25 +12,21 @@ class QuizMapperTests : MapperCRUDTest<QuizMapper, QuizDto>() {
     @Autowired
     lateinit var eventMapper: EventMapper
 
-    override fun prepareDto() {
-        dtoList.addAll(
-            (0..9).map {
-                val eventId = UlidId.new()
-                val eventDto = EventDto(
-                    eventId.toByteArray(),
-                    "Event_$eventId",
-                )
-                eventMapper.insert(eventDto)
-                val sessionId = UlidId.new()
-                QuizDto(
-                    sessionId.toByteArray(),
-                    eventId.toByteArray(),
-                    "Quiz_body_$sessionId",
-                    "Quiz_answer_$sessionId",
-                    it,
-                    event = eventDto,
-                )
-            },
+    override fun stubDtoList() = (0..9).map {
+        val eventId = UlidId.new()
+        val eventDto = EventDto(
+            eventId.toByteArray(),
+            "Event_$eventId",
+        )
+        eventMapper.insert(eventDto)
+        val sessionId = UlidId.new()
+        QuizDto(
+            sessionId.toByteArray(),
+            eventId.toByteArray(),
+            "Quiz_body_$sessionId",
+            "Quiz_answer_$sessionId",
+            it,
+            event = eventDto,
         )
     }
 }
