@@ -6,21 +6,29 @@
         INSERT INTO sessions(
             id,
             event_id,
-            name
+            name,
+            state_id,
+            cover_screen_id,
+            current_quiz_id,
+            is_deleted
         )
         VALUES (
             #{entity.id},
             #{entity.eventId},
-            #{entity.name}
+            #{entity.name},
+            #{entity.stateId},
+            #{entity.coverScreenId},
+            #{entity.currentQuizId},
+            #{entity.isDeleted}
         )
     </insert>
 
-    <select id="select" resultSets="session">
+    <select id="select" resultMap="session">
         SELECT
             sessions.id AS session_id,
             sessions.event_id AS session_event_id,
             sessions.name AS session_name,
-            sessions.state_id AS state_id,
+            sessions.state_id AS session_state_id,
             sessions.cover_screen_id AS session_cover_screen_id,
             sessions.current_quiz_id AS session_current_quiz_id,
             sessions.is_deleted AS session_is_deleted,
@@ -46,7 +54,7 @@
             sessions.id AS session_id,
             sessions.event_id AS session_event_id,
             sessions.name AS session_name,
-            sessions.state_id AS state_id,
+            sessions.state_id AS session_state_id,
             sessions.cover_screen_id AS session_cover_screen_id,
             sessions.current_quiz_id AS session_current_quiz_id,
             sessions.is_deleted AS session_is_deleted,
@@ -80,7 +88,7 @@
         <id property="id" column="session_id" />
         <result property="eventId" column="session_event_id"/>
         <result property="name" column="session_name"/>
-        <result property="sessionStateId" column="session_state_id"/> <!-- TODO: session消す -->
+        <result property="stateId" column="session_state_id"/>
         <result property="coverScreenId" column="session_cover_screen_id"/>
         <result property="currentQuizId" column="session_current_quiz_id"/>
         <result property="isDeleted" column="session_is_deleted"/>

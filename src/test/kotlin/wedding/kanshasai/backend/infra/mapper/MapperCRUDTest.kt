@@ -13,8 +13,12 @@ abstract class MapperCRUDTest<MAPPER : MapperCRUDBase<DTO>, DTO : IdentifiableDt
 
     protected val dtoList = mutableListOf<DTO>()
 
-    @BeforeAll
     abstract fun prepareDto()
+
+    @BeforeAll
+    fun beforeAll() {
+        prepareDto()
+    }
 
     @Test
     @Order(10)
@@ -42,6 +46,9 @@ abstract class MapperCRUDTest<MAPPER : MapperCRUDBase<DTO>, DTO : IdentifiableDt
         val list = mapper.select()
         dtoList.forEach { dto ->
             val item = list.find { it.id.contentEquals(dto.id) }
+            println(dto)
+            println(item)
+            println()
             assert(dto.strictEquals(item))
         }
     }

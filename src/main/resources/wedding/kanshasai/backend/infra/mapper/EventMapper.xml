@@ -5,11 +5,13 @@
     <insert id="insert">
         INSERT INTO events(
             id,
-            name
+            name,
+            is_deleted
         )
         VALUES (
             #{entity.id},
-            #{entity.name}
+            #{entity.name},
+            #{entity.isDeleted}
         )
     </insert>
 
