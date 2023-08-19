@@ -27,7 +27,7 @@
         AND sessions.is_deleted = false
     </select>
 
-    <select id="listSessions" resultSets="sessionWithEvent">
+    <select id="select" resultSets="sessionWithEvent">
         SELECT
         sessions.id AS session_id,
         sessions.event_id AS session_event_id,
@@ -54,16 +54,16 @@
         sessions.id
     </select>
 
-    <insert id="createSession">
+    <insert id="insert">
         INSERT INTO sessions(
         id,
         event_id,
         name
         )
         VALUES (
-        #{id},
-        #{event_id},
-        #{name}
+        #{entity.id},
+        #{entity.eventId},
+        #{entity.name}
         )
     </insert>
 

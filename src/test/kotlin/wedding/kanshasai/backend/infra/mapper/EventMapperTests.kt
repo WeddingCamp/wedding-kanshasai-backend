@@ -9,6 +9,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
 import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
 import wedding.kanshasai.backend.domain.value.UlidId
+import wedding.kanshasai.backend.infra.dto.EventDto
 
 @WeddingKanshasaiSpringBootTest
 class EventMapperTests {
@@ -19,28 +20,28 @@ class EventMapperTests {
     @Test
     @Order(1)
     fun listEvents_shouldReturnArray_listSizeEqualsZero() {
-        assertEquals(0, eventMapper.listEvents().size)
+        assertEquals(0, eventMapper.select().size)
     }
 
     @Test
     @Order(2)
     fun createEvent_shouldSucceed() {
         assertDoesNotThrow {
-            eventMapper.createEvent(UlidId.new().toByteArray(), "Test Event 1")
-            eventMapper.createEvent(UlidId.new().toByteArray(), "Test Event 2")
+            eventMapper.insert(EventDto(UlidId.new().toByteArray(), "Test Event 1"))
+            eventMapper.insert(EventDto(UlidId.new().toByteArray(), "Test Event 2"))
         }
     }
 
     @Test
     @Order(3)
     fun listEvents_shouldReturnArray_listSizeEqualsTwo() {
-        assertEquals(2, eventMapper.listEvents().size)
+        assertEquals(2, eventMapper.select().size)
     }
 
     @Test
     @Order(3)
     fun findEvent_shouldReturnEvent() {
-        val list = eventMapper.listEvents()
+        val list = eventMapper.select()
         val event = eventMapper.findById(list[0].id)
 
         assertNotNull(event!!)
@@ -52,7 +53,7 @@ class EventMapperTests {
     @Order(4)
     fun deleteEvent_shouldSucceed() {
         assertDoesNotThrow {
-            val list = eventMapper.listEvents()
+            val list = eventMapper.select()
             assert(eventMapper.deleteById(list[0].id))
         }
     }
@@ -60,12 +61,12 @@ class EventMapperTests {
     @Test
     @Order(5)
     fun listEvents_shouldReturnArray_listSizeEqualsOne_whenEventDeleted() {
-        assertEquals(1, eventMapper.listEvents().size)
+        assertEquals(1, eventMapper.select().size)
     }
 
     @Test
     @Order(5)
     fun listEvents_shouldReturnArray_listSizeEqualsTwo_whenEventDeletedAndIncludeDeleted() {
-        assertEquals(2, eventMapper.listEvents(true).size)
+        assertEquals(2, eventMapper.select(true).size)
     }
 }

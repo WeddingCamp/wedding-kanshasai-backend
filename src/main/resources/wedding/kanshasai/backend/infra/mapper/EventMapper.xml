@@ -16,18 +16,18 @@
         AND is_deleted = false
     </select>
 
-    <insert id="createEvent">
+    <insert id="insert">
         INSERT INTO events(
         id,
         name
         )
         VALUES (
-        #{id},
-        #{name}
+        #{entity.id},
+        #{entity.name}
         )
     </insert>
 
-    <select id="listEvents" resultMap="event">
+    <select id="select" resultMap="event">
         SELECT
         events.id AS event_id,
         events.name AS event_name,
@@ -40,6 +40,16 @@
         is_deleted = false
         OR is_deleted = #{includeDeleted}
     </select>
+
+    <update id="delete">
+        UPDATE
+        events
+        SET
+        is_deleted = true
+        WHERE
+        id = #{entity.id}
+        AND is_deleted = false
+    </update>
 
     <update id="deleteById">
         UPDATE

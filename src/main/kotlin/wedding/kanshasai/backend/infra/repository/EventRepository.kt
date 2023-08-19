@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository
 import wedding.kanshasai.backend.domain.entity.Event
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.exception.NotFoundException
+import wedding.kanshasai.backend.infra.dto.EventDto
 import wedding.kanshasai.backend.infra.mapper.EventMapper
 
 @Repository
@@ -21,7 +22,8 @@ class EventRepository(
 
     fun createEvent(name: String): Result<Event> = runCatching {
         val ulidId = UlidId.new()
-        val insertCount = eventMapper.createEvent(ulidId.toByteArray(), name)
+
+        val insertCount = eventMapper.insert(EventDto(ulidId.toByteArray(), name))
         if (insertCount < 1) {
             throw TransactionException("Create event failed")
         }
@@ -29,7 +31,7 @@ class EventRepository(
     }
 
     fun listEvents(): Result<List<Event>> = runCatching {
-        eventMapper.listEvents().map(Event::of)
+        eventMapper.select().map(Event::of)
     }
 
     fun deleteEvent(id: UlidId): Result<Unit> = runCatching {

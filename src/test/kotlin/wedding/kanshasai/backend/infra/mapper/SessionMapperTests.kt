@@ -45,7 +45,7 @@ class SessionMapperTests {
     @Test
     @Order(1)
     fun listSessions_shouldReturnArray_listSizeEqualsZero() {
-        assertEquals(0, sessionMapper.listSessions().size)
+        assertEquals(0, sessionMapper.select().size)
     }
 
     @Test
@@ -53,10 +53,12 @@ class SessionMapperTests {
     fun createSession_shouldSucceed() {
         sessionTestStubList.forEach { stub ->
             stub.sessionUlidIdList.forEach { sessionId ->
-                val result = sessionMapper.createSession(
-                    sessionId.toByteArray(),
-                    stub.event.id.toByteArray(),
-                    stub.event.name,
+                val result = sessionMapper.insert(
+                    SessionDto(
+                        sessionId.toByteArray(),
+                        stub.event.id.toByteArray(),
+                        stub.event.name,
+                    )
                 )
                 assertEquals(1, result)
             }
@@ -85,7 +87,7 @@ class SessionMapperTests {
     @Test
     @Order(4)
     fun listSessions_shouldReturnArray_listSizeEqualsSessionSize() {
-        assertEquals(sessionTestStubList.flatMap { it.sessionUlidIdList }.size, sessionMapper.listSessions().size)
+        assertEquals(sessionTestStubList.flatMap { it.sessionUlidIdList }.size, sessionMapper.select().size)
     }
 
     @Test
@@ -99,12 +101,12 @@ class SessionMapperTests {
     @Test
     @Order(6)
     fun listSessions_shouldReturnArray_listSizeEqualsSessionSize_whenRecordDeleted() {
-        assertEquals(sessionTestStubList.flatMap { it.sessionUlidIdList }.size - 1, sessionMapper.listSessions().size)
+        assertEquals(sessionTestStubList.flatMap { it.sessionUlidIdList }.size - 1, sessionMapper.select().size)
     }
 
     @Test
     @Order(6)
     fun listSessions_shouldReturnArray_listSizeEqualsSessionSizePlusOne_whenRecordDeletedAndIncludeDeleted() {
-        assertEquals(sessionTestStubList.flatMap { it.sessionUlidIdList }.size, sessionMapper.listSessions(true).size)
+        assertEquals(sessionTestStubList.flatMap { it.sessionUlidIdList }.size, sessionMapper.select(true).size)
     }
 }
