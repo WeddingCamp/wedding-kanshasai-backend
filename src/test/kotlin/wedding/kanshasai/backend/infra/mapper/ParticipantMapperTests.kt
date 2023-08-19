@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
 import wedding.kanshasai.backend.infra.MapperTestTool
 import wedding.kanshasai.backend.infra.dto.ParticipantDto
+import wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier
 
 @WeddingKanshasaiSpringBootTest
-class ParticipantMapperTests : MapperCRUDTest<ParticipantMapper, ParticipantDto>() {
+class ParticipantMapperTests : MapperCRUDTest<ParticipantMapper, StandardIdentifier, ParticipantDto>() {
 
     @Autowired
     lateinit var testTool: MapperTestTool

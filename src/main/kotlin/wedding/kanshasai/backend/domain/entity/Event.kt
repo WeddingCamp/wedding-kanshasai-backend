@@ -14,7 +14,7 @@ class Event(
     companion object {
         fun of(eventDto: EventDto): Event {
             return Event(
-                UlidId.of(eventDto.id),
+                UlidId.of(eventDto.identifier.id),
                 eventDto.name,
                 eventDto.isDeleted,
                 eventDto.createdAt,

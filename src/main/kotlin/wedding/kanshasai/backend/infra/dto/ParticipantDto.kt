@@ -1,9 +1,10 @@
 package wedding.kanshasai.backend.infra.dto
 
+import wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier
 import java.sql.Timestamp
 
 data class ParticipantDto(
-    override var id: ByteArray = byteArrayOf(),
+    override var identifier: StandardIdentifier = StandardIdentifier(byteArrayOf()),
     var sessionId: ByteArray = byteArrayOf(),
     var name: String = "",
     var imageId: ByteArray = byteArrayOf(),
@@ -11,14 +12,14 @@ data class ParticipantDto(
     var createdAt: Timestamp = Timestamp(0),
     var updatedAt: Timestamp = Timestamp(0),
     var session: SessionDto? = null,
-) : IdentifiableDto(id) {
+) : IdentifiableDto<StandardIdentifier>(identifier) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
         other as ParticipantDto
 
-        if (!id.contentEquals(other.id)) return false
+        if (identifier != other.identifier) return false
         if (!sessionId.contentEquals(other.sessionId)) return false
         if (name != other.name) return false
         if (!imageId.contentEquals(other.imageId)) return false
@@ -37,5 +38,5 @@ data class ParticipantDto(
         return true
     }
 
-    override fun hashCode() = id.contentHashCode()
+    override fun hashCode() = identifier.hashCode()
 }

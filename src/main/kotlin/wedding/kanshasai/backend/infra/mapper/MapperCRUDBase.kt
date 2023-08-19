@@ -2,30 +2,30 @@ package wedding.kanshasai.backend.infra.mapper
 
 import org.apache.ibatis.annotations.Param
 
-interface MapperCRUDBase<T> {
+interface MapperCRUDBase<IDENTIFIER, DTO> {
     // CREATE
     fun insert(
-        @Param("entity") entity: T,
+        @Param("entity") entity: DTO,
     ): Int
 
     // READ
     fun select(
         @Param("includeDeleted") includeDeleted: Boolean = false,
-    ): List<T>
+    ): List<DTO>
 
     fun findById(
-        @Param("id") id: ByteArray,
+        @Param("identifier") identifier: IDENTIFIER,
         @Param("includeDeleted") includeDeleted: Boolean = false,
-    ): T?
+    ): DTO?
 
     // UPDATE
     fun update(
-        @Param("entity") entity: T,
+        @Param("entity") entity: DTO,
         @Param("includeDeleted") includeDeleted: Boolean = false,
     ): Boolean
 
     // DELETE
     fun deleteById(
-        @Param("id") id: ByteArray,
+        @Param("identifier") identifier: IDENTIFIER,
     ): Boolean
 }

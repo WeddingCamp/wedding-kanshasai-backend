@@ -1,7 +1,9 @@
 package wedding.kanshasai.backend.infra.dto
 
-abstract class IdentifiableDto(
-    open var id: ByteArray = byteArrayOf(),
+import wedding.kanshasai.backend.infra.dto.identifier.DtoIdentifier
+
+abstract class IdentifiableDto<T : DtoIdentifier>(
+    open var identifier: T,
 ) {
     abstract fun strictEquals(other: Any?): Boolean
 }
