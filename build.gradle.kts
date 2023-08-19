@@ -9,6 +9,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint-idea") version "11.5.0"
     kotlin("jvm") version "1.8.22"
     kotlin("plugin.spring") version "1.8.22"
+    jacoco
 }
 
 group = "wedding.kanshasai"
@@ -60,7 +61,12 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Test> {
+    finalizedBy(tasks.jacocoTestReport)
     useJUnitPlatform()
+}
+
+tasks.withType<JacocoReport> {
+    dependsOn(tasks.test)
 }
 
 tasks.getByName<BootJar>("bootJar") {
