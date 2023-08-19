@@ -18,7 +18,7 @@ class SessionMapperTests : MapperCRUDTest<SessionMapper, SessionDto>() {
                 val eventId = UlidId.new()
                 val eventDto = EventDto(
                     eventId.toByteArray(),
-                    "Event_$eventId"
+                    "Event_$eventId",
                 )
                 eventMapper.insert(eventDto)
                 val sessionId = UlidId.new()
@@ -29,7 +29,7 @@ class SessionMapperTests : MapperCRUDTest<SessionMapper, SessionDto>() {
                     it,
                     100,
                     null,
-                    event = eventDto
+                    event = eventDto,
                 )
             },
         )
