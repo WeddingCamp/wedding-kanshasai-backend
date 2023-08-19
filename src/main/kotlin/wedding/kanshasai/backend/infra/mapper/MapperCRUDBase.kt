@@ -28,5 +28,6 @@ interface MapperCRUDBase<IDENTIFIER, DTO> {
     // DELETE
     fun deleteById(
         @Param("identifier") identifier: IDENTIFIER,
+        @Param("includeDeleted") includeDeleted: Boolean = false,
     ): Boolean
 }

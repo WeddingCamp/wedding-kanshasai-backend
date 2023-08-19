@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wedding.kanshasai.backend.infra.mapper.ParticipantAnswerMapper">
+
+    <insert id="insert">
+        INSERT INTO participant_answers(
+        participant_id,
+        session_id,
+        quiz_id,
+        answer,
+        time,
+        is_deleted
+        )
+        VALUES (
+        #{entity.identifier.participantId},
+        #{entity.identifier.sessionQuizIdentifier.sessionId},
+        #{entity.identifier.sessionQuizIdentifier.quizId},
+        #{entity.answer},
+        #{entity.time},
+        #{entity.isDeleted}
+        )
+    </insert>
+
+    <select id="select" resultMap="participantAnswer">
+        SELECT
+            participant_answers.participant_id AS participant_answer_participant_id,
+            participant_answers.session_id AS participant_answer_session_id,
+            participant_answers.quiz_id AS participant_answer_quiz_id,
+            participant_answers.answer AS participant_answer_answer,
+            participant_answers.time AS participant_answer_time,
+            participant_answers.is_deleted AS participant_answer_is_deleted,
+            participants.id AS participant_id,
+            participants.session_id AS participant_session_id,
+            participants.name AS participant_name,
+            participants.image_id AS participant_image_id,
+            participants.is_deleted AS participant_is_deleted,
+            participants.created_at AS participant_created_at,
+            participants.updated_at AS participant_updated_at,
+            session_quizzes.session_id AS session_quiz_session_id,
+            session_quizzes.quiz_id AS session_quiz_quiz_id,
+            session_quizzes.is_completed AS session_quiz_is_completed,
+            session_quizzes.started_at AS session_quiz_started_at,
+            session_quizzes.is_deleted AS session_quiz_is_deleted,
+            session_quizzes.created_at AS session_quiz_created_at,
+            session_quizzes.updated_at AS session_quiz_updated_at
+        FROM
+            participant_answers
+        LEFT JOIN
+            session_quizzes ON participant_answers.session_id = session_quizzes.session_id
+            AND participant_answers.quiz_id = session_quizzes.quiz_id
+        LEFT JOIN
+            participants ON participant_answers.participant_id = participants.id
+        WHERE
+            (participant_answers.is_deleted = false OR participant_answers.is_deleted = #{includeDeleted})
+        ORDER BY
+            participant_answers.participant_id, participant_answers.session_id, participant_answers.quiz_id
+    </select>
+
+    <select id="findById" resultMap="participantAnswer">
+        SELECT
+            participant_answers.participant_id AS participant_answer_participant_id,
+            participant_answers.session_id AS participant_answer_session_id,
+            participant_answers.quiz_id AS participant_answer_quiz_id,
+            participant_answers.answer AS participant_answer_answer,
+            participant_answers.time AS participant_answer_time,
+            participant_answers.is_deleted AS participant_answer_is_deleted,
+            participants.id AS participant_id,
+            participants.session_id AS participant_session_id,
+            participants.name AS participant_name,
+            participants.image_id AS participant_image_id,
+            participants.is_deleted AS participant_is_deleted,
+            participants.created_at AS participant_created_at,
+            participants.updated_at AS participant_updated_at,
+            session_quizzes.session_id AS session_quiz_session_id,
+            session_quizzes.quiz_id AS session_quiz_quiz_id,
+            session_quizzes.is_completed AS session_quiz_is_completed,
+            session_quizzes.started_at AS session_quiz_started_at,
+            session_quizzes.is_deleted AS session_quiz_is_deleted,
+            session_quizzes.created_at AS session_quiz_created_at,
+            session_quizzes.updated_at AS session_quiz_updated_at
+        FROM
+            participant_answers
+        LEFT JOIN
+            session_quizzes ON participant_answers.session_id = session_quizzes.session_id
+            AND participant_answers.quiz_id = session_quizzes.quiz_id
+        LEFT JOIN
+            participants ON participant_answers.participant_id = participants.id
+        WHERE
+            participant_answers.participant_id = #{identifier.participantId}
+            AND
+            participant_answers.session_id = #{identifier.sessionQuizIdentifier.sessionId}
+            AND
+            participant_answers.quiz_id = #{identifier.sessionQuizIdentifier.quizId}
+            AND
+            (session_quizzes.is_deleted = false OR session_quizzes.is_deleted = #{includeDeleted})
+    </select>
+
+    <update id="deleteById">
+        UPDATE
+            participant_answers
+        SET
+            is_deleted = true
+        WHERE
+            participant_id = #{identifier.participantId}
+            AND
+            session_id = #{identifier.sessionQuizIdentifier.sessionId}
+            AND
+            quiz_id = #{identifier.sessionQuizIdentifier.quizId}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
+    <resultMap id="participantAnswer" type="wedding.kanshasai.backend.infra.dto.ParticipantAnswerDto">
+        <id property="participantId" column="participant_answer_participant_id"/>
+        <id property="sessionId" column="participant_answer_session_id"/>
+        <id property="quizId" column="participant_answer_quiz_id"/>
+        <result property="answer" column="participant_answer_answer"/>
+        <result property="time" column="participant_answer_time"/>
+        <result property="isDeleted" column="participant_answer_is_deleted"/>
+        <result property="createdAt" column="participant_answer_created_at"/>
+        <result property="updatedAt" column="participant_answer_updated_at"/>
+        <association property="identifier" resultMap="participantAnswerIdentifier"/>
+        <association property="sessionQuiz" resultMap="wedding.kanshasai.backend.infra.mapper.SessionQuizMapper.sessionQuiz"/>
+        <association property="participant" resultMap="wedding.kanshasai.backend.infra.mapper.ParticipantMapper.participant"/>
+    </resultMap>
+
+    <resultMap id="participantAnswerIdentifier" type="wedding.kanshasai.backend.infra.dto.identifier.ParticipantAnswerIdentifier">
+        <result property="participantId" column="participant_answer_participant_id"/>
+        <association property="sessionQuizIdentifier" resultMap="wedding.kanshasai.backend.infra.mapper.SessionQuizMapper.sessionQuizIdentifier"/>
+    </resultMap>
+</mapper>

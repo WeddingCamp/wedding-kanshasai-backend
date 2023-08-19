@@ -19,27 +19,7 @@
         )
     </insert>
 
-    <insert id="insertAll">
-        INSERT INTO session_quizzes(
-        session_id,
-        quiz_id,
-        is_completed,
-        started_at,
-        is_deleted
-        )
-        VALUES
-        <foreach collection="entities" item="entity" index="" separator=",">
-        (
-        #{entity.identifier.sessionId},
-        #{entity.identifier.quizId},
-        #{entity.isCompleted},
-        #{entity.startedAt},
-        #{entity.isDeleted}
-        )
-        </foreach>
-    </insert>
-
-    <select id="select" resultMap="session_quiz">
+    <select id="select" resultMap="sessionQuiz">
         SELECT
             session_quizzes.session_id AS session_quiz_session_id,
             session_quizzes.quiz_id AS session_quiz_quiz_id,
@@ -77,7 +57,7 @@
             session_quizzes.session_id, session_quizzes.quiz_id
     </select>
 
-    <select id="findById" resultMap="session_quiz">
+    <select id="findById" resultMap="sessionQuiz">
         SELECT
             session_quizzes.session_id AS session_quiz_session_id,
             session_quizzes.quiz_id AS session_quiz_quiz_id,
@@ -126,9 +106,11 @@
             session_id = #{identifier.sessionId}
             AND
             quiz_id = #{identifier.quizId}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
     </update>
 
-    <resultMap id="session_quiz" type="wedding.kanshasai.backend.infra.dto.SessionQuizDto">
+    <resultMap id="sessionQuiz" type="wedding.kanshasai.backend.infra.dto.SessionQuizDto">
         <id property="sessionId" column="session_quiz_session_id"/>
         <id property="quizId" column="session_quiz_quiz_id"/>
         <result property="isCompleted" column="session_quiz_is_completed"/>

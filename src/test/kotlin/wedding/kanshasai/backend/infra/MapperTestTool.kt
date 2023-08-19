@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.dto.*
+import wedding.kanshasai.backend.infra.dto.identifier.ParticipantAnswerIdentifier
 import wedding.kanshasai.backend.infra.dto.identifier.SessionQuizIdentifier
 import wedding.kanshasai.backend.infra.mapper.*
 import java.sql.Timestamp
@@ -28,6 +29,9 @@ class MapperTestTool {
 
     @Autowired
     lateinit var sessionQuizMapper: SessionQuizMapper
+
+    @Autowired
+    lateinit var participantAnswerMapper: ParticipantAnswerMapper
 
     fun createEventDto(): EventDto {
         val eventId = UlidId.new()
@@ -128,5 +132,21 @@ class MapperTestTool {
         val sessionQuizDto = createSessionQuizDto(sessionDto, quizDto)
         sessionQuizMapper.insert(sessionQuizDto)
         return sessionQuizDto
+    }
+
+    fun createParticipantAnswerDto(participantDto: ParticipantDto, sessionQuizDto: SessionQuizDto): ParticipantAnswerDto {
+        return ParticipantAnswerDto(
+            ParticipantAnswerIdentifier(participantDto.identifier.id, sessionQuizDto.identifier),
+            "{\"answer\": \"${(1..4).random()}\"}",
+            (Math.random() * 10).toFloat(),
+            participant = participantDto,
+            sessionQuiz = sessionQuizDto,
+        )
+    }
+
+    fun createAndInsertParticipantAnswerDto(participantDto: ParticipantDto, sessionQuizDto: SessionQuizDto): ParticipantAnswerDto {
+        val participantAnswerDto = createParticipantAnswerDto(participantDto, sessionQuizDto)
+        participantAnswerMapper.insert(participantAnswerDto)
+        return participantAnswerDto
     }
 }
