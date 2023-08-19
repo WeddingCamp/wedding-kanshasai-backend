@@ -65,7 +65,7 @@ class MapperTestTool {
             sessionDto.id,
             "Participant_$participantId",
             imageId.toByteArray(),
-            session = sessionDto
+            session = sessionDto,
         )
     }
 
