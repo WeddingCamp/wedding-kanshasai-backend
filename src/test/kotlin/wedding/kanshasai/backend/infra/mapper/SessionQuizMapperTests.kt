@@ -14,11 +14,13 @@ class SessionQuizMapperTests : MapperCRUDTest<SessionQuizMapper, SessionQuizIden
 
     override fun stubDtoList() = (0..9).map {
         val eventDto = testTool.createAndInsertEventDto()
+        val quizDtoList = (1..10).map {
+            testTool.createAndInsertQuizDto(eventDto)
+        }
         (0..2).map {
             val sessionDto = testTool.createAndInsertSessionDto(eventDto)
-            (1..10).map {
-                val quizDto = testTool.createAndInsertQuizDto(eventDto)
-                testTool.createSessionQuizDto(sessionDto, quizDto)
+            quizDtoList.map {
+                testTool.createSessionQuizDto(sessionDto, it)
             }
         }.flatten()
     }.flatten()

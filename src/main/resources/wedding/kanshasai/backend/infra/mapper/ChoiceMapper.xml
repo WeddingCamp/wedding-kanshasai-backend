@@ -76,6 +76,8 @@
             is_deleted = true
         WHERE
             id = #{identifier.id}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
     </update>
 
     <resultMap id="choice" type="wedding.kanshasai.backend.infra.dto.ChoiceDto">

@@ -70,9 +70,24 @@ CREATE TABLE IF NOT EXISTS
     PRIMARY KEY(session_id, quiz_id)
   );
 
+CREATE TABLE IF NOT EXISTS
+  participant_answers (
+    participant_id BINARY(16) NOT NULL,
+    session_id BINARY(16) NOT NULL,
+    quiz_id BINARY(16) NOT NULL,
+    answer TEXT NOT NULL,
+    time FLOAT NULL,
+    is_deleted BOOLEAN NOT NULL DEFAUlT false,
+    created_at DATETIME NOT NULL DEFAUlT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAUlT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY(participant_id, session_id, quiz_id)
+  );
+
 ALTER TABLE sessions ADD FOREIGN KEY (event_id) REFERENCES events(id);
 ALTER TABLE quizzes ADD FOREIGN KEY (event_id) REFERENCES events(id);
 ALTER TABLE participants ADD FOREIGN KEY (session_id) REFERENCES sessions(id);
 ALTER TABLE choices ADD FOREIGN KEY (quiz_id) REFERENCES quizzes(id);
 ALTER TABLE session_quizzes ADD FOREIGN KEY (session_id) REFERENCES sessions(id);
 ALTER TABLE session_quizzes ADD FOREIGN KEY (quiz_id) REFERENCES quizzes(id);
+ALTER TABLE participant_answers ADD FOREIGN KEY (session_id, quiz_id) REFERENCES session_quizzes(session_id, quiz_id);
+ALTER TABLE participant_answers ADD FOREIGN KEY (participant_id) REFERENCES participants(id);
