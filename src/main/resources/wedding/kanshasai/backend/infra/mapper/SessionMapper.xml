@@ -80,7 +80,7 @@
         <id property="id" column="session_id" />
         <result property="eventId" column="session_event_id"/>
         <result property="name" column="session_name"/>
-        <result property="sessionStateId" column="session_state_id"/>
+        <result property="sessionStateId" column="session_state_id"/> <!-- TODO: session消す -->
         <result property="coverScreenId" column="session_cover_screen_id"/>
         <result property="currentQuizId" column="session_current_quiz_id"/>
         <result property="isDeleted" column="session_is_deleted"/>
