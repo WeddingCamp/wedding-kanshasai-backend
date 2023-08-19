@@ -12,7 +12,9 @@ data class SessionQuizDto(
     var updatedAt: Timestamp = Timestamp(0),
     var session: SessionDto? = null,
     var quiz: QuizDto? = null,
+    @Deprecated("'sessionId' is deprecated. Please use 'identifier.sessionId' instead.")
     var sessionId: ByteArray = byteArrayOf(),
+    @Deprecated("'quizId' is deprecated. Please use 'identifier.quizId' instead.")
     var quizId: ByteArray = byteArrayOf()
 ) : IdentifiableDto<SessionQuizIdentifier>(identifier) {
     override fun equals(other: Any?): Boolean {

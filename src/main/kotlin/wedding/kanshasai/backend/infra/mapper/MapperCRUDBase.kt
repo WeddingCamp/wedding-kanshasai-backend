@@ -19,6 +19,7 @@ interface MapperCRUDBase<IDENTIFIER, DTO> {
     ): DTO?
 
     // UPDATE
+    // TODO: NOT IMPLEMENTED
     fun update(
         @Param("entity") entity: DTO,
         @Param("includeDeleted") includeDeleted: Boolean = false,
