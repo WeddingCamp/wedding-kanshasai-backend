@@ -1,5 +1,7 @@
 package wedding.kanshasai.backend.infra.dto.identifier
 
+import wedding.kanshasai.backend.domain.value.UlidId
+
 data class StandardIdentifier(
     var id: ByteArray = byteArrayOf(),
 ) : DtoIdentifier {
@@ -14,5 +16,9 @@ data class StandardIdentifier(
 
     override fun hashCode(): Int {
         return id.contentHashCode()
+    }
+
+    override fun toString(): String {
+        return "${javaClass.simpleName}(id='${UlidId.of(id)}')"
     }
 }

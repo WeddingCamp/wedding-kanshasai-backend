@@ -1,5 +1,7 @@
 package wedding.kanshasai.backend.infra.dto.identifier
 
+import wedding.kanshasai.backend.domain.value.UlidId
+
 data class ParticipantAnswerIdentifier(
     var participantId: ByteArray = byteArrayOf(),
     var sessionQuizIdentifier: SessionQuizIdentifier = SessionQuizIdentifier(),
@@ -20,5 +22,9 @@ data class ParticipantAnswerIdentifier(
         var result = participantId.contentHashCode()
         result = 31 * result + sessionQuizIdentifier.hashCode()
         return result
+    }
+
+    override fun toString(): String {
+        return "${javaClass.simpleName}(participantId='${UlidId.of(participantId)}', ${sessionQuizIdentifier})"
     }
 }
