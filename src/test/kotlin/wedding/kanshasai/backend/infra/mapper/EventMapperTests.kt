@@ -12,7 +12,20 @@ class EventMapperTests : MapperCRUDTest<EventMapper, StandardIdentifier, EventDt
     @Autowired
     lateinit var testTool: MapperTestTool
 
-    override fun stubDtoList() = (0..9).map {
-        testTool.createEventDto()
+    override fun stubDtoList(): Pair<List<EventDto>, List<EventDto>> {
+        val eventDtoList = mutableListOf<EventDto>()
+        val updateEventDtoList = mutableListOf<EventDto>()
+
+        repeat(10) {
+            val eventDto = testTool.createEventDto()
+            eventDtoList.add(eventDto)
+            updateEventDtoList.add(
+                eventDto.copy().apply {
+                    name = testTool.uuid
+                    isDeleted = testTool.trueOrFalse
+                },
+            )
+        }
+        return Pair(eventDtoList, updateEventDtoList)
     }
 }

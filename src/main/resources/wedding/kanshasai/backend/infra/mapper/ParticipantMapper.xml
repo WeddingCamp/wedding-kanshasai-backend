@@ -75,6 +75,20 @@
             (participants.is_deleted = false OR participants.is_deleted = #{includeDeleted})
     </select>
 
+    <update id="update">
+        UPDATE
+            participants
+        SET
+            session_id = #{entity.sessionId},
+            name = #{entity.name},
+            image_id = #{entity.imageId},
+            is_deleted = #{entity.isDeleted}
+        WHERE
+            id = #{entity.identifier.id}
+        AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
     <update id="deleteById">
         UPDATE
             participants

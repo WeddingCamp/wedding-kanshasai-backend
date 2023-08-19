@@ -4,18 +4,18 @@
 
     <insert id="insert">
         INSERT INTO session_quizzes(
-        session_id,
-        quiz_id,
-        is_completed,
-        started_at,
-        is_deleted
+            session_id,
+            quiz_id,
+            is_completed,
+            started_at,
+            is_deleted
         )
         VALUES (
-        #{entity.identifier.sessionId},
-        #{entity.identifier.quizId},
-        #{entity.isCompleted},
-        #{entity.startedAt},
-        #{entity.isDeleted}
+            #{entity.identifier.sessionId},
+            #{entity.identifier.quizId},
+            #{entity.isCompleted},
+            #{entity.startedAt},
+            #{entity.isDeleted}
         )
     </insert>
 
@@ -96,6 +96,21 @@
             AND
             (session_quizzes.is_deleted = false OR session_quizzes.is_deleted = #{includeDeleted})
     </select>
+
+    <update id="update">
+        UPDATE
+            session_quizzes
+        SET
+            is_completed = #{entity.isCompleted},
+            started_at = #{entity.startedAt},
+            is_deleted = #{entity.isDeleted}
+        WHERE
+            session_id = #{entity.identifier.sessionId}
+            AND
+            quiz_id = #{entity.identifier.quizId}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
 
     <update id="deleteById">
         UPDATE

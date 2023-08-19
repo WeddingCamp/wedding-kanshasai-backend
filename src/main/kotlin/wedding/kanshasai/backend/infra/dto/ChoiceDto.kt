@@ -7,11 +7,11 @@ data class ChoiceDto(
     override var identifier: StandardIdentifier = StandardIdentifier(byteArrayOf()),
     var quizId: ByteArray = byteArrayOf(),
     var body: String = "",
-    var isDeleted: Boolean = false,
+    override var isDeleted: Boolean = false,
     var createdAt: Timestamp = Timestamp(0),
     var updatedAt: Timestamp = Timestamp(0),
     var quiz: QuizDto? = null,
-) : IdentifiableDto<StandardIdentifier>(identifier) {
+) : IdentifiableDto<StandardIdentifier>(identifier, isDeleted) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

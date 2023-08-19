@@ -75,6 +75,22 @@
             (sessions.is_deleted = false OR sessions.is_deleted = #{includeDeleted})
     </select>
 
+    <update id="update">
+        UPDATE
+            sessions
+        SET
+            event_id = #{entity.eventId},
+            name = #{entity.name},
+            state_id = #{entity.stateId},
+            cover_screen_id = #{entity.coverScreenId},
+            current_quiz_id = #{entity.currentQuizId},
+            is_deleted = #{entity.isDeleted}
+        WHERE
+            id = #{entity.identifier.id}
+        AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
     <update id="deleteById">
         UPDATE
             sessions

@@ -8,6 +8,7 @@ import wedding.kanshasai.backend.infra.dto.identifier.ParticipantAnswerIdentifie
 import wedding.kanshasai.backend.infra.dto.identifier.SessionQuizIdentifier
 import wedding.kanshasai.backend.infra.mapper.*
 import java.sql.Timestamp
+import java.util.*
 
 @Component
 class MapperTestTool {
@@ -33,11 +34,15 @@ class MapperTestTool {
     @Autowired
     lateinit var participantAnswerMapper: ParticipantAnswerMapper
 
+    val uuid: String get() = UUID.randomUUID().toString()
+    val trueOrFalse: Boolean get() = listOf(true, false).random()
+    fun <T> maybeNull(v: T): T? = listOf(v, null).random()
+
     fun createEventDto(): EventDto {
         val eventId = UlidId.new()
         return EventDto(
             eventId.toStandardIdentifier(),
-            "Event_$eventId",
+            "Event_$uuid",
         )
     }
 
@@ -54,8 +59,8 @@ class MapperTestTool {
             eventDto.identifier.id,
             "Session_$sessionId",
             (0..100).random(),
-            (0..100).random(),
-            null,
+            maybeNull((0..100).random()),
+            maybeNull(UlidId.new().toByteArray()),
             event = eventDto,
         )
     }
@@ -68,12 +73,11 @@ class MapperTestTool {
 
     fun createParticipantDto(sessionDto: SessionDto): ParticipantDto {
         val participantId = UlidId.new()
-        val imageId = UlidId.new()
         return ParticipantDto(
             participantId.toStandardIdentifier(),
             sessionDto.identifier.id,
             "Participant_$participantId",
-            imageId.toByteArray(),
+            maybeNull(UlidId.new().toByteArray()),
             session = sessionDto,
         )
     }
@@ -121,8 +125,8 @@ class MapperTestTool {
     fun createSessionQuizDto(sessionDto: SessionDto, quizDto: QuizDto): SessionQuizDto {
         return SessionQuizDto(
             SessionQuizIdentifier(sessionDto.identifier.id, quizDto.identifier.id),
-            arrayOf(true, false).random(),
-            arrayOf(null, Timestamp(System.currentTimeMillis())).random(),
+            trueOrFalse,
+            maybeNull(Timestamp(System.currentTimeMillis())),
             session = sessionDto,
             quiz = quizDto,
         )
@@ -138,7 +142,7 @@ class MapperTestTool {
         return ParticipantAnswerDto(
             ParticipantAnswerIdentifier(participantDto.identifier.id, sessionQuizDto.identifier),
             "{\"answer\": \"${(1..4).random()}\"}",
-            (Math.random() * 10).toFloat(),
+            maybeNull((Math.random() * 10).toFloat()),
             participant = participantDto,
             sessionQuiz = sessionQuizDto,
         )

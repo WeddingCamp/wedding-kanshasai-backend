@@ -12,29 +12,44 @@ class ParticipantAnswerMapperTests : MapperCRUDTest<ParticipantAnswerMapper, Par
     @Autowired
     lateinit var testTool: MapperTestTool
 
-    override fun stubDtoList() = (0..2).map {
-        val eventDto = testTool.createAndInsertEventDto()
-        val quizDtoList = (1..10).map {
-            testTool.createAndInsertQuizDto(eventDto)
-        }
-        val sessionDtoList = (0..2).map {
-            testTool.createAndInsertSessionDto(eventDto)
-        }
-        val sessionQuizDtoList = sessionDtoList.map { session ->
-            quizDtoList.map { quiz ->
-                testTool.createAndInsertSessionQuizDto(session, quiz)
-            }
-        }.flatten()
-        val participantDtoList = sessionDtoList.map { session ->
-            (0..(10..100).random()).map {
-                testTool.createAndInsertParticipantDto(session)
-            }
-        }.flatten()
+    override fun stubDtoList(): Pair<List<ParticipantAnswerDto>, List<ParticipantAnswerDto>> {
+        val participantAnswerDtoList = mutableListOf<ParticipantAnswerDto>()
+        val updateParticipantAnswerDtoList = mutableListOf<ParticipantAnswerDto>()
 
-        participantDtoList.map { participant ->
-            sessionQuizDtoList.map { sessionQuiz ->
-                testTool.createParticipantAnswerDto(participant, sessionQuiz)
+        repeat(3) {
+            val eventDto = testTool.createAndInsertEventDto()
+            val quizDtoList = (1..10).map {
+                testTool.createAndInsertQuizDto(eventDto)
             }
-        }.flatten()
-    }.flatten()
+            val sessionDtoList = (0..2).map {
+                testTool.createAndInsertSessionDto(eventDto)
+            }
+            val sessionQuizDtoList = sessionDtoList.map { session ->
+                quizDtoList.map { quiz ->
+                    testTool.createAndInsertSessionQuizDto(session, quiz)
+                }
+            }.flatten()
+            val participantDtoList = sessionDtoList.map { session ->
+                (0..(10..50).random()).map {
+                    testTool.createAndInsertParticipantDto(session)
+                }
+            }.flatten()
+
+            participantDtoList.forEach { participant ->
+                sessionQuizDtoList.forEach { sessionQuiz ->
+                    val participantAnswerDto = testTool.createParticipantAnswerDto(participant, sessionQuiz)
+                    participantAnswerDtoList.add(participantAnswerDto)
+                    updateParticipantAnswerDtoList.add(
+                        // TODO: 依存している関係も入れ替えたい
+                        participantAnswerDto.copy().apply {
+                            answer = testTool.uuid
+                            time = testTool.maybeNull((Math.random() * 10).toFloat())
+                            isDeleted = testTool.trueOrFalse
+                        },
+                    )
+                }
+            }
+        }
+        return Pair(participantAnswerDtoList, updateParticipantAnswerDtoList)
+    }
 }
