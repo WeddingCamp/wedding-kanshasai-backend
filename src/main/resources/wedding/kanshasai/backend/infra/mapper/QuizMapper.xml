@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wedding.kanshasai.backend.infra.mapper.QuizMapper">
+
+    <insert id="insert">
+        INSERT INTO quizzes(
+            id,
+            event_id,
+            body,
+            correct_answer,
+            type,
+            is_deleted
+        )
+        VALUES (
+            #{entity.id},
+            #{entity.eventId},
+            #{entity.body},
+            #{entity.correctAnswer},
+            #{entity.type},
+            #{entity.isDeleted}
+        )
+    </insert>
+
+    <select id="select" resultMap="quiz">
+        SELECT
+            quizzes.id AS quiz_id,
+            quizzes.event_id AS quiz_event_id,
+            quizzes.body AS quiz_body,
+            quizzes.correct_answer AS quiz_correct_answer,
+            quizzes.type AS quiz_type,
+            quizzes.is_deleted AS quiz_is_deleted,
+            quizzes.created_at AS quiz_created_at,
+            quizzes.updated_at AS quiz_updated_at,
+            events.id AS event_id,
+            events.name AS event_name,
+            events.is_deleted AS event_is_deleted,
+            events.created_at AS event_created_at,
+            events.updated_at AS event_updated_at
+        FROM
+            quizzes
+        LEFT JOIN
+            events ON quizzes.event_id = events.id
+        WHERE
+            (quizzes.is_deleted = false OR quizzes.is_deleted = #{includeDeleted})
+        ORDER BY
+            quizzes.id
+    </select>
+
+    <select id="findById" resultMap="quiz">
+        SELECT
+            quizzes.id AS quiz_id,
+            quizzes.event_id AS quiz_event_id,
+            quizzes.body AS quiz_body,
+            quizzes.correct_answer AS quiz_correct_answer,
+            quizzes.type AS quiz_type,
+            quizzes.is_deleted AS quiz_is_deleted,
+            quizzes.created_at AS quiz_created_at,
+            quizzes.updated_at AS quiz_updated_at,
+            events.id AS event_id,
+            events.name AS event_name,
+            events.is_deleted AS event_is_deleted,
+            events.created_at AS event_created_at,
+            events.updated_at AS event_updated_at
+        FROM
+        quizzes
+        LEFT JOIN
+            events ON quizzes.event_id = events.id
+        WHERE
+            quizzes.id = #{id}
+            AND
+            (quizzes.is_deleted = false OR quizzes.is_deleted = #{includeDeleted})
+    </select>
+
+    <update id="deleteById">
+        UPDATE
+            quizzes
+        SET
+            is_deleted = true
+        WHERE
+            id = #{id}
+    </update>
+
+    <resultMap id="quiz" type="wedding.kanshasai.backend.infra.dto.QuizDto">
+        <id property="id" column="quiz_id" />
+        <result property="eventId" column="quiz_event_id"/>
+        <result property="body" column="quiz_body"/>
+        <result property="correctAnswer" column="quiz_correct_answer"/>
+        <result property="type" column="quiz_type"/>
+        <result property="isDeleted" column="quiz_is_deleted"/>
+        <result property="createdAt" column="quiz_created_at"/>
+        <result property="updatedAt" column="quiz_updated_at"/>
+        <association property="event" resultMap="wedding.kanshasai.backend.infra.mapper.EventMapper.event"/>
+    </resultMap>
+</mapper>
