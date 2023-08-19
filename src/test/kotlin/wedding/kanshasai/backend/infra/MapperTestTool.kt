@@ -3,10 +3,7 @@ package wedding.kanshasai.backend.infra
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import wedding.kanshasai.backend.domain.value.UlidId
-import wedding.kanshasai.backend.infra.dto.EventDto
-import wedding.kanshasai.backend.infra.dto.ParticipantDto
-import wedding.kanshasai.backend.infra.dto.QuizDto
-import wedding.kanshasai.backend.infra.dto.SessionDto
+import wedding.kanshasai.backend.infra.dto.*
 import wedding.kanshasai.backend.infra.mapper.*
 
 @Component
@@ -23,6 +20,9 @@ class MapperTestTool {
 
     @Autowired
     lateinit var quizMapper: QuizMapper
+
+    @Autowired
+    lateinit var choiceMapper: ChoiceMapper
 
     fun createEventDto(): EventDto {
         val eventId = UlidId.new()
@@ -91,5 +91,21 @@ class MapperTestTool {
         val quizDto = createQuizDto(eventDto)
         quizMapper.insert(quizDto)
         return quizDto
+    }
+
+    fun createChoiceDto(quizDto: QuizDto): ChoiceDto {
+        val choiceId = UlidId.new()
+        return ChoiceDto(
+            choiceId.toByteArray(),
+            quizDto.id,
+            "Choice_$choiceId",
+            quiz = quizDto,
+        )
+    }
+
+    fun createAndInsertChoiceDto(quizDto: QuizDto): ChoiceDto {
+        val choiceDto = createChoiceDto(quizDto)
+        choiceMapper.insert(choiceDto)
+        return choiceDto
     }
 }
