@@ -58,7 +58,7 @@ class SessionMapperTests {
                         sessionId.toByteArray(),
                         stub.event.id.toByteArray(),
                         stub.event.name,
-                    )
+                    ),
                 )
                 assertEquals(1, result)
             }

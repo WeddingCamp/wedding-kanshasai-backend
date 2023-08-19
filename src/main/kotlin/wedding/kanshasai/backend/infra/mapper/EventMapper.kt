@@ -4,4 +4,4 @@ import org.apache.ibatis.annotations.*
 import wedding.kanshasai.backend.infra.dto.EventDto
 
 @Mapper
-interface EventMapper: MapperCRUDBase<EventDto>
+interface EventMapper : MapperCRUDBase<EventDto>

@@ -2,63 +2,63 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="wedding.kanshasai.backend.infra.mapper.EventMapper">
 
-    <select id="findById" resultMap="event">
-        SELECT
-        events.id AS event_id,
-        events.name AS event_name,
-        events.is_deleted AS event_is_deleted,
-        events.created_at AS event_created_at,
-        events.updated_at AS event_updated_at
-        FROM
-        events
-        WHERE
-        id = #{id}
-        AND is_deleted = false
-    </select>
-
     <insert id="insert">
         INSERT INTO events(
-        id,
-        name
+            id,
+            name
         )
         VALUES (
-        #{entity.id},
-        #{entity.name}
+            #{entity.id},
+            #{entity.name}
         )
     </insert>
 
     <select id="select" resultMap="event">
         SELECT
-        events.id AS event_id,
-        events.name AS event_name,
-        events.is_deleted AS event_is_deleted,
-        events.created_at AS event_created_at,
-        events.updated_at AS event_updated_at
+            events.id AS event_id,
+            events.name AS event_name,
+            events.is_deleted AS event_is_deleted,
+            events.created_at AS event_created_at,
+            events.updated_at AS event_updated_at
         FROM
-        events
+            events
         WHERE
-        is_deleted = false
-        OR is_deleted = #{includeDeleted}
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </select>
+
+    <select id="findById" resultMap="event">
+        SELECT
+            events.id AS event_id,
+            events.name AS event_name,
+            events.is_deleted AS event_is_deleted,
+            events.created_at AS event_created_at,
+            events.updated_at AS event_updated_at
+        FROM
+            events
+        WHERE
+            id = #{id}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
     </select>
 
     <update id="delete">
         UPDATE
-        events
+            events
         SET
-        is_deleted = true
+            is_deleted = true
         WHERE
-        id = #{entity.id}
-        AND is_deleted = false
+            id = #{entity.id}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
     </update>
 
     <update id="deleteById">
         UPDATE
-        events
+            events
         SET
-        is_deleted = true
+            is_deleted = true
         WHERE
-        id = #{id}
-        AND is_deleted = false
+            id = #{id}
     </update>
 
     <resultMap id="event" type="wedding.kanshasai.backend.infra.dto.EventDto">
