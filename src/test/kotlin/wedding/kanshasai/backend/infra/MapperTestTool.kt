@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.dto.*
+import wedding.kanshasai.backend.infra.dto.identifier.SessionQuizIdentifier
 import wedding.kanshasai.backend.infra.mapper.*
+import java.sql.Timestamp
 
 @Component
 class MapperTestTool {
@@ -24,10 +26,13 @@ class MapperTestTool {
     @Autowired
     lateinit var choiceMapper: ChoiceMapper
 
+    @Autowired
+    lateinit var sessionQuizMapper: SessionQuizMapper
+
     fun createEventDto(): EventDto {
         val eventId = UlidId.new()
         return EventDto(
-            eventId.toByteArray(),
+            eventId.toStandardIdentifier(),
             "Event_$eventId",
         )
     }
@@ -41,8 +46,8 @@ class MapperTestTool {
     fun createSessionDto(eventDto: EventDto): SessionDto {
         val sessionId = UlidId.new()
         return SessionDto(
-            sessionId.toByteArray(),
-            eventDto.id,
+            sessionId.toStandardIdentifier(),
+            eventDto.identifier.id,
             "Session_$sessionId",
             (0..100).random(),
             (0..100).random(),
@@ -61,8 +66,8 @@ class MapperTestTool {
         val participantId = UlidId.new()
         val imageId = UlidId.new()
         return ParticipantDto(
-            participantId.toByteArray(),
-            sessionDto.id,
+            participantId.toStandardIdentifier(),
+            sessionDto.identifier.id,
             "Participant_$participantId",
             imageId.toByteArray(),
             session = sessionDto,
@@ -78,8 +83,8 @@ class MapperTestTool {
     fun createQuizDto(eventDto: EventDto): QuizDto {
         val quizId = UlidId.new()
         return QuizDto(
-            quizId.toByteArray(),
-            eventDto.id,
+            quizId.toStandardIdentifier(),
+            eventDto.identifier.id,
             "Quiz_body_$quizId",
             "Quiz_answer_$quizId",
             (0..100).random(),
@@ -96,8 +101,8 @@ class MapperTestTool {
     fun createChoiceDto(quizDto: QuizDto): ChoiceDto {
         val choiceId = UlidId.new()
         return ChoiceDto(
-            choiceId.toByteArray(),
-            quizDto.id,
+            choiceId.toStandardIdentifier(),
+            quizDto.identifier.id,
             "Choice_$choiceId",
             quiz = quizDto,
         )
@@ -107,5 +112,21 @@ class MapperTestTool {
         val choiceDto = createChoiceDto(quizDto)
         choiceMapper.insert(choiceDto)
         return choiceDto
+    }
+
+    fun createSessionQuizDto(sessionDto: SessionDto, quizDto: QuizDto): SessionQuizDto {
+        return SessionQuizDto(
+            SessionQuizIdentifier(sessionDto.identifier.id, quizDto.identifier.id),
+            arrayOf(true, false).random(),
+            arrayOf(null, Timestamp(System.currentTimeMillis())).random(),
+            session = sessionDto,
+            quiz = quizDto,
+        )
+    }
+
+    fun createAndInsertSessionQuizDto(sessionDto: SessionDto, quizDto: QuizDto): SessionQuizDto {
+        val sessionQuizDto = createSessionQuizDto(sessionDto, quizDto)
+        sessionQuizMapper.insert(sessionQuizDto)
+        return sessionQuizDto
     }
 }

@@ -12,7 +12,7 @@
             is_deleted
         )
         VALUES (
-            #{entity.id},
+            #{entity.identifier.id},
             #{entity.eventId},
             #{entity.body},
             #{entity.correctAnswer},
@@ -66,7 +66,7 @@
         LEFT JOIN
             events ON quizzes.event_id = events.id
         WHERE
-            quizzes.id = #{id}
+            quizzes.id = #{identifier.id}
             AND
             (quizzes.is_deleted = false OR quizzes.is_deleted = #{includeDeleted})
     </select>
@@ -77,11 +77,10 @@
         SET
             is_deleted = true
         WHERE
-            id = #{id}
+            id = #{identifier.id}
     </update>
 
     <resultMap id="quiz" type="wedding.kanshasai.backend.infra.dto.QuizDto">
-        <id property="id" column="quiz_id" />
         <result property="eventId" column="quiz_event_id"/>
         <result property="body" column="quiz_body"/>
         <result property="correctAnswer" column="quiz_correct_answer"/>
@@ -89,6 +88,11 @@
         <result property="isDeleted" column="quiz_is_deleted"/>
         <result property="createdAt" column="quiz_created_at"/>
         <result property="updatedAt" column="quiz_updated_at"/>
+        <association property="identifier" resultMap="quizIdentifier"/>
         <association property="event" resultMap="wedding.kanshasai.backend.infra.mapper.EventMapper.event"/>
+    </resultMap>
+
+    <resultMap id="quizIdentifier" type="wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier">
+        <id property="id" column="quiz_id"/>
     </resultMap>
 </mapper>

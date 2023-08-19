@@ -2,6 +2,7 @@ package wedding.kanshasai.backend.domain.value
 
 import de.huxhorn.sulky.ulid.ULID
 import wedding.kanshasai.backend.exception.InvalidUlidFormatException
+import wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier
 
 class UlidId private constructor(private val ulid: ULID.Value) {
     override fun toString(): String {
@@ -14,6 +15,10 @@ class UlidId private constructor(private val ulid: ULID.Value) {
 
     fun toULIDValue(): ULID.Value {
         return ulid
+    }
+
+    fun toStandardIdentifier(): StandardIdentifier {
+        return StandardIdentifier(ulid.toBytes())
     }
 
     override fun equals(other: Any?): Boolean {

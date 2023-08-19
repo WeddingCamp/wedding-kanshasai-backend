@@ -9,7 +9,7 @@
             is_deleted
         )
         VALUES (
-            #{entity.id},
+            #{entity.identifier.id},
             #{entity.name},
             #{entity.isDeleted}
         )
@@ -38,7 +38,7 @@
         FROM
             events
         WHERE
-            id = #{id}
+            id = #{identifier.id}
             AND
             (is_deleted = false OR is_deleted = #{includeDeleted})
     </select>
@@ -60,14 +60,18 @@
         SET
             is_deleted = true
         WHERE
-            id = #{id}
+            id = #{identifier.id}
     </update>
 
     <resultMap id="event" type="wedding.kanshasai.backend.infra.dto.EventDto">
-        <id property="id" column="event_id"/>
         <result property="name" column="event_name"/>
         <result property="isDeleted" column="event_is_deleted"/>
         <result property="createdAt" column="event_created_at"/>
         <result property="updatedAt" column="event_updated_at"/>
+        <association property="identifier" resultMap="eventIdentifier"/>
+    </resultMap>
+
+    <resultMap id="eventIdentifier" type="wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier">
+        <id property="id" column="event_id"/>
     </resultMap>
 </mapper>

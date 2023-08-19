@@ -11,7 +11,7 @@
             is_deleted
         )
         VALUES (
-            #{entity.id},
+            #{entity.identifier.id},
             #{entity.sessionId},
             #{entity.name},
             #{entity.imageId},
@@ -70,7 +70,7 @@
         LEFT JOIN
             sessions ON participants.session_id = sessions.id
         WHERE
-            participants.id = #{id}
+            participants.id = #{identifier.id}
             AND
             (participants.is_deleted = false OR participants.is_deleted = #{includeDeleted})
     </select>
@@ -81,17 +81,21 @@
         SET
             is_deleted = true
         WHERE
-            id = #{id}
+            id = #{identifier.id}
     </update>
 
     <resultMap id="participant" type="wedding.kanshasai.backend.infra.dto.ParticipantDto">
-        <id property="id" column="participant_id" />
         <result property="sessionId" column="participant_session_id"/>
         <result property="name" column="participant_name"/>
         <result property="imageId" column="participant_image_id"/>
         <result property="isDeleted" column="participant_is_deleted"/>
         <result property="createdAt" column="participant_created_at"/>
         <result property="updatedAt" column="participant_updated_at"/>
+        <association property="identifier" resultMap="participantIdentifier"/>
         <association property="session" resultMap="wedding.kanshasai.backend.infra.mapper.SessionMapper.session"/>
+    </resultMap>
+
+    <resultMap id="participantIdentifier" type="wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier">
+        <id property="id" column="participant_id"/>
     </resultMap>
 </mapper>
