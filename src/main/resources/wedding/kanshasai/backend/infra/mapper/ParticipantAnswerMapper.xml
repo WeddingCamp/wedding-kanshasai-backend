@@ -4,20 +4,20 @@
 
     <insert id="insert">
         INSERT INTO participant_answers(
-        participant_id,
-        session_id,
-        quiz_id,
-        answer,
-        time,
-        is_deleted
+            participant_id,
+            session_id,
+            quiz_id,
+            answer,
+            time,
+            is_deleted
         )
         VALUES (
-        #{entity.identifier.participantId},
-        #{entity.identifier.sessionQuizIdentifier.sessionId},
-        #{entity.identifier.sessionQuizIdentifier.quizId},
-        #{entity.answer},
-        #{entity.time},
-        #{entity.isDeleted}
+            #{entity.identifier.participantId},
+            #{entity.identifier.sessionQuizIdentifier.sessionId},
+            #{entity.identifier.sessionQuizIdentifier.quizId},
+            #{entity.answer},
+            #{entity.time},
+            #{entity.isDeleted}
         )
     </insert>
 
@@ -94,6 +94,23 @@
             AND
             (session_quizzes.is_deleted = false OR session_quizzes.is_deleted = #{includeDeleted})
     </select>
+
+    <update id="update">
+        UPDATE
+        participant_answers
+        SET
+            answer = #{entity.answer},
+            time = #{entity.time},
+            is_deleted = #{entity.isDeleted}
+        WHERE
+            participant_id = #{entity.identifier.participantId}
+            AND
+            session_id = #{entity.identifier.sessionQuizIdentifier.sessionId}
+            AND
+            quiz_id = #{entity.identifier.sessionQuizIdentifier.quizId}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
 
     <update id="deleteById">
         UPDATE

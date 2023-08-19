@@ -7,7 +7,7 @@ data class SessionQuizDto(
     override var identifier: SessionQuizIdentifier = SessionQuizIdentifier(),
     var isCompleted: Boolean = false,
     var startedAt: Timestamp? = null,
-    var isDeleted: Boolean = false,
+    override var isDeleted: Boolean = false,
     var createdAt: Timestamp = Timestamp(0),
     var updatedAt: Timestamp = Timestamp(0),
     var session: SessionDto? = null,
@@ -16,7 +16,7 @@ data class SessionQuizDto(
     var sessionId: ByteArray = byteArrayOf(),
     @Deprecated("'quizId' is deprecated. Please use 'identifier.quizId' instead.")
     var quizId: ByteArray = byteArrayOf(),
-) : IdentifiableDto<SessionQuizIdentifier>(identifier) {
+) : IdentifiableDto<SessionQuizIdentifier>(identifier, isDeleted) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

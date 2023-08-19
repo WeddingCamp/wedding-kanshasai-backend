@@ -6,8 +6,8 @@ import java.sql.Timestamp
 data class ParticipantAnswerDto(
     override var identifier: ParticipantAnswerIdentifier = ParticipantAnswerIdentifier(),
     var answer: String = "",
-    var time: Float = 0f,
-    var isDeleted: Boolean = false,
+    var time: Float? = null,
+    override var isDeleted: Boolean = false,
     var createdAt: Timestamp = Timestamp(0),
     var updatedAt: Timestamp = Timestamp(0),
     var sessionQuiz: SessionQuizDto? = null,
@@ -18,7 +18,7 @@ data class ParticipantAnswerDto(
     var sessionId: ByteArray = byteArrayOf(),
     @Deprecated("'quizId' is deprecated. Please use 'identifier.quizId' instead.")
     var quizId: ByteArray = byteArrayOf(),
-) : IdentifiableDto<ParticipantAnswerIdentifier>(identifier) {
+) : IdentifiableDto<ParticipantAnswerIdentifier>(identifier, isDeleted) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

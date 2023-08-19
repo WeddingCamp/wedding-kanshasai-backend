@@ -43,13 +43,14 @@
             (is_deleted = false OR is_deleted = #{includeDeleted})
     </select>
 
-    <update id="delete">
+    <update id="update">
         UPDATE
             events
         SET
-            is_deleted = true
+            name = #{entity.name},
+            is_deleted = #{entity.isDeleted}
         WHERE
-            id = #{entity.id}
+            id = #{entity.identifier.id}
             AND
             (is_deleted = false OR is_deleted = #{includeDeleted})
     </update>

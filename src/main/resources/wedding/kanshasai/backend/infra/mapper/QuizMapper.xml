@@ -71,6 +71,21 @@
             (quizzes.is_deleted = false OR quizzes.is_deleted = #{includeDeleted})
     </select>
 
+    <update id="update">
+        UPDATE
+            quizzes
+        SET
+            event_id = #{entity.eventId},
+            body = #{entity.body},
+            correct_answer = #{entity.correctAnswer},
+            type = #{entity.type},
+            is_deleted = #{entity.isDeleted}
+        WHERE
+            id = #{entity.identifier.id}
+        AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
     <update id="deleteById">
         UPDATE
             quizzes
