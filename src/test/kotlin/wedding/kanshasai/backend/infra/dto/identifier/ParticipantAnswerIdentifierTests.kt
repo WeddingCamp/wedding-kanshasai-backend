@@ -15,6 +15,9 @@ class ParticipantAnswerIdentifierTests {
             participantId.toByteArray(),
             SessionQuizIdentifier(sessionId.toByteArray(), quizId.toByteArray()),
         )
-        assertEquals("ParticipantAnswerIdentifier(participantId='$participantId', SessionQuizIdentifier(sessionId='$sessionId', quizId='$quizId'))", identifier.toString())
+        assertEquals(
+            "ParticipantAnswerIdentifier(participantId='$participantId', SessionQuizIdentifier(sessionId='$sessionId', quizId='$quizId'))",
+            identifier.toString(),
+        )
     }
 }
