@@ -7,5 +7,5 @@ enum class Table(val tableName: String) {
     SESSION_QUIZ("SessionQuiz"),
     PARTICIPANT("Participant"),
     PARTICIPANT_ANSWER("ParticipantAnswer"),
-    CHOICE("ParticipantAnswer")
+    CHOICE("ParticipantAnswer"),
 }

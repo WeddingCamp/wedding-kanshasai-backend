@@ -14,8 +14,11 @@ class DatabaseException(message: String? = null, cause: Throwable? = null) : Run
         fun failedToInsert(table: Table, cause: Throwable?): DatabaseException {
             return DatabaseException("Failed to insert ${table.tableName}.", cause)
         }
-        fun incorrectNumberOfInsert(table: Table, cause: Throwable?): DatabaseException{
-            return DatabaseException("Number of records inserted differs from the number of records that attempted to be inserted. Table: ${table.tableName}", cause)
+        fun incorrectNumberOfInsert(table: Table, cause: Throwable?): DatabaseException {
+            return DatabaseException(
+                "Number of records inserted differs from the number of records that attempted to be inserted. Table: ${table.tableName}",
+                cause,
+            )
         }
     }
 }
