@@ -14,13 +14,12 @@ class SessionQuizRepository(
     private val sessionQuizMapper: SessionQuizMapper,
 ) {
     fun insertAll(session: Session, quizList: List<Quiz>): Result<Unit> = runCatching {
-        val result = sessionQuizMapper.insertAll(
-            quizList.map { quiz ->
-                SessionQuizDto(
-                    SessionQuizIdentifier(session.id.toByteArray(), quiz.id.toByteArray()),
-                )
-            },
-        )
+        val quizDtoList = quizList.map { quiz ->
+            SessionQuizDto(
+                SessionQuizIdentifier(session.id.toByteArray(), quiz.id.toByteArray()),
+            )
+        }
+        val result = sessionQuizMapper.insertAll(quizDtoList)
         if (quizList.size != result) {
             throw DatabaseException.incorrectNumberOfInsert(Table.SESSION_QUIZ, quizList.size, result, null)
         }
