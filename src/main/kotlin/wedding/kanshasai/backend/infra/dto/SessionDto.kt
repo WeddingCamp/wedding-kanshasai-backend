@@ -7,7 +7,7 @@ data class SessionDto(
     override var identifier: StandardIdentifier = StandardIdentifier(byteArrayOf()),
     var eventId: ByteArray = byteArrayOf(),
     var name: String = "",
-    var stateId: Int = -1,
+    var stateId: Int = 1,
     var coverScreenId: Int? = null,
     var currentQuizId: ByteArray? = null,
     override var isDeleted: Boolean = false,

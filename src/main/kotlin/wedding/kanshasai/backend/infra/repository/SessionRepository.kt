@@ -1,0 +1,59 @@
+package wedding.kanshasai.backend.infra.repository
+
+import org.springframework.stereotype.Repository
+import wedding.kanshasai.backend.domain.entity.Event
+import wedding.kanshasai.backend.domain.entity.Session
+import wedding.kanshasai.backend.domain.exception.DatabaseException
+import wedding.kanshasai.backend.domain.exception.NotFoundException
+import wedding.kanshasai.backend.domain.value.UlidId
+import wedding.kanshasai.backend.infra.dto.SessionDto
+import wedding.kanshasai.backend.infra.mapper.SessionMapper
+
+@Repository
+class SessionRepository(
+    private val sessionMapper: SessionMapper,
+) {
+    fun findById(id: UlidId): Result<Session> = runCatching {
+        val result = sessionMapper.findById(id.toStandardIdentifier())
+        if (result == null) {
+            throw NotFoundException("Session(id=$id) not found.")
+        }
+        val event = result.event?.let {
+            Event(
+                UlidId.of(it.identifier.id).getOrThrow(),
+                it.name,
+                it.isDeleted,
+                it.createdAt,
+                it.updatedAt,
+            )
+        }
+        if (event == null) {
+            throw DatabaseException(
+                "The Event(id=${UlidId.of(result.eventId).getOrThrow()}) associated with the Session(id=$id) could not be retrieved.",
+            )
+        }
+        Session(
+            UlidId.of(result.identifier.id).getOrThrow(),
+            event,
+            result.name,
+            result.stateId,
+            result.coverScreenId,
+            result.currentQuizId,
+            result.isDeleted,
+            result.createdAt,
+            result.updatedAt,
+        )
+    }
+
+    fun createSession(event: Event, name: String): Result<Session> = runCatching {
+        val id = UlidId.new()
+        val sessionDto = SessionDto(
+            id.toStandardIdentifier(),
+            event.id.toByteArray(),
+            name,
+        )
+        val result = sessionMapper.insert(sessionDto)
+        if (result != 1) throw DatabaseException("Failed to insert session.")
+        return findById(id)
+    }
+}

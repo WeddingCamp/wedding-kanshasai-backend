@@ -25,6 +25,6 @@ data class ParticipantAnswerIdentifier(
     }
 
     override fun toString(): String {
-        return "${javaClass.simpleName}(participantId='${UlidId.of(participantId)}', $sessionQuizIdentifier)"
+        return "${javaClass.simpleName}(participantId='${UlidId.of(participantId).getOrThrow()}', $sessionQuizIdentifier)"
     }
 }
