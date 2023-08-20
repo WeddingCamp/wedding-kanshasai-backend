@@ -21,7 +21,9 @@ class SessionQuizRepository(
             },
         )
         if (quizList.size != result) {
-            throw DatabaseException("Number of insertions($result) does not match number of quizzes(${quizList.size}).")
+            throw DatabaseException(
+                "Number of insertions($result) does not match number of quizzes(${quizList.size}).",
+            )
         }
     }
 }

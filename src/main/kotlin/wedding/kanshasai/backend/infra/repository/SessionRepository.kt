@@ -15,9 +15,7 @@ class SessionRepository(
 ) {
     fun findById(id: UlidId): Result<Session> = runCatching {
         val result = sessionMapper.findById(id.toStandardIdentifier())
-        if (result == null) {
-            throw NotFoundException("Session(id=$id) not found.")
-        }
+        if (result == null) throw NotFoundException("Session(id=$id) not found.")
         Session.of(result)
     }
 
