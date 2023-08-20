@@ -16,13 +16,13 @@ private val logger = KotlinLogging.logger {}
 @GrpcAdvice
 class GrpcExceptionHandler {
     @GrpcExceptionHandler(NotImplementedError::class)
-    fun handleNotImplementedException(e: NotImplementedError) = createStatus(Status.UNIMPLEMENTED, e)
+    fun handleException(e: NotImplementedError) = createStatus(Status.UNIMPLEMENTED, e)
 
     @GrpcExceptionHandler(NotFoundException::class)
-    fun handleNotFoundException(e: NotFoundException) = createStatus(Status.NOT_FOUND, e)
+    fun handleException(e: NotFoundException) = createStatus(Status.NOT_FOUND, e)
 
     @GrpcExceptionHandler(InvalidArgumentException::class)
-    fun handleInvalidArgumentException(e: InvalidArgumentException) = createStatus(Status.INVALID_ARGUMENT, e)
+    fun handleException(e: InvalidArgumentException) = createStatus(Status.INVALID_ARGUMENT, e)
 
     @GrpcExceptionHandler(Exception::class)
     fun handleException(e: Exception) = createStatus(Status.INTERNAL, e)
