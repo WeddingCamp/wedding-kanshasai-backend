@@ -12,7 +12,7 @@ class EventRepository(
 ) {
     fun findById(id: UlidId): Result<Event> = runCatching {
         val result = eventMapper.findById(id.toStandardIdentifier())
-        if (result == null) throw NotFoundException("Event(id=$id) not found.")
+        if (result == null) throw NotFoundException.record("Event", id, null)
         Event.of(result)
     }
 }

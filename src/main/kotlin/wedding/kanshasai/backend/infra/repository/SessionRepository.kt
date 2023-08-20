@@ -15,7 +15,7 @@ class SessionRepository(
 ) {
     fun findById(id: UlidId): Result<Session> = runCatching {
         val result = sessionMapper.findById(id.toStandardIdentifier())
-        if (result == null) throw NotFoundException("Session(id=$id) not found.")
+        if (result == null) throw NotFoundException.record("Session", id, null)
         Session.of(result)
     }
 
@@ -27,7 +27,7 @@ class SessionRepository(
             name,
         )
         val result = sessionMapper.insert(sessionDto)
-        if (result != 1) throw DatabaseException("Failed to insert session.")
+        if (result != 1) throw DatabaseException.failedToInsert("Session")
         return findById(id)
     }
 }
