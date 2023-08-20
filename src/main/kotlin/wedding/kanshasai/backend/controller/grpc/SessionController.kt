@@ -20,12 +20,12 @@ class SessionController(
             throw InvalidArgumentException("'eventId' cannot be parsed as ULID format.", it)
         }
 
-        val session = sessionService.createSession(eventId, request.name)
+        val session = sessionService.createSession(eventId, request.name).getOrThrow()
 
         return CreateSessionResponse.newBuilder().let {
             it.name = session.name
             it.sessionId = session.id.toString()
-            it.eventId = session.event.id.toString()
+            it.eventId = session.eventId.toString()
             it.build()
         }
     }

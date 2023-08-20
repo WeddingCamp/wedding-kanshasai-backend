@@ -23,9 +23,5 @@ data class EventDto(
         return true
     }
 
-    override fun strictEquals(other: Any?): Boolean {
-        return equals(other)
-    }
-
     override fun hashCode() = identifier.hashCode()
 }

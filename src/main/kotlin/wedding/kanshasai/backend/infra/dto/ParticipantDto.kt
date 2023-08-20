@@ -11,7 +11,6 @@ data class ParticipantDto(
     override var isDeleted: Boolean = false,
     var createdAt: Timestamp = Timestamp(0),
     var updatedAt: Timestamp = Timestamp(0),
-    var session: SessionDto? = null,
 ) : IdentifiableDto<StandardIdentifier>(identifier, isDeleted) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -24,16 +23,6 @@ data class ParticipantDto(
         if (name != other.name) return false
         if (!imageId.contentEquals(other.imageId)) return false
         if (isDeleted != other.isDeleted) return false
-
-        return true
-    }
-
-    override fun strictEquals(other: Any?): Boolean {
-        if (!equals(other)) return false
-
-        other as ParticipantDto
-
-        if (session != other.session) return false
 
         return true
     }

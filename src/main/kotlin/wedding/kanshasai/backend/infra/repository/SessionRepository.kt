@@ -18,31 +18,7 @@ class SessionRepository(
         if (result == null) {
             throw NotFoundException("Session(id=$id) not found.")
         }
-        val event = result.event?.let {
-            Event(
-                UlidId.of(it.identifier.id).getOrThrow(),
-                it.name,
-                it.isDeleted,
-                it.createdAt,
-                it.updatedAt,
-            )
-        }
-        if (event == null) {
-            throw DatabaseException(
-                "The Event(id=${UlidId.of(result.eventId).getOrThrow()}) associated with the Session(id=$id) could not be retrieved.",
-            )
-        }
-        Session(
-            UlidId.of(result.identifier.id).getOrThrow(),
-            event,
-            result.name,
-            result.stateId,
-            result.coverScreenId,
-            result.currentQuizId,
-            result.isDeleted,
-            result.createdAt,
-            result.updatedAt,
-        )
+        Session.of(result)
     }
 
     fun createSession(event: Event, name: String): Result<Session> = runCatching {

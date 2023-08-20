@@ -23,56 +23,50 @@
         )
     </insert>
 
+    <insert id="insertAll">
+        INSERT INTO sessions(
+            id,
+            event_id,
+            name,
+            state_id,
+            cover_screen_id,
+            current_quiz_id,
+            is_deleted
+        )
+        VALUES
+        <foreach collection="entities" item="entity" separator=",">
+            (
+                #{entity.identifier.id},
+                #{entity.eventId},
+                #{entity.name},
+                #{entity.stateId},
+                #{entity.coverScreenId},
+                #{entity.currentQuizId},
+                #{entity.isDeleted}
+            )
+        </foreach>
+    </insert>
+
     <select id="select" resultMap="session">
         SELECT
-            sessions.id AS session_id,
-            sessions.event_id AS session_event_id,
-            sessions.name AS session_name,
-            sessions.state_id AS session_state_id,
-            sessions.cover_screen_id AS session_cover_screen_id,
-            sessions.current_quiz_id AS session_current_quiz_id,
-            sessions.is_deleted AS session_is_deleted,
-            sessions.created_at AS session_created_at,
-            sessions.updated_at AS session_updated_at,
-            events.id AS event_id,
-            events.name AS event_name,
-            events.is_deleted AS event_is_deleted,
-            events.created_at AS event_created_at,
-            events.updated_at AS event_updated_at
+            *
         FROM
             sessions
-        LEFT JOIN
-            events ON sessions.event_id = events.id
         WHERE
-            (sessions.is_deleted = false OR sessions.is_deleted = #{includeDeleted})
+            (is_deleted = false OR is_deleted = #{includeDeleted})
         ORDER BY
-            sessions.id
+            id
     </select>
 
     <select id="findById" resultMap="session">
         SELECT
-            sessions.id AS session_id,
-            sessions.event_id AS session_event_id,
-            sessions.name AS session_name,
-            sessions.state_id AS session_state_id,
-            sessions.cover_screen_id AS session_cover_screen_id,
-            sessions.current_quiz_id AS session_current_quiz_id,
-            sessions.is_deleted AS session_is_deleted,
-            sessions.created_at AS session_created_at,
-            sessions.updated_at AS session_updated_at,
-            events.id AS event_id,
-            events.name AS event_name,
-            events.is_deleted AS event_is_deleted,
-            events.created_at AS event_created_at,
-            events.updated_at AS event_updated_at
+            *
         FROM
             sessions
-        LEFT JOIN
-            events ON sessions.event_id = events.id
         WHERE
-            sessions.id = #{identifier.id}
+            id = #{identifier.id}
             AND
-            (sessions.is_deleted = false OR sessions.is_deleted = #{includeDeleted})
+            (is_deleted = false OR is_deleted = #{includeDeleted})
     </select>
 
     <update id="update">
@@ -103,19 +97,18 @@
     </update>
 
     <resultMap id="session" type="wedding.kanshasai.backend.infra.dto.SessionDto">
-        <result property="eventId" column="session_event_id"/>
-        <result property="name" column="session_name"/>
-        <result property="stateId" column="session_state_id"/>
-        <result property="coverScreenId" column="session_cover_screen_id"/>
-        <result property="currentQuizId" column="session_current_quiz_id"/>
-        <result property="isDeleted" column="session_is_deleted"/>
-        <result property="createdAt" column="session_created_at"/>
-        <result property="updatedAt" column="session_updated_at"/>
+        <result property="eventId" column="event_id"/>
+        <result property="name" column="name"/>
+        <result property="stateId" column="state_id"/>
+        <result property="coverScreenId" column="cover_screen_id"/>
+        <result property="currentQuizId" column="current_quiz_id"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
         <association property="identifier" resultMap="sessionIdentifier"/>
-        <association property="event" resultMap="wedding.kanshasai.backend.infra.mapper.EventMapper.event"/>
     </resultMap>
 
     <resultMap id="sessionIdentifier" type="wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier">
-        <id property="id" column="session_id"/>
+        <id property="id" column="id"/>
     </resultMap>
 </mapper>

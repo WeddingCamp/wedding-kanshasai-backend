@@ -25,6 +25,8 @@ data class ParticipantAnswerIdentifier(
     }
 
     override fun toString(): String {
-        return "${javaClass.simpleName}(participantId='${UlidId.of(participantId).getOrThrow()}', $sessionQuizIdentifier)"
+        return "${javaClass.simpleName}(participantId='${UlidId.of(
+            participantId,
+        ).getOrElse { "FAILED_TO_PARSE" }}', $sessionQuizIdentifier)"
     }
 }

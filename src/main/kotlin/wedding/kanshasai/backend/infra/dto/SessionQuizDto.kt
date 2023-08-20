@@ -10,8 +10,6 @@ data class SessionQuizDto(
     override var isDeleted: Boolean = false,
     var createdAt: Timestamp = Timestamp(0),
     var updatedAt: Timestamp = Timestamp(0),
-    var session: SessionDto? = null,
-    var quiz: QuizDto? = null,
     @Deprecated("'sessionId' is deprecated. Please use 'identifier.sessionId' instead.")
     var sessionId: ByteArray = byteArrayOf(),
     @Deprecated("'quizId' is deprecated. Please use 'identifier.quizId' instead.")
@@ -27,17 +25,6 @@ data class SessionQuizDto(
         if (isCompleted != other.isCompleted) return false
         if (startedAt != other.startedAt) return false
         if (isDeleted != other.isDeleted) return false
-
-        return true
-    }
-
-    override fun strictEquals(other: Any?): Boolean {
-        if (!equals(other)) return false
-
-        other as SessionQuizDto
-
-        if (session != other.session) return false
-        if (quiz != other.quiz) return false
 
         return true
     }

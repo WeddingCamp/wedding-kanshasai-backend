@@ -35,9 +35,13 @@ abstract class MapperCRUDTest<MAPPER : MapperCRUDBase<IDENTIFIER, DTO>, IDENTIFI
     @Test
     @Order(20)
     fun insert_shouldSucceed() {
-        dtoList.forEach {
-            assertEquals(1, mapper.insert(it))
-        }
+        assertEquals(1, mapper.insert(dtoList[0]))
+    }
+
+    @Test
+    @Order(25)
+    fun insertAll_shouldSucceed() {
+        assertEquals(dtoList.size - 1, mapper.insertAll(dtoList.subList(1, dtoList.size)))
     }
 
     @Test
@@ -52,7 +56,7 @@ abstract class MapperCRUDTest<MAPPER : MapperCRUDBase<IDENTIFIER, DTO>, IDENTIFI
         val list = mapper.select()
         dtoList.forEach { dto ->
             val item = list.find { it.identifier == dto.identifier }
-            assert(dto.strictEquals(item))
+            assertEquals(dto, item)
         }
     }
 
@@ -60,7 +64,7 @@ abstract class MapperCRUDTest<MAPPER : MapperCRUDBase<IDENTIFIER, DTO>, IDENTIFI
     @Order(40)
     fun findById_shouldReturnDto_dtoIsCorrect() {
         dtoList.forEach {
-            assert(it.strictEquals(mapper.findById(it.identifier, true)))
+            assertEquals(it, mapper.findById(it.identifier, true))
         }
     }
 
@@ -78,7 +82,7 @@ abstract class MapperCRUDTest<MAPPER : MapperCRUDBase<IDENTIFIER, DTO>, IDENTIFI
         val list = mapper.select(true)
         updateDtoList.forEach { dto ->
             val item = list.find { it.identifier == dto.identifier }
-            assert(dto.strictEquals(item))
+            assertEquals(dto, item)
         }
     }
 

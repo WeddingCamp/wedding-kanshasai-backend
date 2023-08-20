@@ -29,8 +29,8 @@ class GrpcExceptionHandler {
 
     fun createStatus(status: Status, e: Throwable): RuntimeException {
         logger.atError {
-            cause = e.cause
             message = e.message
+            cause = e
         }
 
         val metadata = Metadata()

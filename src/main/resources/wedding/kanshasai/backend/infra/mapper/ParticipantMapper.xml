@@ -19,60 +19,46 @@
         )
     </insert>
 
+    <insert id="insertAll">
+        INSERT INTO participants(
+            id,
+            session_id,
+            name,
+            image_id,
+            is_deleted
+        )
+        VALUES
+        <foreach collection="entities" item="entity" separator=",">
+            (
+                #{entity.identifier.id},
+                #{entity.sessionId},
+                #{entity.name},
+                #{entity.imageId},
+                #{entity.isDeleted}
+            )
+        </foreach>
+    </insert>
+
     <select id="select" resultMap="participant">
         SELECT
-            participants.id AS participant_id,
-            participants.session_id AS participant_session_id,
-            participants.name AS participant_name,
-            participants.image_id AS participant_image_id,
-            participants.is_deleted AS participant_is_deleted,
-            participants.created_at AS participant_created_at,
-            participants.updated_at AS participant_updated_at,
-            sessions.id AS session_id,
-            sessions.event_id AS session_event_id,
-            sessions.name AS session_name,
-            sessions.state_id AS session_state_id,
-            sessions.cover_screen_id AS session_cover_screen_id,
-            sessions.current_quiz_id AS session_current_quiz_id,
-            sessions.is_deleted AS session_is_deleted,
-            sessions.created_at AS session_created_at,
-            sessions.updated_at AS session_updated_at
+            *
         FROM
             participants
-        LEFT JOIN
-            sessions ON participants.session_id = sessions.id
         WHERE
-            (participants.is_deleted = false OR participants.is_deleted = #{includeDeleted})
+            (is_deleted = false OR is_deleted = #{includeDeleted})
         ORDER BY
-            participants.id
+            id
     </select>
 
     <select id="findById" resultMap="participant">
         SELECT
-            participants.id AS participant_id,
-            participants.session_id AS participant_session_id,
-            participants.name AS participant_name,
-            participants.image_id AS participant_image_id,
-            participants.is_deleted AS participant_is_deleted,
-            participants.created_at AS participant_created_at,
-            participants.updated_at AS participant_updated_at,
-            sessions.id AS session_id,
-            sessions.event_id AS session_event_id,
-            sessions.name AS session_name,
-            sessions.state_id AS session_state_id,
-            sessions.cover_screen_id AS session_cover_screen_id,
-            sessions.current_quiz_id AS session_current_quiz_id,
-            sessions.is_deleted AS session_is_deleted,
-            sessions.created_at AS session_created_at,
-            sessions.updated_at AS session_updated_at
+            *
         FROM
             participants
-        LEFT JOIN
-            sessions ON participants.session_id = sessions.id
         WHERE
-            participants.id = #{identifier.id}
+            id = #{identifier.id}
             AND
-            (participants.is_deleted = false OR participants.is_deleted = #{includeDeleted})
+            (is_deleted = false OR is_deleted = #{includeDeleted})
     </select>
 
     <update id="update">
@@ -101,17 +87,16 @@
     </update>
 
     <resultMap id="participant" type="wedding.kanshasai.backend.infra.dto.ParticipantDto">
-        <result property="sessionId" column="participant_session_id"/>
-        <result property="name" column="participant_name"/>
-        <result property="imageId" column="participant_image_id"/>
-        <result property="isDeleted" column="participant_is_deleted"/>
-        <result property="createdAt" column="participant_created_at"/>
-        <result property="updatedAt" column="participant_updated_at"/>
+        <result property="sessionId" column="session_id"/>
+        <result property="name" column="name"/>
+        <result property="imageId" column="image_id"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
         <association property="identifier" resultMap="participantIdentifier"/>
-        <association property="session" resultMap="wedding.kanshasai.backend.infra.mapper.SessionMapper.session"/>
     </resultMap>
 
     <resultMap id="participantIdentifier" type="wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier">
-        <id property="id" column="participant_id"/>
+        <id property="id" column="id"/>
     </resultMap>
 </mapper>

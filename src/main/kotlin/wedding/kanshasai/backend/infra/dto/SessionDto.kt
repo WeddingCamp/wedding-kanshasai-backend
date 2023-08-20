@@ -13,7 +13,6 @@ data class SessionDto(
     override var isDeleted: Boolean = false,
     var createdAt: Timestamp = Timestamp(0),
     var updatedAt: Timestamp = Timestamp(0),
-    var event: EventDto? = null,
 ) : IdentifiableDto<StandardIdentifier>(identifier, isDeleted) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -31,16 +30,6 @@ data class SessionDto(
             if (!currentQuizId.contentEquals(other.currentQuizId)) return false
         } else if (other.currentQuizId != null) return false
         if (isDeleted != other.isDeleted) return false
-
-        return true
-    }
-
-    override fun strictEquals(other: Any?): Boolean {
-        if (!equals(other)) return false
-
-        other as SessionDto
-
-        if (event != other.event) return false
 
         return true
     }

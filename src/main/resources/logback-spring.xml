@@ -38,4 +38,8 @@
         <target>System.out</target>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
+
+    <logger name="wedding.kanshasai.backend.infra.mapper">
+        <level value="debug"/>
+    </logger>
 </configuration>
