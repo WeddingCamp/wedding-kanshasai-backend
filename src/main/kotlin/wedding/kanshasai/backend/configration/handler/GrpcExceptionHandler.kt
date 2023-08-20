@@ -7,6 +7,8 @@ import net.devh.boot.grpc.server.advice.GrpcAdvice
 import net.devh.boot.grpc.server.advice.GrpcExceptionHandler
 import org.slf4j.MDC
 import wedding.kanshasai.backend.configration.interceptor.REQUEST_ID_KEY
+import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
+import wedding.kanshasai.backend.domain.exception.NotFoundException
 import java.lang.RuntimeException
 
 private val logger = KotlinLogging.logger {}
@@ -14,15 +16,21 @@ private val logger = KotlinLogging.logger {}
 @GrpcAdvice
 class GrpcExceptionHandler {
     @GrpcExceptionHandler(NotImplementedError::class)
-    fun handleNotImplementedException(e: NotImplementedError) = createStatus(Status.UNIMPLEMENTED, e)
+    fun handleException(e: NotImplementedError) = createStatus(Status.UNIMPLEMENTED, e)
+
+    @GrpcExceptionHandler(NotFoundException::class)
+    fun handleException(e: NotFoundException) = createStatus(Status.NOT_FOUND, e)
+
+    @GrpcExceptionHandler(InvalidArgumentException::class)
+    fun handleException(e: InvalidArgumentException) = createStatus(Status.INVALID_ARGUMENT, e)
 
     @GrpcExceptionHandler(Exception::class)
     fun handleException(e: Exception) = createStatus(Status.INTERNAL, e)
 
     fun createStatus(status: Status, e: Throwable): RuntimeException {
         logger.atError {
-            cause = e.cause
             message = e.message
+            cause = e
         }
 
         val metadata = Metadata()

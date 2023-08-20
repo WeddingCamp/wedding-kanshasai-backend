@@ -1,7 +1,7 @@
 package wedding.kanshasai.backend.domain.state
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import wedding.kanshasai.backend.exception.InvalidStateTransitionException
+import wedding.kanshasai.backend.domain.exception.InvalidStateTransitionException
 
 private val logger = KotlinLogging.logger {}
 

@@ -19,6 +19,6 @@ data class StandardIdentifier(
     }
 
     override fun toString(): String {
-        return "${javaClass.simpleName}(id='${UlidId.of(id)}')"
+        return "${javaClass.simpleName}(id='${UlidId.of(id).getOrElse { "FAILED_TO_PARSE" }}')"
     }
 }

@@ -4,7 +4,7 @@ import de.huxhorn.sulky.ulid.ULID
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import wedding.kanshasai.backend.exception.InvalidUlidFormatException
+import wedding.kanshasai.backend.domain.exception.InvalidUlidFormatException
 
 class UlidIdTest {
     companion object {
@@ -43,42 +43,42 @@ class UlidIdTest {
     @Test
     fun of_shouldSucceedWhenValidUlidTextIsPassed() {
         assertDoesNotThrow {
-            UlidId.of(VALID_ULID_TEXT)
+            UlidId.of(VALID_ULID_TEXT).getOrThrow()
         }
     }
 
     @Test
     fun of_shouldFailWhenInvalidUlidTextIsPassed() {
         assertThrows<InvalidUlidFormatException> {
-            UlidId.of(INVALID_ULID_TEXT)
+            UlidId.of(INVALID_ULID_TEXT).getOrThrow()
         }
     }
 
     @Test
     fun of_shouldFailWhenNotUlidTextIsPassed() {
         assertThrows<InvalidUlidFormatException> {
-            UlidId.of(NOT_ULID_TEXT)
+            UlidId.of(NOT_ULID_TEXT).getOrThrow()
         }
     }
 
     @Test
     fun of_shouldSucceedWhenValidUlidByteArrayIsPassed() {
         assertDoesNotThrow {
-            UlidId.of(VALID_ULID_BYTE_ARRAY)
+            UlidId.of(VALID_ULID_BYTE_ARRAY).getOrThrow()
         }
     }
 
     @Test
     fun of_shouldFailWhenInvalidUlidByteArrayIsPassed() {
         assertThrows<InvalidUlidFormatException> {
-            UlidId.of(INVALID_ULID_BYTE_ARRAY)
+            UlidId.of(INVALID_ULID_BYTE_ARRAY).getOrThrow()
         }
     }
 
     @Test
     fun of_shouldSucceedWhenValidULIDValueIsPassed() {
         assertDoesNotThrow {
-            UlidId.of(ULID().nextValue())
+            UlidId.of(ULID().nextValue()).getOrThrow()
         }
     }
 

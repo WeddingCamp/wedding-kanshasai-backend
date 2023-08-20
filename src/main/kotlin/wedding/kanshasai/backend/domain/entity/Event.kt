@@ -4,7 +4,7 @@ import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.dto.EventDto
 import java.sql.Timestamp
 
-class Event(
+class Event private constructor(
     val id: UlidId,
     var name: String,
     var isDeleted: Boolean,
@@ -14,7 +14,7 @@ class Event(
     companion object {
         fun of(eventDto: EventDto): Event {
             return Event(
-                UlidId.of(eventDto.identifier.id),
+                UlidId.of(eventDto.identifier.id).getOrThrow(),
                 eventDto.name,
                 eventDto.isDeleted,
                 eventDto.createdAt,

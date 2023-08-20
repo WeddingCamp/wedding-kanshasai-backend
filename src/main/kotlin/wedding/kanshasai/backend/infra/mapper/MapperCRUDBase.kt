@@ -8,6 +8,10 @@ interface MapperCRUDBase<IDENTIFIER, DTO> {
         @Param("entity") entity: DTO,
     ): Int
 
+    fun insertAll(
+        @Param("entities") entities: List<DTO>,
+    ): Int
+
     // READ
     fun select(
         @Param("includeDeleted") includeDeleted: Boolean = false,

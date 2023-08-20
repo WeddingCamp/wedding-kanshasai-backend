@@ -17,56 +17,44 @@
         )
     </insert>
 
+    <insert id="insertAll">
+        INSERT INTO choices(
+            id,
+            quiz_id,
+            body,
+            is_deleted
+        )
+        VALUES
+        <foreach collection="entities" item="entity" separator=",">
+            (
+                #{entity.identifier.id},
+                #{entity.quizId},
+                #{entity.body},
+                #{entity.isDeleted}
+            )
+        </foreach>
+    </insert>
+
     <select id="select" resultMap="choice">
         SELECT
-            choices.id AS choice_id,
-            choices.quiz_id AS choice_quiz_id,
-            choices.body AS choice_body,
-            choices.is_deleted AS choice_is_deleted,
-            choices.created_at AS choice_created_at,
-            choices.updated_at AS choice_updated_at,
-            quizzes.id AS quiz_id,
-            quizzes.event_id AS quiz_event_id,
-            quizzes.body AS quiz_body,
-            quizzes.correct_answer AS quiz_correct_answer,
-            quizzes.type AS quiz_type,
-            quizzes.is_deleted AS quiz_is_deleted,
-            quizzes.created_at AS quiz_created_at,
-            quizzes.updated_at AS quiz_updated_at
+            *
         FROM
             choices
-        LEFT JOIN
-            quizzes ON choices.quiz_id = quizzes.id
         WHERE
-            (choices.is_deleted = false OR choices.is_deleted = #{includeDeleted})
+            (is_deleted = false OR is_deleted = #{includeDeleted})
         ORDER BY
-            choices.id
+            id
     </select>
 
     <select id="findById" resultMap="choice">
         SELECT
-            choices.id AS choice_id,
-            choices.quiz_id AS choice_quiz_id,
-            choices.body AS choice_body,
-            choices.is_deleted AS choice_is_deleted,
-            choices.created_at AS choice_created_at,
-            choices.updated_at AS choice_updated_at,
-            quizzes.id AS quiz_id,
-            quizzes.event_id AS quiz_event_id,
-            quizzes.body AS quiz_body,
-            quizzes.correct_answer AS quiz_correct_answer,
-            quizzes.type AS quiz_type,
-            quizzes.is_deleted AS quiz_is_deleted,
-            quizzes.created_at AS quiz_created_at,
-            quizzes.updated_at AS quiz_updated_at
+            *
         FROM
             choices
-        LEFT JOIN
-            quizzes ON choices.quiz_id = quizzes.id
         WHERE
-            choices.id = #{identifier.id}
+            id = #{identifier.id}
             AND
-            (choices.is_deleted = false OR choices.is_deleted = #{includeDeleted})
+            (is_deleted = false OR is_deleted = #{includeDeleted})
     </select>
 
     <update id="update">
@@ -94,16 +82,15 @@
     </update>
 
     <resultMap id="choice" type="wedding.kanshasai.backend.infra.dto.ChoiceDto">
-        <result property="quizId" column="choice_quiz_id"/>
-        <result property="body" column="choice_body"/>
-        <result property="isDeleted" column="choice_is_deleted"/>
-        <result property="createdAt" column="choice_created_at"/>
-        <result property="updatedAt" column="choice_updated_at"/>
+        <result property="quizId" column="quiz_id"/>
+        <result property="body" column="body"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
         <association property="identifier" resultMap="choiceIdentifier"/>
-        <association property="quiz" resultMap="wedding.kanshasai.backend.infra.mapper.QuizMapper.quiz"/>
     </resultMap>
 
     <resultMap id="choiceIdentifier" type="wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier">
-        <id property="id" column="choice_id"/>
+        <id property="id" column="id"/>
     </resultMap>
 </mapper>

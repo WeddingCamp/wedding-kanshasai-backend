@@ -61,7 +61,6 @@ class MapperTestTool {
             (0..100).random(),
             maybeNull((0..100).random()),
             maybeNull(UlidId.new().toByteArray()),
-            event = eventDto,
         )
     }
 
@@ -78,7 +77,6 @@ class MapperTestTool {
             sessionDto.identifier.id,
             "Participant_$participantId",
             maybeNull(UlidId.new().toByteArray()),
-            session = sessionDto,
         )
     }
 
@@ -96,7 +94,6 @@ class MapperTestTool {
             "Quiz_body_$quizId",
             "Quiz_answer_$quizId",
             (0..100).random(),
-            event = eventDto,
         )
     }
 
@@ -112,7 +109,6 @@ class MapperTestTool {
             choiceId.toStandardIdentifier(),
             quizDto.identifier.id,
             "Choice_$choiceId",
-            quiz = quizDto,
         )
     }
 
@@ -127,8 +123,6 @@ class MapperTestTool {
             SessionQuizIdentifier(sessionDto.identifier.id, quizDto.identifier.id),
             trueOrFalse,
             maybeNull(Timestamp(System.currentTimeMillis())),
-            session = sessionDto,
-            quiz = quizDto,
         )
     }
 
@@ -143,8 +137,6 @@ class MapperTestTool {
             ParticipantAnswerIdentifier(participantDto.identifier.id, sessionQuizDto.identifier),
             "{\"answer\": \"${(1..4).random()}\"}",
             maybeNull((Math.random() * 10).toFloat()),
-            participant = participantDto,
-            sessionQuiz = sessionQuizDto,
         )
     }
 

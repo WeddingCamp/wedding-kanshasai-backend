@@ -12,7 +12,6 @@ data class QuizDto(
     override var isDeleted: Boolean = false,
     var createdAt: Timestamp = Timestamp(0),
     var updatedAt: Timestamp = Timestamp(0),
-    var event: EventDto? = null,
 ) : IdentifiableDto<StandardIdentifier>(identifier, isDeleted) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -26,16 +25,6 @@ data class QuizDto(
         if (correctAnswer != other.correctAnswer) return false
         if (type != other.type) return false
         if (isDeleted != other.isDeleted) return false
-
-        return true
-    }
-
-    override fun strictEquals(other: Any?): Boolean {
-        if (!equals(other)) return false
-
-        other as QuizDto
-
-        if (event != other.event) return false
 
         return true
     }

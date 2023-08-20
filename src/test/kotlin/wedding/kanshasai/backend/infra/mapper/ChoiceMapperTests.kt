@@ -31,8 +31,7 @@ class ChoiceMapperTests : MapperCRUDTest<ChoiceMapper, StandardIdentifier, Choic
                         choiceDto.copy().apply {
                             body = testTool.uuid
                             isDeleted = testTool.trueOrFalse
-                            quiz = quizDtoList.random()
-                            quizId = quiz!!.identifier.id
+                            quizId = quizDtoList.random().identifier.id
                         },
                     )
                 }

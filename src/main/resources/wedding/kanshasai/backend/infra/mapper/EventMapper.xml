@@ -15,13 +15,25 @@
         )
     </insert>
 
+    <insert id="insertAll">
+        INSERT INTO events(
+            id,
+            name,
+            is_deleted
+        )
+        VALUES
+        <foreach collection="entities" item="entity" separator=",">
+            (
+                #{entity.identifier.id},
+                #{entity.name},
+                #{entity.isDeleted}
+            )
+        </foreach>
+    </insert>
+
     <select id="select" resultMap="event">
         SELECT
-            events.id AS event_id,
-            events.name AS event_name,
-            events.is_deleted AS event_is_deleted,
-            events.created_at AS event_created_at,
-            events.updated_at AS event_updated_at
+            *
         FROM
             events
         WHERE
@@ -30,11 +42,7 @@
 
     <select id="findById" resultMap="event">
         SELECT
-            events.id AS event_id,
-            events.name AS event_name,
-            events.is_deleted AS event_is_deleted,
-            events.created_at AS event_created_at,
-            events.updated_at AS event_updated_at
+            *
         FROM
             events
         WHERE
@@ -67,14 +75,14 @@
     </update>
 
     <resultMap id="event" type="wedding.kanshasai.backend.infra.dto.EventDto">
-        <result property="name" column="event_name"/>
-        <result property="isDeleted" column="event_is_deleted"/>
-        <result property="createdAt" column="event_created_at"/>
-        <result property="updatedAt" column="event_updated_at"/>
+        <result property="name" column="name"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
         <association property="identifier" resultMap="eventIdentifier"/>
     </resultMap>
 
     <resultMap id="eventIdentifier" type="wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier">
-        <id property="id" column="event_id"/>
+        <id property="id" column="id"/>
     </resultMap>
 </mapper>

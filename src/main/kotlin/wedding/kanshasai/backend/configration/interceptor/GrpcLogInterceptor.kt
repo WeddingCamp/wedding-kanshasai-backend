@@ -48,7 +48,11 @@ class GrpcLogInterceptor : ServerInterceptor {
 
                 override fun close(status: Status?, trailers: Metadata?) {
                     MDC.put(REQUEST_ID_KEY, requestId)
-                    super.close(status, trailers)
+                    val metadata = trailers ?: Metadata()
+                    metadata.put(Metadata.Key.of(REQUEST_ID_KEY, Metadata.ASCII_STRING_MARSHALLER), MDC.get(REQUEST_ID_KEY))
+
+                    super.close(status, metadata)
+
                     logger.at(Level.DEBUG) {
                         this.message = "Request closed"
                         this.payload = mapOf(
