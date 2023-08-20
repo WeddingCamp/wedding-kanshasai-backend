@@ -13,7 +13,7 @@ class SessionService(
     private val eventRepository: EventRepository,
     private val sessionRepository: SessionRepository,
     private val quizRepository: QuizRepository,
-    private val sessionQuizRepository: SessionQuizRepository
+    private val sessionQuizRepository: SessionQuizRepository,
 ) {
     // TODO: 例外ちゃんとする
     fun createSession(eventId: UlidId, name: String): Result<Session> = runCatching {
