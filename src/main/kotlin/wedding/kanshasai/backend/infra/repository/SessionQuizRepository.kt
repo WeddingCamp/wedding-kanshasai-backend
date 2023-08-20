@@ -1,6 +1,7 @@
 package wedding.kanshasai.backend.infra.repository
 
 import org.springframework.stereotype.Repository
+import wedding.kanshasai.backend.domain.constant.Table
 import wedding.kanshasai.backend.domain.entity.Quiz
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.DatabaseException
@@ -21,9 +22,7 @@ class SessionQuizRepository(
             },
         )
         if (quizList.size != result) {
-            throw DatabaseException(
-                "Number of insertions($result) does not match number of quizzes(${quizList.size}).",
-            )
+            throw DatabaseException.incorrectNumberOfInsert(Table.SESSION_QUIZ, quizList.size, result, null)
         }
     }
 }

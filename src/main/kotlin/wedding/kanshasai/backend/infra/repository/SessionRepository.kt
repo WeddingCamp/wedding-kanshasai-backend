@@ -30,7 +30,7 @@ class SessionRepository(
             name,
         )
         val result = sessionMapper.insert(sessionDto)
-        if (result != 1) throw DatabaseException.incorrectNumberOfInsert(TABLE, null)
+        if (result != 1) throw DatabaseException.incorrectNumberOfInsert(TABLE, 1, result, null)
         return findById(id)
     }
 }
