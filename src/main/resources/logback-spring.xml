@@ -8,9 +8,10 @@
         </root>
     </springProfile>
 
-    <springProfile name="prd">
+    <springProfile name="prd,dev">
         <root level="INFO">
             <appender-ref ref="JSON"/>
+            <appender-ref ref="STASH"/>
         </root>
     </springProfile>
 
@@ -34,12 +35,18 @@
         </encoder>
     </appender>
 
+    <appender name="STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>${LOG_DESTINATION}</destination>
+
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+
     <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
         <target>System.out</target>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
 
-    <logger name="wedding.kanshasai.backend.infra.mapper">
+    <logger name="wedding.kanshasai.backend">
         <level value="debug"/>
     </logger>
 </configuration>
