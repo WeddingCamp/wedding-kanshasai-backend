@@ -23,8 +23,8 @@ class ParticipantController(
     override suspend fun createParticipant(request: CreateParticipantRequest): CreateParticipantResponse {
         if (request.name.isNullOrEmpty()) throw InvalidArgumentException.requiredField("name")
         if (request.sessionId.isNullOrEmpty()) throw InvalidArgumentException.requiredField("sessionId")
-        val imageId = UlidId.of(request.imageId).getOrNull()
 
+        val imageId = UlidId.of(request.imageId).getOrNull()
         val sessionId = UlidId.of(request.sessionId).getOrElse {
             throw InvalidArgumentException("'eventId' cannot be parsed as ULID format.", it)
         }
