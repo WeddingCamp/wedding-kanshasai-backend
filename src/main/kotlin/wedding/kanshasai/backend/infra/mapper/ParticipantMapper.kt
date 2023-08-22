@@ -5,4 +5,9 @@ import wedding.kanshasai.backend.infra.dto.ParticipantDto
 import wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier
 
 @Mapper
-interface ParticipantMapper : MapperCRUDBase<StandardIdentifier, ParticipantDto>
+interface ParticipantMapper : MapperCRUDBase<StandardIdentifier, ParticipantDto> {
+    fun listBySessionId(
+        @Param("id") id: ByteArray,
+        @Param("includeDeleted") includeDeleted: Boolean = false,
+    ): List<ParticipantDto>
+}

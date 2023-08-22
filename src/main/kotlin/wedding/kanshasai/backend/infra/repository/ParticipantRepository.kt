@@ -22,6 +22,11 @@ class ParticipantRepository(
         Participant.of(result)
     }
 
+    fun listBySessionId(sessionId: UlidId): Result<List<Participant>> = runCatching {
+        val resultList = participantMapper.listBySessionId(sessionId.toByteArray())
+        resultList.map(Participant::of)
+    }
+
     fun createParticipant(session: Session, name: String, imageId: UlidId?): Result<Participant> = runCatching {
         val id = UlidId.new()
         val participantDto = ParticipantDto(
