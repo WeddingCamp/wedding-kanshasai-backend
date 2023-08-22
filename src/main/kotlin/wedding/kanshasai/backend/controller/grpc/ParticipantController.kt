@@ -24,7 +24,9 @@ class ParticipantController(
         if (request.name.isNullOrEmpty()) throw InvalidArgumentException.requiredField("name")
         if (request.sessionId.isNullOrEmpty()) throw InvalidArgumentException.requiredField("sessionId")
 
-        val imageId = if (request.imageId.isEmpty()) null else {
+        val imageId = if (request.imageId.isEmpty()) {
+            null
+        } else {
             UlidId.of(request.imageId).getOrElse {
                 throw InvalidArgumentException("'imageId' cannot be parsed as ULID format.", it)
             }
