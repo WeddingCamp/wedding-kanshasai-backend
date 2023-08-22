@@ -56,7 +56,7 @@ class SessionRepositoryTests {
         if (throwable == null) {
             Assertions.assertDoesNotThrow {
                 val session = sessionRepository.findById(id).getOrThrow()
-                if(expect != null) {
+                if (expect != null) {
                     assertEquals(expect.id, session.id)
                     assertEquals(expect.name, session.name)
                     assertEquals(expect.stateId, session.stateId)

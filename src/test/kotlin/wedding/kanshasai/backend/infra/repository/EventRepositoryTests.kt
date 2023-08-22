@@ -16,12 +16,11 @@ import wedding.kanshasai.backend.domain.exception.NotFoundException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
 import wedding.kanshasai.backend.infra.dto.EventDto
-import wedding.kanshasai.backend.infra.dto.SessionDto
 import java.util.stream.Stream
 
 @WeddingKanshasaiSpringBootTest
 @DisplayName("EventRepository")
-class EventRepositoryTests{
+class EventRepositoryTests {
 
     @Autowired
     private lateinit var eventRepository: EventRepository
@@ -53,7 +52,7 @@ class EventRepositoryTests{
         if (throwable == null) {
             Assertions.assertDoesNotThrow {
                 val event = eventRepository.findById(id).getOrThrow()
-                if(expect != null) {
+                if (expect != null) {
                     assertEquals(expect.id, event.id)
                     assertEquals(expect.name, event.name)
                     assertEquals(expect.isDeleted, event.isDeleted)
