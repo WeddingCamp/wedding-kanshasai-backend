@@ -7,6 +7,7 @@ import wedding.kanshasai.backend.infra.dto.*
 import wedding.kanshasai.backend.infra.dto.identifier.ParticipantAnswerIdentifier
 import wedding.kanshasai.backend.infra.dto.identifier.SessionQuizIdentifier
 import wedding.kanshasai.backend.infra.mapper.*
+import java.lang.RuntimeException
 import java.sql.Timestamp
 import java.util.*
 
@@ -34,26 +35,31 @@ class MapperTestTool {
     @Autowired
     lateinit var participantAnswerMapper: ParticipantAnswerMapper
 
+    @Autowired
+    lateinit var truncateMapper: TruncateMapper
+
     val uuid: String get() = UUID.randomUUID().toString()
     val trueOrFalse: Boolean get() = listOf(true, false).random()
     fun <T> maybeNull(v: T): T? = listOf(v, null).random()
 
-    fun createEventDto(): EventDto {
-        val eventId = UlidId.new()
+    fun truncateAll() {
+        truncateMapper.truncate()
+    }
+
+    fun createEventDto(eventId: UlidId = UlidId.new()): EventDto {
         return EventDto(
             eventId.toStandardIdentifier(),
             "Event_$eventId",
         )
     }
 
-    fun createAndInsertEventDto(): EventDto {
-        val eventDto = createEventDto()
+    fun createAndInsertEventDto(eventId: UlidId = UlidId.new()): EventDto {
+        val eventDto = createEventDto(eventId)
         eventMapper.insert(eventDto)
-        return eventDto
+        return eventMapper.findById(eventDto.identifier) ?: throw RuntimeException("Failed to create dto.")
     }
 
-    fun createSessionDto(eventDto: EventDto): SessionDto {
-        val sessionId = UlidId.new()
+    fun createSessionDto(eventDto: EventDto, sessionId: UlidId = UlidId.new()): SessionDto {
         return SessionDto(
             sessionId.toStandardIdentifier(),
             eventDto.identifier.id,
@@ -64,14 +70,13 @@ class MapperTestTool {
         )
     }
 
-    fun createAndInsertSessionDto(eventDto: EventDto): SessionDto {
-        val sessionDto = createSessionDto(eventDto)
+    fun createAndInsertSessionDto(eventDto: EventDto, sessionId: UlidId = UlidId.new()): SessionDto {
+        val sessionDto = createSessionDto(eventDto, sessionId)
         sessionMapper.insert(sessionDto)
-        return sessionDto
+        return sessionMapper.findById(sessionDto.identifier) ?: throw RuntimeException("Failed to create dto.")
     }
 
-    fun createParticipantDto(sessionDto: SessionDto): ParticipantDto {
-        val participantId = UlidId.new()
+    fun createParticipantDto(sessionDto: SessionDto, participantId: UlidId = UlidId.new()): ParticipantDto {
         return ParticipantDto(
             participantId.toStandardIdentifier(),
             sessionDto.identifier.id,
@@ -80,14 +85,13 @@ class MapperTestTool {
         )
     }
 
-    fun createAndInsertParticipantDto(sessionDto: SessionDto): ParticipantDto {
-        val participantDto = createParticipantDto(sessionDto)
+    fun createAndInsertParticipantDto(sessionDto: SessionDto, participantId: UlidId = UlidId.new()): ParticipantDto {
+        val participantDto = createParticipantDto(sessionDto, participantId)
         participantMapper.insert(participantDto)
-        return participantDto
+        return participantMapper.findById(participantDto.identifier) ?: throw RuntimeException("Failed to create dto.")
     }
 
-    fun createQuizDto(eventDto: EventDto): QuizDto {
-        val quizId = UlidId.new()
+    fun createQuizDto(eventDto: EventDto, quizId: UlidId = UlidId.new()): QuizDto {
         return QuizDto(
             quizId.toStandardIdentifier(),
             eventDto.identifier.id,
@@ -97,14 +101,13 @@ class MapperTestTool {
         )
     }
 
-    fun createAndInsertQuizDto(eventDto: EventDto): QuizDto {
-        val quizDto = createQuizDto(eventDto)
+    fun createAndInsertQuizDto(eventDto: EventDto, quizId: UlidId = UlidId.new()): QuizDto {
+        val quizDto = createQuizDto(eventDto, quizId)
         quizMapper.insert(quizDto)
-        return quizDto
+        return quizMapper.findById(quizDto.identifier) ?: throw RuntimeException("Failed to create dto.")
     }
 
-    fun createChoiceDto(quizDto: QuizDto): ChoiceDto {
-        val choiceId = UlidId.new()
+    fun createChoiceDto(quizDto: QuizDto, choiceId: UlidId = UlidId.new()): ChoiceDto {
         return ChoiceDto(
             choiceId.toStandardIdentifier(),
             quizDto.identifier.id,
@@ -112,10 +115,10 @@ class MapperTestTool {
         )
     }
 
-    fun createAndInsertChoiceDto(quizDto: QuizDto): ChoiceDto {
-        val choiceDto = createChoiceDto(quizDto)
+    fun createAndInsertChoiceDto(quizDto: QuizDto, choiceId: UlidId = UlidId.new()): ChoiceDto {
+        val choiceDto = createChoiceDto(quizDto, choiceId)
         choiceMapper.insert(choiceDto)
-        return choiceDto
+        return choiceMapper.findById(choiceDto.identifier) ?: throw RuntimeException("Failed to create dto.")
     }
 
     fun createSessionQuizDto(sessionDto: SessionDto, quizDto: QuizDto): SessionQuizDto {
@@ -129,7 +132,7 @@ class MapperTestTool {
     fun createAndInsertSessionQuizDto(sessionDto: SessionDto, quizDto: QuizDto): SessionQuizDto {
         val sessionQuizDto = createSessionQuizDto(sessionDto, quizDto)
         sessionQuizMapper.insert(sessionQuizDto)
-        return sessionQuizDto
+        return sessionQuizMapper.findById(sessionQuizDto.identifier) ?: throw RuntimeException("Failed to create dto.")
     }
 
     fun createParticipantAnswerDto(participantDto: ParticipantDto, sessionQuizDto: SessionQuizDto): ParticipantAnswerDto {
@@ -143,6 +146,6 @@ class MapperTestTool {
     fun createAndInsertParticipantAnswerDto(participantDto: ParticipantDto, sessionQuizDto: SessionQuizDto): ParticipantAnswerDto {
         val participantAnswerDto = createParticipantAnswerDto(participantDto, sessionQuizDto)
         participantAnswerMapper.insert(participantAnswerDto)
-        return participantAnswerDto
+        return participantAnswerMapper.findById(participantAnswerDto.identifier) ?: throw RuntimeException("Failed to create dto.")
     }
 }
