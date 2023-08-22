@@ -13,8 +13,8 @@ class SessionController(
     private val sessionService: SessionService,
 ) : SessionServiceCoroutineImplBase() {
     override suspend fun createSession(request: CreateSessionRequest): CreateSessionResponse {
-        if (request.name.isEmpty()) throw InvalidArgumentException("'name' is required.")
-        if (request.eventId.isEmpty()) throw InvalidArgumentException("'eventId' is required.")
+        if (request.name.isNullOrEmpty()) throw InvalidArgumentException.requiredField("name")
+        if (request.eventId.isNullOrEmpty()) throw InvalidArgumentException.requiredField("eventId")
 
         val eventId = UlidId.of(request.eventId).getOrElse {
             throw InvalidArgumentException("'eventId' cannot be parsed as ULID format.", it)
