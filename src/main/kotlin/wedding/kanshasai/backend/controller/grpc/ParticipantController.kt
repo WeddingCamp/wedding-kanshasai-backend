@@ -13,7 +13,27 @@ class ParticipantController(
     private val participantService: ParticipantService,
 ) : ParticipantServiceCoroutineImplBase() {
     override suspend fun listParticipant(request: ListParticipantRequest): ListParticipantResponse {
-        TODO("NOT IMPLEMENTED")
+        if (request.sessionId.isNullOrEmpty()) throw InvalidArgumentException.requiredField("sessionId")
+
+        val sessionId = UlidId.of(request.sessionId).getOrElse {
+            throw InvalidArgumentException("'sessionId' cannot be parsed as ULID format.", it)
+        }
+
+        val participantList = participantService.listParticipantsBySessionId(sessionId).getOrThrow()
+        val grpcParticipantList = participantList.map { p ->
+            ListParticipantResponse.Participant.newBuilder().let {
+                it.name = p.name
+                it.participantId = p.id.toString()
+                it.sessionId = p.sessionId.toString()
+                it.imageId = p.imageId.toString()
+                it.build()
+            }
+        }
+
+        return ListParticipantResponse.newBuilder().let {
+            it.addAllParticipants(grpcParticipantList)
+            it.build()
+        }
     }
 
     override suspend fun registerParticipant(request: RegisterParticipantRequest): RegisterParticipantResponse {
@@ -32,7 +52,7 @@ class ParticipantController(
             }
         }
         val sessionId = UlidId.of(request.sessionId).getOrElse {
-            throw InvalidArgumentException("'eventId' cannot be parsed as ULID format.", it)
+            throw InvalidArgumentException("'sessionId' cannot be parsed as ULID format.", it)
         }
 
         val participant = participantService.createParticipant(sessionId, request.name, imageId).getOrThrow()

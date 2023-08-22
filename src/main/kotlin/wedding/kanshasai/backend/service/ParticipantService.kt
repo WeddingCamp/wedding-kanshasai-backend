@@ -12,6 +12,14 @@ class ParticipantService(
     private val sessionRepository: SessionRepository,
     private val participantRepository: ParticipantRepository,
 ) {
+    fun listParticipantsBySessionId(sessionId: UlidId): Result<List<Participant>> = runCatching {
+        sessionRepository.findById(sessionId).getOrElse {
+            throw DatabaseException.failedToRetrieve(Table.SESSION, sessionId, it)
+        }
+        participantRepository.listBySessionId(sessionId).getOrElse {
+            throw DatabaseException.failedToRetrieve(Table.PARTICIPANT, "sessionId", sessionId, it)
+        }
+    }
     fun createParticipant(sessionId: UlidId, name: String, imageId: UlidId?): Result<Participant> = runCatching {
         val session = sessionRepository.findById(sessionId).getOrElse {
             throw DatabaseException.failedToRetrieve(Table.SESSION, sessionId, it)

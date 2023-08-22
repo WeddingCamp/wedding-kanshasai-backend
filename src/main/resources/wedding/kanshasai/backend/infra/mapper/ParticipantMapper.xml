@@ -86,6 +86,19 @@
             (is_deleted = false OR is_deleted = #{includeDeleted})
     </update>
 
+    <select id="listBySessionId" resultMap="participant">
+        SELECT
+            *
+        FROM
+            participants
+        WHERE
+            session_id = #{id}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY
+            id
+    </select>
+
     <resultMap id="participant" type="wedding.kanshasai.backend.infra.dto.ParticipantDto">
         <result property="sessionId" column="session_id"/>
         <result property="name" column="name"/>
