@@ -5,6 +5,6 @@ on:
       - 'main'
 jobs:
   build-and-push:
-    uses: ./.github/workflows/cd-prd.yml
+    uses: ./.github/workflows/publish.yml
     with:
       environment: prd
