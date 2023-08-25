@@ -23,6 +23,8 @@ jobs:
     uses: ./.github/workflows/ci-tests.yml
 
   build-and-push:
+    needs:
+      - test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
