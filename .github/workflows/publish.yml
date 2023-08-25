@@ -10,14 +10,14 @@ on:
       environment:
         description: Environment
         required: true
-        default: 'dev'
+        default: stg
         type: choice
         options:
           - nightly
-          - dev
+          - stg
           - prd
 env:
-  environment: ${{ inputs.environment || 'dev' }}
+  environment: ${{ inputs.environment || 'stg' }}
 jobs:
   test:
     uses: ./.github/workflows/ci-tests.yml
