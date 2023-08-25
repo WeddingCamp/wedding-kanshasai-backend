@@ -1,4 +1,4 @@
-name: [nightly] CD
+name: "[nightly] CD"
 on:
   push:
     branches:

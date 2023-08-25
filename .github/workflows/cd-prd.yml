@@ -1,4 +1,4 @@
-name: [prd] CD
+name: "[prd] CD"
 on:
   push:
     branches:
