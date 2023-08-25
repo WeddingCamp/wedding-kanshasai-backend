@@ -1,8 +1,10 @@
-name: Publish
+name: [CD] Publish
 on:
-  push:
-    branches:
-      - 'main'
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       environment:
@@ -11,11 +13,15 @@ on:
         default: 'dev'
         type: choice
         options:
+          - nightly
           - dev
           - prd
 env:
   environment: ${{ inputs.environment || 'dev' }}
 jobs:
+  test:
+    uses: ./.github/workflows/ci-tests.yml
+
   build-and-push:
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +40,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_REGISTRY }}/library/wedding-kanshasai-backend:${{ github.sha }},${{ secrets.DOCKERHUB_REGISTRY }}/library/wedding-kanshasai-backend:latest
+          tags: ${{ secrets.DOCKERHUB_REGISTRY }}/library/wedding-kanshasai-backend-${{ env.environment }}:${{ github.sha }},${{ secrets.DOCKERHUB_REGISTRY }}/library/wedding-kanshasai-backend-${{ env.environment }}:latest
 
       - name: Apply new image
         shell: bash
