@@ -7,7 +7,9 @@ on:
 
 jobs:
   gradle-test:
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
+      - linux
     steps:
       - name: Checkout Project
         uses: actions/checkout@v3

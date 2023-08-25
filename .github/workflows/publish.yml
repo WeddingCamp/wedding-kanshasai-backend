@@ -23,9 +23,11 @@ jobs:
     uses: ./.github/workflows/ci-tests.yml
 
   build-and-push:
+    runs-on:
+      - self-hosted
+      - linux
     needs:
       - test
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
