@@ -1,0 +1,10 @@
+name: "[prd] CD"
+on:
+  push:
+    branches:
+      - 'main'
+jobs:
+  build-and-push:
+    uses: ./.github/workflows/cd-prd.yml
+    with:
+      environment: prd

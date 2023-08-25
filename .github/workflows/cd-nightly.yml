@@ -1,0 +1,10 @@
+name: "[nightly] CD"
+on:
+  push:
+    branches:
+      - 'develop'
+jobs:
+  build-and-push:
+    uses: ./.github/workflows/cd-prd.yml
+    with:
+      environment: nightly

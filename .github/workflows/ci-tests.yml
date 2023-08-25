@@ -1,12 +1,14 @@
-name: CI
+name: "[CI] Tests"
 on:
   pull_request:
     branches:
       - "*"
+  workflow_call:
 
 jobs:
   gradle-test:
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
     steps:
       - name: Checkout Project
         uses: actions/checkout@v3
