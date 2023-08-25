@@ -9,7 +9,6 @@ jobs:
   gradle-test:
     runs-on:
       - self-hosted
-      - linux
     steps:
       - name: Checkout Project
         uses: actions/checkout@v3

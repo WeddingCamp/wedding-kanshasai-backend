@@ -25,7 +25,6 @@ jobs:
   build-and-push:
     runs-on:
       - self-hosted
-      - linux
     needs:
       - test
     steps:
