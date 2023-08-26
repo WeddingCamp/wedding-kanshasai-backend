@@ -28,7 +28,6 @@ import wedding.kanshasai.backend.infra.dto.SessionDto
 import wedding.kanshasai.backend.infra.mapper.ParticipantMapper
 import java.util.stream.Stream
 
-
 @WeddingKanshasaiSpringBootTest
 @DisplayName("ParticipantRepository")
 class ParticipantRepositoryTests {
@@ -85,13 +84,15 @@ class ParticipantRepositoryTests {
             return
         }
         val event = participantRepository.findById(id).getOrThrow()
-        if (expect != null) {
-            assertEquals(expect.id, event.id)
-            assertEquals(expect.sessionId, event.sessionId)
-            assertEquals(expect.name, event.name)
-            assertEquals(expect.imageId, event.imageId)
-            assertEquals(expect.isDeleted, event.isDeleted)
+        if (expect == null) {
+            assertNull(event)
+            return
         }
+        assertEquals(expect.id, event.id)
+        assertEquals(expect.sessionId, event.sessionId)
+        assertEquals(expect.name, event.name)
+        assertEquals(expect.imageId, event.imageId)
+        assertEquals(expect.isDeleted, event.isDeleted)
     }
 
     fun findById_parameters(): Stream<Arguments> {
@@ -167,7 +168,7 @@ class ParticipantRepositoryTests {
         participantName: String,
         imageId: UlidId?,
         throwable: Class<T>?,
-        dbFailFlag: Boolean
+        dbFailFlag: Boolean,
     ) {
         if (dbFailFlag) {
             doReturn(0).`when`(participantMapper).insert(any(ParticipantDto::class.java))
@@ -200,7 +201,7 @@ class ParticipantRepositoryTests {
                 "participant_name",
                 UlidId.new(),
                 null,
-                false
+                false,
             ),
             arguments(
                 "正常系 正しいnameのみを渡すと参加者レコードが挿入され、参加者が返される",
@@ -208,7 +209,7 @@ class ParticipantRepositoryTests {
                 "participant_name",
                 null,
                 null,
-                false
+                false,
             ),
             arguments(
                 "正常系 既に存在するnameとユニークなimageIdを渡すと参加者レコードが挿入され、参加者が返される",
@@ -216,7 +217,7 @@ class ParticipantRepositoryTests {
                 participantDto.name,
                 UlidId.new(),
                 null,
-                false
+                false,
             ),
             arguments(
                 "正常系 既に存在するnameと既に存在するimageIdを渡すと参加者レコードが挿入され、参加者が返される",
@@ -224,7 +225,7 @@ class ParticipantRepositoryTests {
                 participantDto.name,
                 participantDto.imageId?.let { UlidId.of(it).getOrThrow() },
                 null,
-                false
+                false,
             ),
             arguments(
                 "異常系 DBに存在しないセッションを渡すとNotFoundExceptionが投げられる",
@@ -232,7 +233,7 @@ class ParticipantRepositoryTests {
                 "participant_name",
                 null,
                 NotFoundException::class.java,
-                false
+                false,
             ),
             arguments(
                 "異常系 nameに空文字を渡すとInvalidArgumentExceptionが投げられる",
@@ -240,7 +241,7 @@ class ParticipantRepositoryTests {
                 "",
                 null,
                 InvalidArgumentException::class.java,
-                false
+                false,
             ),
             arguments(
                 "異常系 nameに空文字かつDBに存在しないイベントを渡すとInvalidArgumentExceptionが投げられる",
@@ -248,7 +249,7 @@ class ParticipantRepositoryTests {
                 "",
                 null,
                 InvalidArgumentException::class.java,
-                false
+                false,
             ),
             arguments(
                 "異常系 DBへの挿入に失敗するとDatabaseExceptionが投げられる",
@@ -256,7 +257,7 @@ class ParticipantRepositoryTests {
                 "participant_name",
                 null,
                 DatabaseException::class.java,
-                true
+                true,
             ),
         )
     }

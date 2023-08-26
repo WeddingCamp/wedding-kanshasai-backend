@@ -19,7 +19,6 @@ import wedding.kanshasai.backend.domain.exception.NotFoundException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
 import wedding.kanshasai.backend.infra.dto.EventDto
-import wedding.kanshasai.backend.infra.dto.ParticipantDto
 import wedding.kanshasai.backend.infra.dto.SessionDto
 import wedding.kanshasai.backend.infra.mapper.SessionMapper
 import java.util.stream.Stream
@@ -68,14 +67,16 @@ class SessionRepositoryTests {
             return
         }
         val session = sessionRepository.findById(id).getOrThrow()
-        if (expect != null) {
-            assertEquals(expect.id, session.id)
-            assertEquals(expect.name, session.name)
-            assertEquals(expect.stateId, session.stateId)
-            assertEquals(expect.coverScreenId, session.coverScreenId)
-            assertEquals(expect.currentQuizId, session.currentQuizId)
-            assertEquals(expect.isDeleted, session.isDeleted)
+        if (expect == null) {
+            assertNull(session)
+            return
         }
+        assertEquals(expect.id, session.id)
+        assertEquals(expect.name, session.name)
+        assertEquals(expect.stateId, session.stateId)
+        assertEquals(expect.coverScreenId, session.coverScreenId)
+        assertEquals(expect.currentQuizId, session.currentQuizId)
+        assertEquals(expect.isDeleted, session.isDeleted)
     }
 
     fun findById_parameters(): Stream<Arguments> {
@@ -98,7 +99,13 @@ class SessionRepositoryTests {
     @ParameterizedTest(name = "{0}")
     @MethodSource("createSession_parameters")
     @DisplayName("createSession()")
-    fun <T : Throwable> createSession_test(testCaseName: String, event: Event, sessionName: String, throwable: Class<T>?, dbFailFlag: Boolean) {
+    fun <T : Throwable> createSession_test(
+        testCaseName: String,
+        event: Event,
+        sessionName: String,
+        throwable: Class<T>?,
+        dbFailFlag: Boolean,
+    ) {
         if (dbFailFlag) {
             Mockito.doReturn(0).`when`(sessionMapper).insert(any(SessionDto::class.java))
         }

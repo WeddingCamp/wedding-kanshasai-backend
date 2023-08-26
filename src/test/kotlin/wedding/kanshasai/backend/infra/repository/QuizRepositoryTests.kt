@@ -69,7 +69,6 @@ class QuizRepositoryTests {
         }
 
         val quizList = quizRepository.listByEventId(id).getOrThrow()
-
         expect?.map { Quiz.of(it) }?.forEach { expectQuiz ->
             val quiz = quizList.find { quiz -> quiz.id == expectQuiz.id }
             assertNotNull(quiz)

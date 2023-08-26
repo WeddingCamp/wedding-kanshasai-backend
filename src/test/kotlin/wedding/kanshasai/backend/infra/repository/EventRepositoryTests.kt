@@ -1,7 +1,6 @@
 package wedding.kanshasai.backend.infra.repository
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -56,11 +55,13 @@ class EventRepositoryTests {
             return
         }
         val event = eventRepository.findById(id).getOrThrow()
-        if (expect != null) {
-            assertEquals(expect.id, event.id)
-            assertEquals(expect.name, event.name)
-            assertEquals(expect.isDeleted, event.isDeleted)
+        if (expect == null) {
+            assertNull(event)
+            return
         }
+        assertEquals(expect.id, event.id)
+        assertEquals(expect.name, event.name)
+        assertEquals(expect.isDeleted, event.isDeleted)
     }
 
     fun findById_parameters(): Stream<Arguments> {

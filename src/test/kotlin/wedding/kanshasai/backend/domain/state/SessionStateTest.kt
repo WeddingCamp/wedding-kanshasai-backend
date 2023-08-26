@@ -18,7 +18,7 @@ class SessionStateTest {
         validTransitionDestinationList: List<SessionState>,
     ) {
         SessionState.values().forEach {
-            if(it == sessionState) assertEquals(it.id, sessionState.id)
+            if (it == sessionState) assertEquals(it.id, sessionState.id)
 
             if (it == sessionState || validTransitionDestinationList.contains(it)) {
                 assertDoesNotThrow {
