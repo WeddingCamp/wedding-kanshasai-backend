@@ -5,5 +5,8 @@ class InvalidArgumentException(message: String? = null, cause: Throwable? = null
         fun requiredField(fieldName: String, cause: Throwable? = null): InvalidArgumentException {
             return InvalidArgumentException("'$fieldName' is required.", cause)
         }
+        fun empty(fieldName: String, cause: Throwable? = null): InvalidArgumentException {
+            return InvalidArgumentException("'$fieldName' is empty.", cause)
+        }
     }
 }

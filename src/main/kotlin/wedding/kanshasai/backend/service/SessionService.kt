@@ -27,7 +27,7 @@ class SessionService(
         val quizList = quizRepository.listByEventId(event.id).getOrElse {
             throw DatabaseException.failedToRetrieve(Table.QUIZ, "eventId", event.id, it)
         }
-        sessionQuizRepository.insertAll(session, quizList).getOrElse {
+        sessionQuizRepository.insertQuizList(session, quizList).getOrElse {
             throw DatabaseException.failedToInsert(Table.SESSION_QUIZ, it)
         }
         session

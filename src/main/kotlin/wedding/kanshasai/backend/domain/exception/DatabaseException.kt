@@ -11,6 +11,16 @@ class DatabaseException(message: String? = null, cause: Throwable? = null) : Run
         fun failedToRetrieve(table: Table, columnName: String, id: UlidId, cause: Throwable?): DatabaseException {
             return DatabaseException("Failed to retrieve ${table.tableName}($columnName=$id).", cause)
         }
+        fun failedToRetrieve(
+            table: Table,
+            columnName1: String,
+            id1: UlidId,
+            columnName2: String,
+            id2: UlidId,
+            cause: Throwable?,
+        ): DatabaseException {
+            return DatabaseException("Failed to retrieve ${table.tableName}($columnName1=$id1, $columnName2=$id2).", cause)
+        }
         fun failedToInsert(table: Table, cause: Throwable?): DatabaseException {
             return DatabaseException("Failed to insert ${table.tableName}.", cause)
         }
