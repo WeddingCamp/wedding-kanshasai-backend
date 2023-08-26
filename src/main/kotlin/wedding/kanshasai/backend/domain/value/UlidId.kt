@@ -1,7 +1,7 @@
 package wedding.kanshasai.backend.domain.value
 
 import de.huxhorn.sulky.ulid.ULID
-import wedding.kanshasai.backend.domain.exception.InvalidUlidFormatException
+import wedding.kanshasai.backend.domain.exception.InvalidValueException
 import wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier
 import java.lang.Exception
 
@@ -40,7 +40,7 @@ class UlidId private constructor(private val ulid: ULID.Value) {
             return try {
                 UlidId(ULID.parseULID(value))
             } catch (e: Exception) {
-                throw InvalidUlidFormatException("Invalid ULID format.", e)
+                throw InvalidValueException("Invalid ULID format.", e)
             }
         }
 
@@ -48,7 +48,7 @@ class UlidId private constructor(private val ulid: ULID.Value) {
             return try {
                 UlidId(ULID.fromBytes(value))
             } catch (e: Exception) {
-                throw InvalidUlidFormatException("Invalid ULID format.", e)
+                throw InvalidValueException("Invalid ULID format.", e)
             }
         }
 
@@ -56,7 +56,7 @@ class UlidId private constructor(private val ulid: ULID.Value) {
             return try {
                 UlidId(value)
             } catch (e: Exception) {
-                throw InvalidUlidFormatException("Invalid ULID format.", e)
+                throw InvalidValueException("Invalid ULID format.", e)
             }
         }
 

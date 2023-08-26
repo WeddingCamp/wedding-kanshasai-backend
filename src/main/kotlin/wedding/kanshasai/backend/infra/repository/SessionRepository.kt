@@ -7,6 +7,7 @@ import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.NotFoundException
+import wedding.kanshasai.backend.domain.value.CoverScreenType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.dto.SessionDto
 import wedding.kanshasai.backend.infra.mapper.EventMapper
@@ -39,5 +40,10 @@ class SessionRepository(
         val result = sessionMapper.insert(sessionDto)
         if (result != 1) throw DatabaseException.incorrectNumberOfInsert(TABLE, 1, result, null)
         return findById(id)
+    }
+
+    fun updateCoverScreen(session: Session, coverScreenType: CoverScreenType): Result<Unit> = runCatching {
+        val isSucceed = sessionMapper.update(session.toDto().copy(coverScreenId = coverScreenType.value))
+        if (!isSucceed) throw DatabaseException.failedToUpdate(TABLE, session.id, null)
     }
 }

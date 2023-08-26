@@ -2,8 +2,10 @@ package wedding.kanshasai.backend.controller.grpc
 
 import kotlinx.coroutines.flow.Flow
 import net.devh.boot.grpc.server.service.GrpcService
+import wedding.kanshasai.backend.controller.GrpcTool
+import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
-import wedding.kanshasai.backend.domain.exception.InvalidUlidFormatException
+import wedding.kanshasai.backend.domain.exception.InvalidValueException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.service.SessionService
 import wedding.kanshasai.v1.*
@@ -12,12 +14,13 @@ import wedding.kanshasai.v1.SessionServiceGrpcKt.SessionServiceCoroutineImplBase
 @GrpcService
 class SessionController(
     private val sessionService: SessionService,
+    private val grpcTool: GrpcTool,
 ) : SessionServiceCoroutineImplBase() {
     override suspend fun createSession(request: CreateSessionRequest): CreateSessionResponse {
         if (request.name.isNullOrEmpty()) throw InvalidArgumentException.requiredField("name")
         if (request.eventId.isNullOrEmpty()) throw InvalidArgumentException.requiredField("eventId")
 
-        val eventId = try { UlidId.of(request.eventId) } catch (e: InvalidUlidFormatException) {
+        val eventId = try { UlidId.of(request.eventId) } catch (e: InvalidValueException) {
             throw InvalidArgumentException("'eventId' cannot be parsed as ULID format.", e)
         }
 
@@ -56,7 +59,16 @@ class SessionController(
     }
 
     override suspend fun setCoverScreen(request: SetCoverScreenRequest): SetCoverScreenResponse {
-        TODO("NOT IMPLEMENTED")
+        if (request.sessionId.isNullOrEmpty()) throw InvalidArgumentException.requiredField("sessionId")
+
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+        val coverScreenType = grpcTool.parseCoverScreenType(request.screenType)
+
+        sessionService.setCoverScreen(sessionId, coverScreenType).getOrElse {
+            throw DatabaseException("Failed to set cover screen.", it)
+        }
+
+        return SetCoverScreenResponse.newBuilder().build()
     }
 
     override fun streamSessionEvent(request: StreamSessionEventRequest): Flow<StreamSessionEventResponse> {

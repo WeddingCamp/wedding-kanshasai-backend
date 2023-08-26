@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import wedding.kanshasai.backend.domain.constant.Table
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.DatabaseException
+import wedding.kanshasai.backend.domain.value.CoverScreenType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.repository.EventRepository
 import wedding.kanshasai.backend.infra.repository.QuizRepository
@@ -31,5 +32,14 @@ class SessionService(
             throw DatabaseException.failedToInsert(Table.SESSION_QUIZ, it)
         }
         session
+    }
+
+    fun setCoverScreen(sessionId: UlidId, coverScreenType: CoverScreenType): Result<Unit> = runCatching {
+        val session = sessionRepository.findById(sessionId).getOrElse {
+            throw DatabaseException.failedToRetrieve(Table.SESSION, sessionId, it)
+        }
+        sessionRepository.updateCoverScreen(session, coverScreenType).getOrElse {
+            throw DatabaseException.failedToUpdate(Table.SESSION, sessionId, it)
+        }
     }
 }

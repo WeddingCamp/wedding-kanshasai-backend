@@ -21,6 +21,7 @@ services:
     image: mysql:8
     ports:
       - "3306:3306"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/00_schema.sql
       - ./src/main/resources/sample.sql:/docker-entrypoint-initdb.d/01_data.sql
@@ -30,4 +31,5 @@ services:
       MYSQL_DATABASE: wedding_kanshasai
       MYSQL_USER: mysql
       MYSQL_PASSWORD: mysql
+      TZ: Asia/Tokyo
     restart: always

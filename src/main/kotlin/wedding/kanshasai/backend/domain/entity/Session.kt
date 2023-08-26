@@ -15,6 +15,17 @@ class Session private constructor(
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
 ) {
+    fun toDto(): SessionDto = SessionDto(
+        id.toStandardIdentifier(),
+        eventId.toByteArray(),
+        name,
+        stateId,
+        coverScreenId,
+        currentQuizId?.toByteArray(),
+        isDeleted,
+        createdAt,
+        updatedAt,
+    )
     companion object {
         fun of(sessionDto: SessionDto): Session {
             return Session(

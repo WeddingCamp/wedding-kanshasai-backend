@@ -1,3 +1,6 @@
+SET CHARACTER_SET_CLIENT = utf8;
+SET CHARACTER_SET_CONNECTION = utf8;
+
 INSERT INTO events (id, name)
 VALUES (0x018a0d02dd6f3d6a453cf75894612edc, 'サンプルイベント 1');
 
