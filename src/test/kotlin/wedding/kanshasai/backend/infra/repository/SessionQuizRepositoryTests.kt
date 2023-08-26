@@ -82,6 +82,61 @@ class SessionQuizRepositoryTests {
     }
 
     @ParameterizedTest(name = "{0}")
+    @MethodSource("find_parameters")
+    @DisplayName("find()")
+    fun <T : Throwable> find_test(testCaseName: String, session: Session, quiz: Quiz, expect: SessionQuiz?, throwable: Class<T>?) {
+        if (throwable != null) {
+            assertThrows(throwable) {
+                sessionQuizRepository.find(session, quiz).getOrThrow()
+            }
+            return
+        }
+        val sessionQuiz = sessionQuizRepository.find(session, quiz).getOrThrow()
+        if (expect == null) {
+            assertNull(sessionQuiz)
+            return
+        }
+        assertEquals(expect.sessionId, sessionQuiz.sessionId)
+        assertEquals(expect.quizId, sessionQuiz.quizId)
+        assertEquals(expect.isCompleted, sessionQuiz.isCompleted)
+        assertEquals(expect.startedAt, sessionQuiz.startedAt)
+        assertEquals(expect.isDeleted, sessionQuiz.isDeleted)
+    }
+
+    fun find_parameters(): Stream<Arguments> {
+        return Stream.of(
+            arguments(
+                "正常系 正しいセッションIDとクイズIDを渡すとイベントが返される",
+                Session.of(sessionDto),
+                Quiz.of(insertedQuizDtoList.first()),
+                SessionQuiz.of(sessionQuizDtoList.first()),
+                null,
+            ),
+            arguments(
+                "異常系 存在しないセッションIDと存在するクイズIDを渡すとNotFoundExceptionが投げられる",
+                Session.of(sessionDto.copy(identifier = UlidId.new().toStandardIdentifier())),
+                Quiz.of(insertedQuizDtoList.first()),
+                null,
+                NotFoundException::class.java,
+            ),
+            arguments(
+                "異常系 存在するセッションIDと存在しないクイズIDを渡すとNotFoundExceptionが投げられる",
+                Session.of(sessionDto),
+                Quiz.of(insertedQuizDtoList.first().copy(identifier = UlidId.new().toStandardIdentifier())),
+                null,
+                NotFoundException::class.java,
+            ),
+            arguments(
+                "異常系 存在しないセッションIDと存在しないクイズIDを渡すとNotFoundExceptionが投げられる",
+                Session.of(sessionDto.copy(identifier = UlidId.new().toStandardIdentifier())),
+                Quiz.of(insertedQuizDtoList.first().copy(identifier = UlidId.new().toStandardIdentifier())),
+                null,
+                NotFoundException::class.java,
+            ),
+        )
+    }
+
+    @ParameterizedTest(name = "{0}")
     @MethodSource("insertQuizList_parameters")
     @DisplayName("insertQuizList")
     fun <T : Throwable> insertQuizList_test(

@@ -20,7 +20,7 @@ class SessionQuizRepository(
     private val sessionMapper: SessionMapper,
     private val sessionQuizMapper: SessionQuizMapper,
 ) {
-    fun findById(session: Session, quiz: Quiz): Result<SessionQuiz> = runCatching {
+    fun find(session: Session, quiz: Quiz): Result<SessionQuiz> = runCatching {
         val sessionQuizDto = sessionQuizMapper.findById(
             SessionQuizIdentifier(session.id.toByteArray(), quiz.id.toByteArray()),
         )
