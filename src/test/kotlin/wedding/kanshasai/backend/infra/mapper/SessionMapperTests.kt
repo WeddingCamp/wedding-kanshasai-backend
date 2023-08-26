@@ -33,7 +33,7 @@ class SessionMapperTests : MapperCRUDTest<SessionMapper, StandardIdentifier, Ses
                         coverScreenId = testTool.maybeNull((0..100).random())
                         currentQuizId = testTool.maybeNull(UlidId.new().toByteArray())
                         isDeleted = testTool.trueOrFalse
-                        eventId = eventDtoList.random().identifier.id
+                        eventId = eventDtoList.random().eventIdentifier.id
                     },
                 )
             }

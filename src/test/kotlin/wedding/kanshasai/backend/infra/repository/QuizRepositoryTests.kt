@@ -87,13 +87,13 @@ class QuizRepositoryTests {
         return Stream.of(
             arguments(
                 "正常系 正しいイベントIDを渡すとクイズの配列が返される",
-                UlidId.of(eventDto.identifier.id),
+                UlidId.of(eventDto.eventIdentifier.id),
                 quizDtoList,
                 null,
             ),
             arguments(
                 "正常系 クイズが0件なイベントIDを渡すと0件のクイズの配列が返される",
-                UlidId.of(quizEmptyEventDto.identifier.id),
+                UlidId.of(quizEmptyEventDto.eventIdentifier.id),
                 listOf<QuizDto>(),
                 null,
             ),

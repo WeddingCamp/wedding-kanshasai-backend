@@ -98,7 +98,7 @@ class ParticipantRepositoryTests {
         return Stream.of(
             arguments(
                 "正常系 正しい参加者IDを渡すと参加者が返される",
-                UlidId.of(participantDto.identifier.id),
+                UlidId.of(participantDto.participantIdentifier.id),
                 Participant.of(participantDto),
                 null,
             ),
@@ -139,13 +139,13 @@ class ParticipantRepositoryTests {
         return Stream.of(
             arguments(
                 "正常系 正しいセッションIDを渡すと参加者の配列が返される",
-                UlidId.of(sessionDto.identifier.id),
+                UlidId.of(sessionDto.sessionIdentifier.id),
                 participantDtoList,
                 null,
             ),
             arguments(
                 "正常系 クイズが0件なセッションIDを渡すと0件の参加者の配列が返される",
-                UlidId.of(participantEmptySessionDto.identifier.id),
+                UlidId.of(participantEmptySessionDto.sessionIdentifier.id),
                 listOf<QuizDto>(),
                 null,
             ),
@@ -228,7 +228,7 @@ class ParticipantRepositoryTests {
             ),
             arguments(
                 "異常系 DBに存在しないセッションを渡すとNotFoundExceptionが投げられる",
-                Session.of(SessionDto(UlidId.new().toStandardIdentifier(), eventDto.identifier.id)),
+                Session.of(SessionDto(UlidId.new().toStandardIdentifier(), eventDto.eventIdentifier.id)),
                 "participant_name",
                 null,
                 NotFoundException::class.java,
@@ -244,7 +244,7 @@ class ParticipantRepositoryTests {
             ),
             arguments(
                 "異常系 nameに空文字かつDBに存在しないイベントを渡すとInvalidArgumentExceptionが投げられる",
-                Session.of(SessionDto(UlidId.new().toStandardIdentifier(), eventDto.identifier.id)),
+                Session.of(SessionDto(UlidId.new().toStandardIdentifier(), eventDto.eventIdentifier.id)),
                 "",
                 null,
                 InvalidArgumentException::class.java,

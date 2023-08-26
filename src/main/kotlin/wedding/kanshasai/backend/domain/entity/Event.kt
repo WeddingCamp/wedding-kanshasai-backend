@@ -14,7 +14,7 @@ class Event private constructor(
     companion object {
         fun of(eventDto: EventDto): Event {
             return Event(
-                UlidId.of(eventDto.identifier.id),
+                UlidId.of(eventDto.eventIdentifier.id),
                 eventDto.name,
                 eventDto.isDeleted,
                 eventDto.createdAt,

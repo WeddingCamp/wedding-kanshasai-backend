@@ -1,7 +1,7 @@
 package wedding.kanshasai.backend.domain.entity
 
 import wedding.kanshasai.backend.domain.value.UlidId
-import wedding.kanshasai.backend.infra.dto.SessionQuizDto
+import wedding.kanshasai.backend.infra.dto.interfaces.ISessionQuiz
 import java.sql.Timestamp
 
 class SessionQuiz private constructor(
@@ -14,10 +14,10 @@ class SessionQuiz private constructor(
     val updatedAt: Timestamp,
 ) {
     companion object {
-        fun of(sessionQuizDto: SessionQuizDto): SessionQuiz {
+        fun of(sessionQuizDto: ISessionQuiz): SessionQuiz {
             return SessionQuiz(
-                UlidId.of(sessionQuizDto.identifier.sessionId),
-                UlidId.of(sessionQuizDto.identifier.quizId),
+                UlidId.of(sessionQuizDto.sessionQuizIdentifier.sessionId),
+                UlidId.of(sessionQuizDto.sessionQuizIdentifier.quizId),
                 sessionQuizDto.isCompleted,
                 sessionQuizDto.startedAt,
                 sessionQuizDto.isDeleted,

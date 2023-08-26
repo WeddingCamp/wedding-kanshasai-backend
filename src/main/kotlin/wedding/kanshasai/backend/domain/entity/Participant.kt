@@ -16,7 +16,7 @@ class Participant private constructor(
     companion object {
         fun of(participantDto: ParticipantDto): Participant {
             return Participant(
-                UlidId.of(participantDto.identifier.id),
+                UlidId.of(participantDto.participantIdentifier.id),
                 UlidId.of(participantDto.sessionId),
                 participantDto.name,
                 participantDto.imageId?.let(UlidId::of),

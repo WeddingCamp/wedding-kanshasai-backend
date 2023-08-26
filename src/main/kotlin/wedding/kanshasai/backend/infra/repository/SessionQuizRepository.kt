@@ -8,6 +8,7 @@ import wedding.kanshasai.backend.domain.entity.SessionQuiz
 import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.NotFoundException
+import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.dto.SessionQuizDto
 import wedding.kanshasai.backend.infra.dto.identifier.SessionQuizIdentifier
 import wedding.kanshasai.backend.infra.mapper.SessionMapper
@@ -28,6 +29,19 @@ class SessionQuizRepository(
             throw NotFoundException.record(TABLE, "sessionId", session.id, "quizId", quiz.id, null)
         }
         SessionQuiz.of(sessionQuizDto)
+    }
+
+    fun listBySession(sessionId: UlidId): Result<List<Pair<Quiz, SessionQuiz>>> = runCatching {
+        val session = sessionMapper.findById(sessionId.toStandardIdentifier())
+        if (session == null) throw NotFoundException.record(Table.SESSION, sessionId, null)
+
+        val resultList = sessionQuizMapper.listBySessionId(sessionId.toByteArray())
+        resultList.map {
+            Pair(
+                Quiz.of(it),
+                SessionQuiz.of(it),
+            )
+        }
     }
 
     fun insertQuizList(session: Session, quizList: List<Quiz>): Result<Unit> = runCatching {

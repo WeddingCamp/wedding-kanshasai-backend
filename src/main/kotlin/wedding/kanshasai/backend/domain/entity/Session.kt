@@ -1,5 +1,6 @@
 package wedding.kanshasai.backend.domain.entity
 
+import wedding.kanshasai.backend.domain.value.CoverScreenType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.dto.SessionDto
 import java.sql.Timestamp
@@ -9,7 +10,7 @@ class Session private constructor(
     val eventId: UlidId,
     var name: String,
     var stateId: Int,
-    var coverScreenId: Int?,
+    var coverScreen: CoverScreenType?,
     var currentQuizId: UlidId?,
     var isDeleted: Boolean,
     val createdAt: Timestamp,
@@ -20,7 +21,7 @@ class Session private constructor(
         eventId.toByteArray(),
         name,
         stateId,
-        coverScreenId,
+        coverScreen?.number,
         currentQuizId?.toByteArray(),
         isDeleted,
         createdAt,
@@ -29,11 +30,11 @@ class Session private constructor(
     companion object {
         fun of(sessionDto: SessionDto): Session {
             return Session(
-                UlidId.of(sessionDto.identifier.id),
+                UlidId.of(sessionDto.sessionIdentifier.id),
                 UlidId.of(sessionDto.eventId),
                 sessionDto.name,
                 sessionDto.stateId,
-                sessionDto.coverScreenId,
+                sessionDto.coverScreenId?.let(CoverScreenType::of),
                 sessionDto.currentQuizId?.let(UlidId::of),
                 sessionDto.isDeleted,
                 sessionDto.createdAt,

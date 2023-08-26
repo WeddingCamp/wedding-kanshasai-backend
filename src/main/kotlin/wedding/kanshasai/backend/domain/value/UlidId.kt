@@ -5,21 +5,21 @@ import wedding.kanshasai.backend.domain.exception.InvalidValueException
 import wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier
 import java.lang.Exception
 
-class UlidId private constructor(private val ulid: ULID.Value) {
+class UlidId private constructor(private val value: ULID.Value) {
     override fun toString(): String {
-        return ulid.toString()
+        return value.toString()
     }
 
     fun toByteArray(): ByteArray {
-        return ulid.toBytes()
+        return value.toBytes()
     }
 
     fun toULIDValue(): ULID.Value {
-        return ulid
+        return value
     }
 
     fun toStandardIdentifier(): StandardIdentifier {
-        return StandardIdentifier(ulid.toBytes())
+        return StandardIdentifier(value.toBytes())
     }
 
     override fun equals(other: Any?): Boolean {
@@ -28,11 +28,11 @@ class UlidId private constructor(private val ulid: ULID.Value) {
 
         other as UlidId
 
-        return ulid == other.ulid
+        return value == other.value
     }
 
     override fun hashCode(): Int {
-        return ulid.hashCode()
+        return value.hashCode()
     }
 
     companion object {
