@@ -6,21 +6,30 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.Arguments.arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.mock.mockito.SpyBean
 import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
+import wedding.kanshasai.backend.any
 import wedding.kanshasai.backend.domain.entity.Event
 import wedding.kanshasai.backend.domain.entity.Session
+import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.NotFoundException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
 import wedding.kanshasai.backend.infra.dto.EventDto
+import wedding.kanshasai.backend.infra.dto.ParticipantDto
 import wedding.kanshasai.backend.infra.dto.SessionDto
+import wedding.kanshasai.backend.infra.mapper.SessionMapper
 import java.util.stream.Stream
 
 @WeddingKanshasaiSpringBootTest
 @DisplayName("SessionRepository")
 class SessionRepositoryTests {
+
+    @SpyBean
+    private lateinit var sessionMapper: SessionMapper
 
     @Autowired
     private lateinit var sessionRepository: SessionRepository
@@ -89,7 +98,10 @@ class SessionRepositoryTests {
     @ParameterizedTest(name = "{0}")
     @MethodSource("createSession_parameters")
     @DisplayName("createSession()")
-    fun <T : Throwable> createSession_test(testCaseName: String, event: Event, sessionName: String, throwable: Class<T>?) {
+    fun <T : Throwable> createSession_test(testCaseName: String, event: Event, sessionName: String, throwable: Class<T>?, dbFailFlag: Boolean) {
+        if (dbFailFlag) {
+            Mockito.doReturn(0).`when`(sessionMapper).insert(any(SessionDto::class.java))
+        }
         if (throwable != null) {
             assertThrows(throwable) {
                 sessionRepository.createSession(event, sessionName).getOrThrow()
@@ -119,30 +131,42 @@ class SessionRepositoryTests {
                 Event.of(eventDto),
                 "session_name",
                 null,
+                false,
             ),
             arguments(
                 "正常系 既に存在するセッション名を渡すとセッションレコードが挿入され、セッションが返される",
                 Event.of(eventDto),
                 sessionDto.name,
                 null,
+                false,
             ),
             arguments(
                 "異常系 DBに存在しないイベントを渡すとNotFoundExceptionが投げられる",
                 Event.of(EventDto(UlidId.new().toStandardIdentifier(), "event_name")),
                 "session_name",
                 NotFoundException::class.java,
+                false,
             ),
             arguments(
                 "異常系 nameに空文字を渡すとInvalidArgumentExceptionが投げられる",
                 Event.of(eventDto),
                 "",
                 InvalidArgumentException::class.java,
+                false,
             ),
             arguments(
                 "異常系 nameに空文字かつDBに存在しないイベントを渡すとInvalidArgumentExceptionが投げられる",
                 Event.of(EventDto(UlidId.new().toStandardIdentifier(), "event_name")),
                 "",
                 InvalidArgumentException::class.java,
+                false,
+            ),
+            arguments(
+                "異常系 DBのinsertに失敗するとDatabaseExceptionが投げられる",
+                Event.of(eventDto),
+                "session_name",
+                DatabaseException::class.java,
+                true,
             ),
         )
     }

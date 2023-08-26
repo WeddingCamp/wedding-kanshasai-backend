@@ -8,10 +8,15 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.Arguments.arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.mock.mockito.SpyBean
 import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
+import wedding.kanshasai.backend.any
 import wedding.kanshasai.backend.domain.entity.Participant
 import wedding.kanshasai.backend.domain.entity.Session
+import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.NotFoundException
 import wedding.kanshasai.backend.domain.value.UlidId
@@ -20,11 +25,16 @@ import wedding.kanshasai.backend.infra.dto.EventDto
 import wedding.kanshasai.backend.infra.dto.ParticipantDto
 import wedding.kanshasai.backend.infra.dto.QuizDto
 import wedding.kanshasai.backend.infra.dto.SessionDto
+import wedding.kanshasai.backend.infra.mapper.ParticipantMapper
 import java.util.stream.Stream
+
 
 @WeddingKanshasaiSpringBootTest
 @DisplayName("ParticipantRepository")
 class ParticipantRepositoryTests {
+
+    @SpyBean
+    private lateinit var participantMapper: ParticipantMapper
 
     @Autowired
     private lateinit var participantRepository: ParticipantRepository
@@ -157,7 +167,11 @@ class ParticipantRepositoryTests {
         participantName: String,
         imageId: UlidId?,
         throwable: Class<T>?,
+        dbFailFlag: Boolean
     ) {
+        if (dbFailFlag) {
+            doReturn(0).`when`(participantMapper).insert(any(ParticipantDto::class.java))
+        }
         if (throwable != null) {
             assertThrows(throwable) {
                 participantRepository.createParticipant(session, participantName, imageId).getOrThrow()
@@ -186,6 +200,7 @@ class ParticipantRepositoryTests {
                 "participant_name",
                 UlidId.new(),
                 null,
+                false
             ),
             arguments(
                 "正常系 正しいnameのみを渡すと参加者レコードが挿入され、参加者が返される",
@@ -193,6 +208,7 @@ class ParticipantRepositoryTests {
                 "participant_name",
                 null,
                 null,
+                false
             ),
             arguments(
                 "正常系 既に存在するnameとユニークなimageIdを渡すと参加者レコードが挿入され、参加者が返される",
@@ -200,6 +216,7 @@ class ParticipantRepositoryTests {
                 participantDto.name,
                 UlidId.new(),
                 null,
+                false
             ),
             arguments(
                 "正常系 既に存在するnameと既に存在するimageIdを渡すと参加者レコードが挿入され、参加者が返される",
@@ -207,6 +224,7 @@ class ParticipantRepositoryTests {
                 participantDto.name,
                 participantDto.imageId?.let { UlidId.of(it).getOrThrow() },
                 null,
+                false
             ),
             arguments(
                 "異常系 DBに存在しないセッションを渡すとNotFoundExceptionが投げられる",
@@ -214,6 +232,7 @@ class ParticipantRepositoryTests {
                 "participant_name",
                 null,
                 NotFoundException::class.java,
+                false
             ),
             arguments(
                 "異常系 nameに空文字を渡すとInvalidArgumentExceptionが投げられる",
@@ -221,6 +240,7 @@ class ParticipantRepositoryTests {
                 "",
                 null,
                 InvalidArgumentException::class.java,
+                false
             ),
             arguments(
                 "異常系 nameに空文字かつDBに存在しないイベントを渡すとInvalidArgumentExceptionが投げられる",
@@ -228,6 +248,15 @@ class ParticipantRepositoryTests {
                 "",
                 null,
                 InvalidArgumentException::class.java,
+                false
+            ),
+            arguments(
+                "異常系 DBへの挿入に失敗するとDatabaseExceptionが投げられる",
+                Session.of(sessionDto),
+                "participant_name",
+                null,
+                DatabaseException::class.java,
+                true
             ),
         )
     }

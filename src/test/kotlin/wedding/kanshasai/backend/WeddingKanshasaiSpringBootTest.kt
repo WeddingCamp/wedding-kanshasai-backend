@@ -3,6 +3,7 @@ package wedding.kanshasai.backend
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestMethodOrder
+import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
 
@@ -15,3 +16,5 @@ import org.springframework.test.annotation.DirtiesContext
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext
 annotation class WeddingKanshasaiSpringBootTest
+
+fun <T> any(type: Class<T>): T = Mockito.any<T>(type)
