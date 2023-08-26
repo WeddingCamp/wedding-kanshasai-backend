@@ -8,3 +8,8 @@ jobs:
     uses: ./.github/workflows/publish.yml
     with:
       environment: prd
+    secrets:
+      DOCKERHUB_REGISTRY: ${{ secrets.DOCKERHUB_REGISTRY }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+      DEPLOY_URL: ${{ secrets.DEPLOY_URL }}

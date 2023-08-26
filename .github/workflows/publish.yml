@@ -5,6 +5,15 @@ on:
       environment:
         required: true
         type: string
+    secrets:
+      DOCKERHUB_REGISTRY:
+        required: true
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_PASSWORD:
+        required: true
+      DEPLOY_URL:
+        required: true
   workflow_dispatch:
     inputs:
       environment:
