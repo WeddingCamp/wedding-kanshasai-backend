@@ -18,4 +18,9 @@ class EventRepository(
         if (result == null) throw NotFoundException.record(TABLE, id, null)
         Event.of(result)
     }
+
+    fun listAll(): Result<List<Event>> = runCatching {
+        val eventList = eventMapper.select()
+        eventList.map(Event::of)
+    }
 }

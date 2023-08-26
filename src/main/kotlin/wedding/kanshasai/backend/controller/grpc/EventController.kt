@@ -1,11 +1,14 @@
 package wedding.kanshasai.backend.controller.grpc
 
 import net.devh.boot.grpc.server.service.GrpcService
+import wedding.kanshasai.backend.service.EventService
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.EventServiceGrpcKt.EventServiceCoroutineImplBase
 
 @GrpcService
-class EventController : EventServiceCoroutineImplBase() {
+class EventController(
+    private val eventService: EventService,
+) : EventServiceCoroutineImplBase() {
     override suspend fun createEvent(request: CreateEventRequest): CreateEventResponse {
         TODO("NOT IMPLEMENTED")
     }
@@ -19,6 +22,17 @@ class EventController : EventServiceCoroutineImplBase() {
     }
 
     override suspend fun listEvents(request: ListEventsRequest): ListEventsResponse {
-        TODO("NOT IMPLEMENTED")
+        val eventList = eventService.listEventAll().getOrThrow()
+        val grpcEventList = eventList.map { p ->
+            ListEventsResponse.Event.newBuilder().let {
+                it.eventId = p.id.toString()
+                it.eventName = p.name
+                it.build()
+            }
+        }
+        return ListEventsResponse.newBuilder().let {
+            it.addAllEvents(grpcEventList)
+            it.build()
+        }
     }
 }
