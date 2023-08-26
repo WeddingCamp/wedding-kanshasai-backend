@@ -16,10 +16,10 @@ class Participant private constructor(
     companion object {
         fun of(participantDto: ParticipantDto): Participant {
             return Participant(
-                UlidId.of(participantDto.identifier.id).getOrThrow(),
-                UlidId.of(participantDto.sessionId).getOrThrow(),
+                UlidId.of(participantDto.identifier.id),
+                UlidId.of(participantDto.sessionId),
                 participantDto.name,
-                participantDto.imageId?.let { UlidId.of(it).getOrThrow() },
+                participantDto.imageId?.let(UlidId::of),
                 participantDto.isDeleted,
                 participantDto.createdAt,
                 participantDto.updatedAt,

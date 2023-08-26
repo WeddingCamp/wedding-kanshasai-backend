@@ -98,13 +98,13 @@ class ParticipantRepositoryTests {
         return Stream.of(
             arguments(
                 "正常系 正しい参加者IDを渡すと参加者が返される",
-                UlidId.of(participantDto.identifier.id).getOrThrow(),
+                UlidId.of(participantDto.identifier.id),
                 Participant.of(participantDto),
                 null,
             ),
             arguments(
                 "異常系 存在しない参加者IDを渡すとNotFoundExceptionが投げられる",
-                UlidId.of(INVALID_PARTICIPANT_ID).getOrThrow(),
+                UlidId.of(INVALID_PARTICIPANT_ID),
                 null,
                 NotFoundException::class.java,
             ),
@@ -139,19 +139,19 @@ class ParticipantRepositoryTests {
         return Stream.of(
             arguments(
                 "正常系 正しいセッションIDを渡すと参加者の配列が返される",
-                UlidId.of(sessionDto.identifier.id).getOrThrow(),
+                UlidId.of(sessionDto.identifier.id),
                 participantDtoList,
                 null,
             ),
             arguments(
                 "正常系 クイズが0件なセッションIDを渡すと0件の参加者の配列が返される",
-                UlidId.of(participantEmptySessionDto.identifier.id).getOrThrow(),
+                UlidId.of(participantEmptySessionDto.identifier.id),
                 listOf<QuizDto>(),
                 null,
             ),
             arguments(
                 "異常系 存在しないセッションIDを渡すとNotFoundExceptionが投げられる",
-                UlidId.of(INVALID_SESSION_ID).getOrThrow(),
+                UlidId.of(INVALID_SESSION_ID),
                 null,
                 NotFoundException::class.java,
             ),
@@ -222,7 +222,7 @@ class ParticipantRepositoryTests {
                 "正常系 既に存在するnameと既に存在するimageIdを渡すと参加者レコードが挿入され、参加者が返される",
                 Session.of(sessionDto),
                 participantDto.name,
-                participantDto.imageId?.let { UlidId.of(it).getOrThrow() },
+                participantDto.imageId?.let(UlidId::of),
                 null,
                 false,
             ),

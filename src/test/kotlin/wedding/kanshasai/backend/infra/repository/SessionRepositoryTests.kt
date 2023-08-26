@@ -83,13 +83,13 @@ class SessionRepositoryTests {
         return Stream.of(
             arguments(
                 "正常系 正しいセッションIDを渡すとイベントが返される",
-                UlidId.of(sessionDto.identifier.id).getOrThrow(),
+                UlidId.of(sessionDto.identifier.id),
                 Session.of(sessionDto),
                 null,
             ),
             arguments(
                 "異常系 存在しないセッションIDを渡すとNotFoundExceptionが投げられる",
-                UlidId.of(INVALID_SESSION_ID).getOrThrow(),
+                UlidId.of(INVALID_SESSION_ID),
                 null,
                 NotFoundException::class.java,
             ),

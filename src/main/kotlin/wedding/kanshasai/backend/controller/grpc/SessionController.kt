@@ -3,6 +3,7 @@ package wedding.kanshasai.backend.controller.grpc
 import kotlinx.coroutines.flow.Flow
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
+import wedding.kanshasai.backend.domain.exception.InvalidUlidFormatException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.service.SessionService
 import wedding.kanshasai.v1.*
@@ -16,8 +17,8 @@ class SessionController(
         if (request.name.isNullOrEmpty()) throw InvalidArgumentException.requiredField("name")
         if (request.eventId.isNullOrEmpty()) throw InvalidArgumentException.requiredField("eventId")
 
-        val eventId = UlidId.of(request.eventId).getOrElse {
-            throw InvalidArgumentException("'eventId' cannot be parsed as ULID format.", it)
+        val eventId = try { UlidId.of(request.eventId) } catch (e: InvalidUlidFormatException) {
+            throw InvalidArgumentException("'eventId' cannot be parsed as ULID format.", e)
         }
 
         val session = sessionService.createSession(eventId, request.name).getOrThrow()

@@ -43,42 +43,42 @@ class UlidIdTest {
     @Test
     fun of_shouldSucceedWhenValidUlidTextIsPassed() {
         assertDoesNotThrow {
-            UlidId.of(VALID_ULID_TEXT).getOrThrow()
+            UlidId.of(VALID_ULID_TEXT)
         }
     }
 
     @Test
     fun of_shouldFailWhenInvalidUlidTextIsPassed() {
         assertThrows<InvalidUlidFormatException> {
-            UlidId.of(INVALID_ULID_TEXT).getOrThrow()
+            UlidId.of(INVALID_ULID_TEXT)
         }
     }
 
     @Test
     fun of_shouldFailWhenNotUlidTextIsPassed() {
         assertThrows<InvalidUlidFormatException> {
-            UlidId.of(NOT_ULID_TEXT).getOrThrow()
+            UlidId.of(NOT_ULID_TEXT)
         }
     }
 
     @Test
     fun of_shouldSucceedWhenValidUlidByteArrayIsPassed() {
         assertDoesNotThrow {
-            UlidId.of(VALID_ULID_BYTE_ARRAY).getOrThrow()
+            UlidId.of(VALID_ULID_BYTE_ARRAY)
         }
     }
 
     @Test
     fun of_shouldFailWhenInvalidUlidByteArrayIsPassed() {
         assertThrows<InvalidUlidFormatException> {
-            UlidId.of(INVALID_ULID_BYTE_ARRAY).getOrThrow()
+            UlidId.of(INVALID_ULID_BYTE_ARRAY)
         }
     }
 
     @Test
     fun of_shouldSucceedWhenValidULIDValueIsPassed() {
         assertDoesNotThrow {
-            UlidId.of(ULID().nextValue()).getOrThrow()
+            UlidId.of(ULID().nextValue())
         }
     }
 

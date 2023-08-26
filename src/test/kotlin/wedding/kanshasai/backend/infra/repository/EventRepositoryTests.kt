@@ -68,13 +68,13 @@ class EventRepositoryTests {
         return Stream.of(
             arguments(
                 "正常系 正しいイベントIDを渡すとイベントが返される",
-                UlidId.of(eventDto.identifier.id).getOrThrow(),
+                UlidId.of(eventDto.identifier.id),
                 Event.of(eventDto),
                 null,
             ),
             arguments(
                 "異常系 存在しないイベントIDを渡すとNotFoundExceptionが投げられる",
-                UlidId.of(INVALID_EVENT_ID).getOrThrow(),
+                UlidId.of(INVALID_EVENT_ID),
                 null,
                 NotFoundException::class.java,
             ),

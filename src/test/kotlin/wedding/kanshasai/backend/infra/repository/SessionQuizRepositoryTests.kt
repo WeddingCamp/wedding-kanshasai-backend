@@ -168,11 +168,11 @@ class SessionQuizRepositoryTests {
                 assertNotNull(sessionQuizDto)
                 assertEquals(
                     expectSessionQuiz.sessionId,
-                    sessionQuizDto?.identifier?.sessionId?.let { UlidId.of(it).getOrThrow() },
+                    sessionQuizDto?.identifier?.sessionId?.let(UlidId::of),
                 )
                 assertEquals(
                     expectSessionQuiz.quizId,
-                    sessionQuizDto?.identifier?.quizId?.let { UlidId.of(it).getOrThrow() },
+                    sessionQuizDto?.identifier?.quizId?.let(UlidId::of),
                 )
                 assertEquals(expectSessionQuiz.isCompleted, sessionQuizDto?.isCompleted)
                 assertEquals(expectSessionQuiz.startedAt, sessionQuizDto?.startedAt)

@@ -3,6 +3,7 @@ package wedding.kanshasai.backend.domain.value
 import de.huxhorn.sulky.ulid.ULID
 import wedding.kanshasai.backend.domain.exception.InvalidUlidFormatException
 import wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier
+import java.lang.Exception
 
 class UlidId private constructor(private val ulid: ULID.Value) {
     override fun toString(): String {
@@ -35,28 +36,30 @@ class UlidId private constructor(private val ulid: ULID.Value) {
     }
 
     companion object {
-        fun of(value: String): Result<UlidId> = runCatching {
-            try {
+        fun of(value: String): UlidId {
+            return try {
                 UlidId(ULID.parseULID(value))
             } catch (e: Exception) {
-                throw InvalidUlidFormatException(e.message)
+                throw InvalidUlidFormatException("Invalid ULID format.", e)
             }
         }
 
-        fun of(value: ByteArray): Result<UlidId> = runCatching {
-            try {
+        fun of(value: ByteArray): UlidId {
+            return try {
                 UlidId(ULID.fromBytes(value))
             } catch (e: Exception) {
-                throw InvalidUlidFormatException(e.message)
+                throw InvalidUlidFormatException("Invalid ULID format.", e)
             }
         }
 
-        fun of(value: ULID.Value): Result<UlidId> = runCatching {
-            UlidId(value)
+        fun of(value: ULID.Value): UlidId {
+            return try {
+                UlidId(value)
+            } catch (e: Exception) {
+                throw InvalidUlidFormatException("Invalid ULID format.", e)
+            }
         }
 
-        fun new(): UlidId {
-            return UlidId(ULID().nextValue())
-        }
+        fun new(): UlidId = UlidId(ULID().nextValue())
     }
 }

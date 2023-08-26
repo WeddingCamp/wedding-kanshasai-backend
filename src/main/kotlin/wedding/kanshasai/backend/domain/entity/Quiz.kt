@@ -17,8 +17,8 @@ class Quiz private constructor(
     companion object {
         fun of(quizDto: QuizDto): Quiz {
             return Quiz(
-                UlidId.of(quizDto.identifier.id).getOrThrow(),
-                UlidId.of(quizDto.eventId).getOrThrow(),
+                UlidId.of(quizDto.identifier.id),
+                UlidId.of(quizDto.eventId),
                 quizDto.body,
                 quizDto.correctAnswer,
                 quizDto.type,
