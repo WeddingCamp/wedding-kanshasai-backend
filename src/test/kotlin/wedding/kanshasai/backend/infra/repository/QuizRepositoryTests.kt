@@ -87,19 +87,19 @@ class QuizRepositoryTests {
         return Stream.of(
             arguments(
                 "正常系 正しいイベントIDを渡すとクイズの配列が返される",
-                UlidId.of(eventDto.identifier.id).getOrThrow(),
+                UlidId.of(eventDto.identifier.id),
                 quizDtoList,
                 null,
             ),
             arguments(
                 "正常系 クイズが0件なイベントIDを渡すと0件のクイズの配列が返される",
-                UlidId.of(quizEmptyEventDto.identifier.id).getOrThrow(),
+                UlidId.of(quizEmptyEventDto.identifier.id),
                 listOf<QuizDto>(),
                 null,
             ),
             arguments(
                 "異常系 存在しないイベントIDを渡すとNotFoundExceptionが投げられる",
-                UlidId.of(INVALID_EVENT_ID).getOrThrow(),
+                UlidId.of(INVALID_EVENT_ID),
                 null,
                 NotFoundException::class.java,
             ),

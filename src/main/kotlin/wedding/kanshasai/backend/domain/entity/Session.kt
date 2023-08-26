@@ -18,12 +18,12 @@ class Session private constructor(
     companion object {
         fun of(sessionDto: SessionDto): Session {
             return Session(
-                UlidId.of(sessionDto.identifier.id).getOrThrow(),
-                UlidId.of(sessionDto.eventId).getOrThrow(),
+                UlidId.of(sessionDto.identifier.id),
+                UlidId.of(sessionDto.eventId),
                 sessionDto.name,
                 sessionDto.stateId,
                 sessionDto.coverScreenId,
-                sessionDto.currentQuizId?.let { UlidId.of(it).getOrThrow() },
+                sessionDto.currentQuizId?.let(UlidId::of),
                 sessionDto.isDeleted,
                 sessionDto.createdAt,
                 sessionDto.updatedAt,

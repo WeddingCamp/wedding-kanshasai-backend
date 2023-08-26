@@ -16,8 +16,8 @@ class SessionQuiz private constructor(
     companion object {
         fun of(sessionQuizDto: SessionQuizDto): SessionQuiz {
             return SessionQuiz(
-                UlidId.of(sessionQuizDto.identifier.sessionId).getOrThrow(),
-                UlidId.of(sessionQuizDto.identifier.quizId).getOrThrow(),
+                UlidId.of(sessionQuizDto.identifier.sessionId),
+                UlidId.of(sessionQuizDto.identifier.quizId),
                 sessionQuizDto.isCompleted,
                 sessionQuizDto.startedAt,
                 sessionQuizDto.isDeleted,

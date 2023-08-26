@@ -3,6 +3,7 @@ package wedding.kanshasai.backend.controller.grpc
 import kotlinx.coroutines.flow.Flow
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
+import wedding.kanshasai.backend.domain.exception.InvalidUlidFormatException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.service.ParticipantService
 import wedding.kanshasai.v1.*
@@ -15,8 +16,8 @@ class ParticipantController(
     override suspend fun listParticipant(request: ListParticipantRequest): ListParticipantResponse {
         if (request.sessionId.isNullOrEmpty()) throw InvalidArgumentException.requiredField("sessionId")
 
-        val sessionId = UlidId.of(request.sessionId).getOrElse {
-            throw InvalidArgumentException("'sessionId' cannot be parsed as ULID format.", it)
+        val sessionId = try { UlidId.of(request.sessionId) } catch (e: InvalidUlidFormatException) {
+            throw InvalidArgumentException("'sessionId' cannot be parsed as ULID format.", e)
         }
 
         val participantList = participantService.listParticipantsBySessionId(sessionId).getOrThrow()
@@ -47,12 +48,12 @@ class ParticipantController(
         val imageId = if (request.imageId.isEmpty()) {
             null
         } else {
-            UlidId.of(request.imageId).getOrElse {
-                throw InvalidArgumentException("'imageId' cannot be parsed as ULID format.", it)
+            try { UlidId.of(request.imageId) } catch (e: InvalidUlidFormatException) {
+                throw InvalidArgumentException("'imageId' cannot be parsed as ULID format.", e)
             }
         }
-        val sessionId = UlidId.of(request.sessionId).getOrElse {
-            throw InvalidArgumentException("'sessionId' cannot be parsed as ULID format.", it)
+        val sessionId = try { UlidId.of(request.sessionId) } catch (e: InvalidUlidFormatException) {
+            throw InvalidArgumentException("'sessionId' cannot be parsed as ULID format.", e)
         }
 
         val participant = participantService.createParticipant(sessionId, request.name, imageId).getOrThrow()
