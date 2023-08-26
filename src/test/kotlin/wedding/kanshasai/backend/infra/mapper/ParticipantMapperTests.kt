@@ -33,7 +33,7 @@ class ParticipantMapperTests : MapperCRUDTest<ParticipantMapper, StandardIdentif
                             name = testTool.uuid
                             imageId = testTool.maybeNull(UlidId.new().toByteArray())
                             isDeleted = testTool.trueOrFalse
-                            sessionId = sessionDtoList.random().identifier.id
+                            sessionId = sessionDtoList.random().sessionIdentifier.id
                         },
                     )
                 }

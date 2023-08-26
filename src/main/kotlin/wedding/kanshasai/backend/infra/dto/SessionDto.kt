@@ -1,26 +1,33 @@
 package wedding.kanshasai.backend.infra.dto
 
 import wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier
+import wedding.kanshasai.backend.infra.dto.interfaces.ISession
 import java.sql.Timestamp
 
 data class SessionDto(
-    override var identifier: StandardIdentifier = StandardIdentifier(byteArrayOf()),
-    var eventId: ByteArray = byteArrayOf(),
-    var name: String = "",
-    var stateId: Int = 1,
-    var coverScreenId: Int? = null,
-    var currentQuizId: ByteArray? = null,
+    override var sessionIdentifier: StandardIdentifier = StandardIdentifier(byteArrayOf()),
+    override var eventId: ByteArray = byteArrayOf(),
+    override var name: String = "",
+    override var stateId: Int = 1,
+    override var coverScreenId: Int? = null,
+    override var currentQuizId: ByteArray? = null,
     override var isDeleted: Boolean = false,
-    var createdAt: Timestamp = Timestamp(0),
-    var updatedAt: Timestamp = Timestamp(0),
-) : IdentifiableDto<StandardIdentifier>(identifier, isDeleted) {
+    override var createdAt: Timestamp = Timestamp(0),
+    override var updatedAt: Timestamp = Timestamp(0),
+) : ISession, IdentifiableDto<StandardIdentifier>(isDeleted) {
+    override var identifier: StandardIdentifier
+        get() = sessionIdentifier
+        set(value) {
+            sessionIdentifier = value
+        }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
         other as SessionDto
 
-        if (identifier != other.identifier) return false
+        if (sessionIdentifier != other.sessionIdentifier) return false
         if (!eventId.contentEquals(other.eventId)) return false
         if (name != other.name) return false
         if (stateId != other.stateId) return false
@@ -34,5 +41,5 @@ data class SessionDto(
         return true
     }
 
-    override fun hashCode() = identifier.hashCode()
+    override fun hashCode() = sessionIdentifier.hashCode()
 }

@@ -31,7 +31,7 @@ class QuizMapperTests : MapperCRUDTest<QuizMapper, StandardIdentifier, QuizDto>(
                         correctAnswer = testTool.uuid
                         type = (0..100).random()
                         isDeleted = testTool.trueOrFalse
-                        eventId = eventDtoList.random().identifier.id
+                        eventId = eventDtoList.random().eventIdentifier.id
                     },
                 )
             }

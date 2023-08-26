@@ -7,6 +7,7 @@ import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.InvalidValueException
 import wedding.kanshasai.backend.domain.value.UlidId
+import wedding.kanshasai.backend.service.SessionQuizService
 import wedding.kanshasai.backend.service.SessionService
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.SessionServiceGrpcKt.SessionServiceCoroutineImplBase
@@ -15,6 +16,7 @@ import wedding.kanshasai.v1.SessionServiceGrpcKt.SessionServiceCoroutineImplBase
 class SessionController(
     private val sessionService: SessionService,
     private val grpcTool: GrpcTool,
+    private val sessionQuizService: SessionQuizService,
 ) : SessionServiceCoroutineImplBase() {
     override suspend fun createSession(request: CreateSessionRequest): CreateSessionResponse {
         if (request.name.isNullOrEmpty()) throw InvalidArgumentException.requiredField("name")
@@ -35,7 +37,34 @@ class SessionController(
     }
 
     override suspend fun listSessionQuizzes(request: ListSessionQuizzesRequest): ListSessionQuizzesResponse {
-        TODO("NOT IMPLEMENTED")
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+        val sessionQuizList = sessionQuizService.listQuizBySessionId(sessionId).getOrElse {
+            throw DatabaseException("Failed to retrieve session quizzes.", it)
+        }
+
+        val grpcSessionQuizList = sessionQuizList.map { (quiz, sessionQuiz, choiceList) ->
+            ListSessionQuizzesResponse.SessionQuiz.newBuilder().let {
+                it.quizId = quiz.id.toString()
+                it.body = quiz.body
+                it.quizType = quiz.type.toGrpcType()
+                it.addAllChoices(
+                    choiceList.map { choice ->
+                        ListSessionQuizzesResponse.Choice.newBuilder().let { c ->
+                            c.choiceId = choice.id.toString()
+                            c.body = choice.body
+                            c.build()
+                        }
+                    },
+                )
+                it.isCompleted = sessionQuiz.isCompleted
+                it.build()
+            }
+        }
+
+        return ListSessionQuizzesResponse.newBuilder().let {
+            it.addAllQuizzes(grpcSessionQuizList)
+            it.build()
+        }
     }
 
     override suspend fun setNextQuiz(request: SetNextQuizRequest): SetNextQuizResponse {

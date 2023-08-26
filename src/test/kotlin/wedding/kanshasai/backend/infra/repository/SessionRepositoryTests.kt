@@ -74,7 +74,7 @@ class SessionRepositoryTests {
         assertEquals(expect.id, session.id)
         assertEquals(expect.name, session.name)
         assertEquals(expect.stateId, session.stateId)
-        assertEquals(expect.coverScreenId, session.coverScreenId)
+        assertEquals(expect.coverScreen, session.coverScreen)
         assertEquals(expect.currentQuizId, session.currentQuizId)
         assertEquals(expect.isDeleted, session.isDeleted)
     }
@@ -83,7 +83,7 @@ class SessionRepositoryTests {
         return Stream.of(
             arguments(
                 "正常系 正しいセッションIDを渡すとイベントが返される",
-                UlidId.of(sessionDto.identifier.id),
+                UlidId.of(sessionDto.sessionIdentifier.id),
                 Session.of(sessionDto),
                 null,
             ),
@@ -118,7 +118,7 @@ class SessionRepositoryTests {
         val createdSession = sessionRepository.createSession(event, sessionName).getOrThrow()
         assertEquals(sessionName, createdSession.name)
         assertEquals(1, createdSession.stateId)
-        assertNull(createdSession.coverScreenId)
+        assertNull(createdSession.coverScreen)
         assertNull(createdSession.currentQuizId)
         assertFalse(createdSession.isDeleted)
 
@@ -126,7 +126,7 @@ class SessionRepositoryTests {
         assertEquals(createdSession.id, foundSession.id)
         assertEquals(createdSession.name, foundSession.name)
         assertEquals(createdSession.stateId, foundSession.stateId)
-        assertEquals(createdSession.coverScreenId, foundSession.coverScreenId)
+        assertEquals(createdSession.coverScreen, foundSession.coverScreen)
         assertEquals(createdSession.currentQuizId, foundSession.currentQuizId)
         assertEquals(createdSession.isDeleted, foundSession.isDeleted)
     }

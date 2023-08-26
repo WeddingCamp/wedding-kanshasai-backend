@@ -68,7 +68,7 @@ class EventRepositoryTests {
         return Stream.of(
             arguments(
                 "正常系 正しいイベントIDを渡すとイベントが返される",
-                UlidId.of(eventDto.identifier.id),
+                UlidId.of(eventDto.eventIdentifier.id),
                 Event.of(eventDto),
                 null,
             ),

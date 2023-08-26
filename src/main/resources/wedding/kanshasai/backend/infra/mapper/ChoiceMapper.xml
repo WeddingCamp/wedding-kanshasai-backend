@@ -81,6 +81,19 @@
             (is_deleted = false OR is_deleted = #{includeDeleted})
     </update>
 
+    <select id="listByQuizId" resultMap="choice">
+        SELECT
+            *
+        FROM
+            choices
+        WHERE
+            quiz_id = #{quizId}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY
+            id
+    </select>
+
     <resultMap id="choice" type="wedding.kanshasai.backend.infra.dto.ChoiceDto">
         <result property="quizId" column="quiz_id"/>
         <result property="body" column="body"/>

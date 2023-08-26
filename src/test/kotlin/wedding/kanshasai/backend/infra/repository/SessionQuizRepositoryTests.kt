@@ -11,7 +11,6 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.properties.bind.Bindable.listOf
 import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.DuplicateKeyException
@@ -114,7 +113,7 @@ class SessionQuizRepositoryTests {
             ),
             arguments(
                 "異常系 存在しないセッションIDと存在するクイズIDを渡すとNotFoundExceptionが投げられる",
-                Session.of(sessionDto.copy(identifier = UlidId.new().toStandardIdentifier())),
+                Session.of(sessionDto.copy(sessionIdentifier = UlidId.new().toStandardIdentifier())),
                 Quiz.of(insertedQuizDtoList.first()),
                 null,
                 NotFoundException::class.java,
@@ -122,14 +121,14 @@ class SessionQuizRepositoryTests {
             arguments(
                 "異常系 存在するセッションIDと存在しないクイズIDを渡すとNotFoundExceptionが投げられる",
                 Session.of(sessionDto),
-                Quiz.of(insertedQuizDtoList.first().copy(identifier = UlidId.new().toStandardIdentifier())),
+                Quiz.of(insertedQuizDtoList.first().copy(quizIdentifier = UlidId.new().toStandardIdentifier())),
                 null,
                 NotFoundException::class.java,
             ),
             arguments(
                 "異常系 存在しないセッションIDと存在しないクイズIDを渡すとNotFoundExceptionが投げられる",
-                Session.of(sessionDto.copy(identifier = UlidId.new().toStandardIdentifier())),
-                Quiz.of(insertedQuizDtoList.first().copy(identifier = UlidId.new().toStandardIdentifier())),
+                Session.of(sessionDto.copy(sessionIdentifier = UlidId.new().toStandardIdentifier())),
+                Quiz.of(insertedQuizDtoList.first().copy(quizIdentifier = UlidId.new().toStandardIdentifier())),
                 null,
                 NotFoundException::class.java,
             ),
@@ -168,11 +167,11 @@ class SessionQuizRepositoryTests {
                 assertNotNull(sessionQuizDto)
                 assertEquals(
                     expectSessionQuiz.sessionId,
-                    sessionQuizDto?.identifier?.sessionId?.let(UlidId::of),
+                    sessionQuizDto?.sessionQuizIdentifier?.sessionId?.let(UlidId::of),
                 )
                 assertEquals(
                     expectSessionQuiz.quizId,
-                    sessionQuizDto?.identifier?.quizId?.let(UlidId::of),
+                    sessionQuizDto?.sessionQuizIdentifier?.quizId?.let(UlidId::of),
                 )
                 assertEquals(expectSessionQuiz.isCompleted, sessionQuizDto?.isCompleted)
                 assertEquals(expectSessionQuiz.startedAt, sessionQuizDto?.startedAt)
@@ -190,7 +189,7 @@ class SessionQuizRepositoryTests {
                 quizDtoList.map {
                     SessionQuiz.of(
                         SessionQuizDto(
-                            SessionQuizIdentifier(sessionDto.identifier.id, it.identifier.id),
+                            SessionQuizIdentifier(sessionDto.sessionIdentifier.id, it.identifier.id),
                         ),
                     )
                 },
@@ -216,7 +215,7 @@ class SessionQuizRepositoryTests {
             arguments(
                 "異常系 クイズ配列にDBに存在しないクイズが含まれているとDataIntegrityViolationExceptionが投げられる",
                 Session.of(sessionDto),
-                quizDtoList.map { Quiz.of(it.copy(identifier = UlidId.new().toStandardIdentifier())) },
+                quizDtoList.map { Quiz.of(it.copy(quizIdentifier = UlidId.new().toStandardIdentifier())) },
                 null,
                 DataIntegrityViolationException::class.java,
                 false,
@@ -244,7 +243,7 @@ class SessionQuizRepositoryTests {
                 quizDtoList.map {
                     SessionQuiz.of(
                         SessionQuizDto(
-                            SessionQuizIdentifier(sessionDto.identifier.id, it.identifier.id),
+                            SessionQuizIdentifier(sessionDto.sessionIdentifier.id, it.identifier.id),
                         ),
                     )
                 },
