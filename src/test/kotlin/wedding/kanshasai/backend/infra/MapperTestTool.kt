@@ -76,12 +76,12 @@ class MapperTestTool {
         return sessionMapper.findById(sessionDto.identifier) ?: throw RuntimeException("Failed to create dto.")
     }
 
-    fun createParticipantDto(sessionDto: SessionDto, participantId: UlidId = UlidId.new()): ParticipantDto {
+    fun createParticipantDto(sessionDto: SessionDto, participantId: UlidId = UlidId.new(), imageId: UlidId? = null): ParticipantDto {
         return ParticipantDto(
             participantId.toStandardIdentifier(),
             sessionDto.identifier.id,
             "Participant_$participantId",
-            maybeNull(UlidId.new().toByteArray()),
+            imageId?.toByteArray() ?: maybeNull(UlidId.new().toByteArray()),
         )
     }
 

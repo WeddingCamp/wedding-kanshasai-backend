@@ -1,7 +1,7 @@
 package wedding.kanshasai.backend.infra.repository
 
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -48,33 +48,31 @@ class EventRepositoryTests {
     @ParameterizedTest(name = "{0}")
     @MethodSource("findById_parameters")
     @DisplayName("findById")
-    fun <T : Throwable> findById_test(name: String, id: UlidId, expect: Event?, throwable: Class<T>?) {
-        if (throwable == null) {
-            Assertions.assertDoesNotThrow {
-                val event = eventRepository.findById(id).getOrThrow()
-                if (expect != null) {
-                    assertEquals(expect.id, event.id)
-                    assertEquals(expect.name, event.name)
-                    assertEquals(expect.isDeleted, event.isDeleted)
-                }
-            }
-        } else {
-            Assertions.assertThrows(throwable) {
+    fun <T : Throwable> findById_test(testCaseName: String, id: UlidId, expect: Event?, throwable: Class<T>?) {
+        if (throwable != null) {
+            assertThrows(throwable) {
                 eventRepository.findById(id).getOrThrow()
             }
+            return
+        }
+        val event = eventRepository.findById(id).getOrThrow()
+        if (expect != null) {
+            assertEquals(expect.id, event.id)
+            assertEquals(expect.name, event.name)
+            assertEquals(expect.isDeleted, event.isDeleted)
         }
     }
 
     fun findById_parameters(): Stream<Arguments> {
         return Stream.of(
             arguments(
-                "正常系 正しいIDを渡すとイベントが返される",
+                "正常系 正しいイベントIDを渡すとイベントが返される",
                 UlidId.of(eventDto.identifier.id).getOrThrow(),
                 Event.of(eventDto),
                 null,
             ),
             arguments(
-                "異常系 存在しないIDを渡すとNotFoundExceptionが投げられる",
+                "異常系 存在しないイベントIDを渡すとNotFoundExceptionが投げられる",
                 UlidId.of(INVALID_EVENT_ID).getOrThrow(),
                 null,
                 NotFoundException::class.java,
