@@ -5,6 +5,9 @@ import wedding.kanshasai.backend.domain.value.UlidId
 
 class DatabaseException(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause) {
     companion object {
+        fun failedToRetrieve(table: Table, cause: Throwable?): DatabaseException {
+            return DatabaseException("Failed to retrieve from ${table.tableName}.", cause)
+        }
         fun failedToRetrieve(table: Table, id: UlidId, cause: Throwable?): DatabaseException {
             return DatabaseException("Failed to retrieve ${table.tableName}(id=$id).", cause)
         }
