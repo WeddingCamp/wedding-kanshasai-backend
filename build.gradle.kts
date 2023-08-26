@@ -41,7 +41,7 @@ dependencies {
 
     // gRPC
     implementation("net.devh:grpc-spring-boot-starter:2.14.0.RELEASE")
-    implementation("wedding.kanshasai:protobuf:0.0.4")
+    implementation("wedding.kanshasai:protobuf:0.0.5")
 
     // Logging
     implementation("ch.qos.logback:logback-classic:1.4.8")

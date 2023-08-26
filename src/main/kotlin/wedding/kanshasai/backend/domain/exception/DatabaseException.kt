@@ -34,5 +34,8 @@ class DatabaseException(message: String? = null, cause: Throwable? = null) : Run
                 cause,
             )
         }
+        fun failedToUpdate(table: Table, id: UlidId, cause: Throwable?): DatabaseException {
+            return DatabaseException("Failed to update ${table.tableName}(id=$id).", cause)
+        }
     }
 }

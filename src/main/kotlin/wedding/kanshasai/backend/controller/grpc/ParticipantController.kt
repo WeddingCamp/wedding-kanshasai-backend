@@ -3,7 +3,7 @@ package wedding.kanshasai.backend.controller.grpc
 import kotlinx.coroutines.flow.Flow
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
-import wedding.kanshasai.backend.domain.exception.InvalidUlidFormatException
+import wedding.kanshasai.backend.domain.exception.InvalidValueException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.service.ParticipantService
 import wedding.kanshasai.v1.*
@@ -16,7 +16,7 @@ class ParticipantController(
     override suspend fun listParticipant(request: ListParticipantRequest): ListParticipantResponse {
         if (request.sessionId.isNullOrEmpty()) throw InvalidArgumentException.requiredField("sessionId")
 
-        val sessionId = try { UlidId.of(request.sessionId) } catch (e: InvalidUlidFormatException) {
+        val sessionId = try { UlidId.of(request.sessionId) } catch (e: InvalidValueException) {
             throw InvalidArgumentException("'sessionId' cannot be parsed as ULID format.", e)
         }
 
@@ -48,11 +48,11 @@ class ParticipantController(
         val imageId = if (request.imageId.isEmpty()) {
             null
         } else {
-            try { UlidId.of(request.imageId) } catch (e: InvalidUlidFormatException) {
+            try { UlidId.of(request.imageId) } catch (e: InvalidValueException) {
                 throw InvalidArgumentException("'imageId' cannot be parsed as ULID format.", e)
             }
         }
-        val sessionId = try { UlidId.of(request.sessionId) } catch (e: InvalidUlidFormatException) {
+        val sessionId = try { UlidId.of(request.sessionId) } catch (e: InvalidValueException) {
             throw InvalidArgumentException("'sessionId' cannot be parsed as ULID format.", e)
         }
 

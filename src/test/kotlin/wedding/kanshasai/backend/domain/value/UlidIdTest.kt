@@ -4,7 +4,7 @@ import de.huxhorn.sulky.ulid.ULID
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import wedding.kanshasai.backend.domain.exception.InvalidUlidFormatException
+import wedding.kanshasai.backend.domain.exception.InvalidValueException
 
 class UlidIdTest {
     companion object {
@@ -49,14 +49,14 @@ class UlidIdTest {
 
     @Test
     fun of_shouldFailWhenInvalidUlidTextIsPassed() {
-        assertThrows<InvalidUlidFormatException> {
+        assertThrows<InvalidValueException> {
             UlidId.of(INVALID_ULID_TEXT)
         }
     }
 
     @Test
     fun of_shouldFailWhenNotUlidTextIsPassed() {
-        assertThrows<InvalidUlidFormatException> {
+        assertThrows<InvalidValueException> {
             UlidId.of(NOT_ULID_TEXT)
         }
     }
@@ -70,7 +70,7 @@ class UlidIdTest {
 
     @Test
     fun of_shouldFailWhenInvalidUlidByteArrayIsPassed() {
-        assertThrows<InvalidUlidFormatException> {
+        assertThrows<InvalidValueException> {
             UlidId.of(INVALID_ULID_BYTE_ARRAY)
         }
     }
