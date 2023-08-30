@@ -7,9 +7,10 @@ jobs:
   build-and-push:
     uses: ./.github/workflows/publish.yml
     with:
-      environment: nightly
+      environment: dev
     secrets:
       DOCKERHUB_REGISTRY: ${{ secrets.DOCKERHUB_REGISTRY }}
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+      DOCKERHUB_PROJECT: ${{ secrets.DOCKERHUB_PROJECT }}
       DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
