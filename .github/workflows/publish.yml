@@ -22,7 +22,7 @@ on:
         default: stg
         type: choice
         options:
-          - nightly
+          - dev
           - stg
           - prd
 env:
@@ -55,9 +55,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_REGISTRY }}/library/wedding-kanshasai-backend-${{ env.environment }}:${{ github.sha }},${{ secrets.DOCKERHUB_REGISTRY }}/library/wedding-kanshasai-backend-${{ env.environment }}:latest
+          tags: ${{ secrets.DOCKERHUB_REGISTRY }}/${{ secrets.DOCKERHUB_PROJECT }}/wedding-kanshasai-backend-${{ env.environment }}:${{ github.sha }},${{ secrets.DOCKERHUB_REGISTRY }}/${{ secrets.DOCKERHUB_PROJECT }}/wedding-kanshasai-backend-${{ env.environment }}:latest
 
       - name: Apply new image
         shell: bash
         run: |
-          curl ${{ secrets.DEPLOY_URL }}?env=${{ env.environment }}
+          curl ${{ secrets.DEPLOY_URL }}?target=wedding-kanshasai-backend-${{ env.environment }}
