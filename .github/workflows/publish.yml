@@ -12,6 +12,8 @@ on:
         required: true
       DOCKERHUB_PASSWORD:
         required: true
+      DOCKERHUB_PROJECT:
+        required: true
       DEPLOY_URL:
         required: true
   workflow_dispatch:
