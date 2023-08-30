@@ -22,7 +22,7 @@ on:
         default: stg
         type: choice
         options:
-          - nightly
+          - dev
           - stg
           - prd
 env:
