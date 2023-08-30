@@ -60,4 +60,4 @@ jobs:
       - name: Apply new image
         shell: bash
         run: |
-          curl ${{ secrets.DEPLOY_URL }}?env=${{ env.environment }}
+          curl ${{ secrets.DEPLOY_URL }}?target=wedding-kanshasai-backend-${{ env.environment }}
