@@ -1,4 +1,4 @@
-name: "[CD] Publish"
+name: "[Deploy] Publish"
 on:
   workflow_call:
     inputs:
@@ -11,6 +11,8 @@ on:
       DOCKERHUB_USERNAME:
         required: true
       DOCKERHUB_PASSWORD:
+        required: true
+      DOCKERHUB_PROJECT:
         required: true
       DEPLOY_URL:
         required: true
