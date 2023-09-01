@@ -5,6 +5,7 @@ import io.lettuce.core.ReadFrom
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.redis.connection.RedisPassword
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
@@ -27,6 +28,8 @@ class RedisConfiguration(
             it.hostName = redisProperties.host
             it.port = redisProperties.port
             it.database = redisProperties.database
+            it.username = redisProperties.username
+            it.password = RedisPassword.of(redisProperties.password)
         }
         return LettuceConnectionFactory(serverConfig, clientConfig)
     }

@@ -9,9 +9,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
+      host: ${REDIS_HOST:rds01.l.mizucoffee.com}
       port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
+      password: ${REDIS_PASSWORD:sp*wLdu4tx--VzAjnxvC}
       database: ${REDIS_DATABASE:0}
 
 mybatis.configuration.map-underscore-to-camel-case: true

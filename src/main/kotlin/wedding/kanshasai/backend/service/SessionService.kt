@@ -6,11 +6,11 @@ import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.value.CoverScreenType
 import wedding.kanshasai.backend.domain.value.UlidId
-import wedding.kanshasai.backend.infra.redis.event.CoverScreenRedisEvent
 import wedding.kanshasai.backend.infra.mysql.repository.EventRepository
 import wedding.kanshasai.backend.infra.mysql.repository.QuizRepository
 import wedding.kanshasai.backend.infra.mysql.repository.SessionQuizRepository
 import wedding.kanshasai.backend.infra.mysql.repository.SessionRepository
+import wedding.kanshasai.backend.infra.redis.event.CoverScreenRedisEvent
 
 @Service
 class SessionService(
