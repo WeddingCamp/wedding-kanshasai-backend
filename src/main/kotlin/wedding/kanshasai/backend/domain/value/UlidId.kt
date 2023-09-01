@@ -2,7 +2,7 @@ package wedding.kanshasai.backend.domain.value
 
 import de.huxhorn.sulky.ulid.ULID
 import wedding.kanshasai.backend.domain.exception.InvalidValueException
-import wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier
+import wedding.kanshasai.backend.infra.mysql.dto.identifier.StandardIdentifier
 import java.lang.Exception
 
 class UlidId private constructor(private val value: ULID.Value) {

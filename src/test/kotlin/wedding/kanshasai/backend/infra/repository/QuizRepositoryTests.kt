@@ -14,9 +14,10 @@ import wedding.kanshasai.backend.domain.entity.Quiz
 import wedding.kanshasai.backend.domain.exception.NotFoundException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
-import wedding.kanshasai.backend.infra.dto.EventDto
-import wedding.kanshasai.backend.infra.dto.QuizDto
-import wedding.kanshasai.backend.infra.dto.SessionDto
+import wedding.kanshasai.backend.infra.mysql.dto.EventDto
+import wedding.kanshasai.backend.infra.mysql.dto.QuizDto
+import wedding.kanshasai.backend.infra.mysql.dto.SessionDto
+import wedding.kanshasai.backend.infra.mysql.repository.QuizRepository
 import java.util.stream.Stream
 
 @WeddingKanshasaiSpringBootTest

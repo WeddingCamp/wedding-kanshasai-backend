@@ -3,8 +3,9 @@ package wedding.kanshasai.backend.infra.mapper
 import org.springframework.beans.factory.annotation.Autowired
 import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
 import wedding.kanshasai.backend.infra.MapperTestTool
-import wedding.kanshasai.backend.infra.dto.SessionQuizDto
-import wedding.kanshasai.backend.infra.dto.identifier.SessionQuizIdentifier
+import wedding.kanshasai.backend.infra.mysql.dto.SessionQuizDto
+import wedding.kanshasai.backend.infra.mysql.dto.identifier.SessionQuizIdentifier
+import wedding.kanshasai.backend.infra.mysql.mapper.SessionQuizMapper
 import java.sql.Timestamp
 
 @WeddingKanshasaiSpringBootTest

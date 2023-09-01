@@ -5,7 +5,8 @@ import wedding.kanshasai.backend.domain.constant.Table
 import wedding.kanshasai.backend.domain.entity.Participant
 import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.value.UlidId
-import wedding.kanshasai.backend.infra.repository.*
+import wedding.kanshasai.backend.infra.mysql.repository.ParticipantRepository
+import wedding.kanshasai.backend.infra.mysql.repository.SessionRepository
 
 @Service
 class ParticipantService(

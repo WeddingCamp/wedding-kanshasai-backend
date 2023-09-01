@@ -18,9 +18,10 @@ import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.NotFoundException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
-import wedding.kanshasai.backend.infra.dto.EventDto
-import wedding.kanshasai.backend.infra.dto.SessionDto
-import wedding.kanshasai.backend.infra.mapper.SessionMapper
+import wedding.kanshasai.backend.infra.mysql.dto.EventDto
+import wedding.kanshasai.backend.infra.mysql.dto.SessionDto
+import wedding.kanshasai.backend.infra.mysql.mapper.SessionMapper
+import wedding.kanshasai.backend.infra.mysql.repository.SessionRepository
 import java.util.stream.Stream
 
 @WeddingKanshasaiSpringBootTest

@@ -7,7 +7,9 @@ import wedding.kanshasai.backend.domain.entity.Quiz
 import wedding.kanshasai.backend.domain.entity.SessionQuiz
 import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.value.UlidId
-import wedding.kanshasai.backend.infra.repository.*
+import wedding.kanshasai.backend.infra.mysql.repository.ChoiceRepository
+import wedding.kanshasai.backend.infra.mysql.repository.SessionQuizRepository
+import wedding.kanshasai.backend.infra.mysql.repository.SessionRepository
 
 @Service
 class SessionQuizService(

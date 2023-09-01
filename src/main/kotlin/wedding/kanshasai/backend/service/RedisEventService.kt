@@ -12,7 +12,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
 import org.springframework.stereotype.Service
 import wedding.kanshasai.backend.domain.value.UlidId
-import wedding.kanshasai.backend.infra.redis.type.RedisEvent
+import wedding.kanshasai.backend.infra.redis.event.RedisEvent
 import kotlin.reflect.KClass
 
 private val logger = KotlinLogging.logger {}

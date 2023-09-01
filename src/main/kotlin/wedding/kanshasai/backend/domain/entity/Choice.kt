@@ -1,7 +1,7 @@
 package wedding.kanshasai.backend.domain.entity
 
 import wedding.kanshasai.backend.domain.value.UlidId
-import wedding.kanshasai.backend.infra.dto.ChoiceDto
+import wedding.kanshasai.backend.infra.mysql.dto.ChoiceDto
 import java.sql.Timestamp
 
 class Choice private constructor(

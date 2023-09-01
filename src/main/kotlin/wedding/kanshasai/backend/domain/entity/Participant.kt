@@ -1,7 +1,7 @@
 package wedding.kanshasai.backend.domain.entity
 
 import wedding.kanshasai.backend.domain.value.UlidId
-import wedding.kanshasai.backend.infra.dto.ParticipantDto
+import wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto
 import java.sql.Timestamp
 
 class Participant private constructor(
