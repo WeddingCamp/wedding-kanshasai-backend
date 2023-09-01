@@ -5,11 +5,6 @@
 
 ### Development Server
 ```bash
-$ docker compose up proxy database -d
+$ docker compose up -d
 $ ./gradlew bootRun
-```
-
-### Instant Server
-```bash
-$ docker compose up
 ```

@@ -43,7 +43,7 @@ class SessionRepository(
     }
 
     fun updateCoverScreen(session: Session, coverScreenType: CoverScreenType): Result<Unit> = runCatching {
-        val isSucceed = sessionMapper.update(session.toDto().copy(coverScreenId = coverScreenType.number))
+        val isSucceed = sessionMapper.update(session.toDto().copy(coverScreenId = coverScreenType.toNumber()))
         if (!isSucceed) throw DatabaseException.failedToUpdate(TABLE, session.id, null)
     }
 }

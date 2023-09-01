@@ -1,18 +1,16 @@
 package wedding.kanshasai.backend.domain.value
 
+import wedding.kanshasai.backend.configration.NoArg
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.v1.CoverScreenType as CoverScreenTypeGrpc
 
-class CoverScreenType private constructor(private val value: CoverScreenTypeEnum) {
-    val number: Int get() = value.number
+@NoArg
+class CoverScreenType private constructor(val value: CoverScreenTypeEnum) {
+    override fun toString(): String = value.name
 
-    override fun toString(): String {
-        return value.name
-    }
+    fun toNumber(): Int = value.number
 
-    fun toGrpcType(): CoverScreenTypeGrpc {
-        return value.grpcValue
-    }
+    fun toGrpcType(): CoverScreenTypeGrpc = value.grpcValue
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -27,7 +25,7 @@ class CoverScreenType private constructor(private val value: CoverScreenTypeEnum
         return value.hashCode()
     }
 
-    private enum class CoverScreenTypeEnum(
+    enum class CoverScreenTypeEnum(
         val number: Int,
         val grpcValue: CoverScreenTypeGrpc,
     ) {

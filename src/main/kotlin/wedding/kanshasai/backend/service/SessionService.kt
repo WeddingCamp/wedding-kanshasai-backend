@@ -6,6 +6,7 @@ import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.value.CoverScreenType
 import wedding.kanshasai.backend.domain.value.UlidId
+import wedding.kanshasai.backend.infra.redis.type.CoverScreenRedisEvent
 import wedding.kanshasai.backend.infra.repository.EventRepository
 import wedding.kanshasai.backend.infra.repository.QuizRepository
 import wedding.kanshasai.backend.infra.repository.SessionQuizRepository
@@ -17,6 +18,7 @@ class SessionService(
     private val sessionRepository: SessionRepository,
     private val quizRepository: QuizRepository,
     private val sessionQuizRepository: SessionQuizRepository,
+    private val redisEventService: RedisEventService,
 ) {
     fun createSession(eventId: UlidId, name: String): Result<Session> = runCatching {
         val event = eventRepository.findById(eventId).getOrElse {
@@ -41,5 +43,6 @@ class SessionService(
         sessionRepository.updateCoverScreen(session, coverScreenType).getOrElse {
             throw DatabaseException.failedToUpdate(Table.SESSION, sessionId, it)
         }
+        redisEventService.publish(CoverScreenRedisEvent(coverScreenType), sessionId)
     }
 }

@@ -1,0 +1,17 @@
+grpc.server.port: 6565
+
+spring:
+  profiles.active: default
+  datasource:
+    url: jdbc:${DATABASE_URL:mysql://127.0.0.1:3306/wedding_kanshasai}
+    username: ${DATABASE_USERNAME:mysql}
+    password: ${DATABASE_PASSWORD:mysql}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DATABASE:0}
+
+mybatis.configuration.map-underscore-to-camel-case: true

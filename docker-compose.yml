@@ -1,22 +1,13 @@
 version: "3"
 services:
-  backend:
-    build: .
-    ports:
-      - "6565:6565"
-    depends_on:
-      - proxy
-      - database
-    environment:
-      DATABASE_URL: mysql://database:3306/wedding_kanshasai
-      DATABASE_USERNAME: mysql
-      DATABASE_PASSWORD: mysql
   proxy:
     image: envoyproxy/envoy:distroless-v1.27-latest
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
     ports:
       - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   database:
     image: mysql:8
     ports:
@@ -32,4 +23,11 @@ services:
       MYSQL_USER: mysql
       MYSQL_PASSWORD: mysql
       TZ: Asia/Tokyo
+    restart: always
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./docker/redis:/data
     restart: always
