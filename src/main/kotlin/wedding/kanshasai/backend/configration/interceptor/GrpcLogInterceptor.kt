@@ -46,10 +46,16 @@ class GrpcLogInterceptor : ServerInterceptor {
                     super.sendMessage(message)
                 }
 
+                override fun sendHeaders(m: Metadata?) {
+                    val metadata = m ?: Metadata()
+                    metadata.put(Metadata.Key.of(REQUEST_ID_KEY, Metadata.ASCII_STRING_MARSHALLER), requestId)
+                    super.sendHeaders(metadata)
+                }
+
                 override fun close(status: Status?, trailers: Metadata?) {
                     MDC.put(REQUEST_ID_KEY, requestId)
                     val metadata = trailers ?: Metadata()
-                    metadata.put(Metadata.Key.of(REQUEST_ID_KEY, Metadata.ASCII_STRING_MARSHALLER), MDC.get(REQUEST_ID_KEY))
+                    metadata.put(Metadata.Key.of(REQUEST_ID_KEY, Metadata.ASCII_STRING_MARSHALLER), requestId)
 
                     super.close(status, metadata)
 

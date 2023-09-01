@@ -21,7 +21,7 @@ class Session private constructor(
         eventId.toByteArray(),
         name,
         stateId,
-        coverScreen?.number,
+        coverScreen?.toNumber(),
         currentQuizId?.toByteArray(),
         isDeleted,
         createdAt,

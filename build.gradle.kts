@@ -7,6 +7,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.2"
     id("org.jlleitschuh.gradle.ktlint") version "11.5.0"
     id("org.jlleitschuh.gradle.ktlint-idea") version "11.5.0"
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.3.11"
     kotlin("jvm") version "1.8.22"
     kotlin("plugin.spring") version "1.8.22"
     jacoco
@@ -32,6 +33,7 @@ dependencies {
 
     // Database
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis:3.1.3")
     implementation("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.5.0")
     implementation("com.mysql:mysql-connector-j:8.1.0")
     implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0")
@@ -71,6 +73,10 @@ tasks.withType<JacocoReport> {
 
 tasks.getByName<BootJar>("bootJar") {
     archiveFileName = "backend.jar"
+}
+
+noArg {
+    annotation("wedding.kanshasai.backend.configration.NoArg")
 }
 
 configurations {
