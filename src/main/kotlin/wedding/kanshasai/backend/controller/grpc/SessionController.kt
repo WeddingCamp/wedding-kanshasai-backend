@@ -2,7 +2,6 @@ package wedding.kanshasai.backend.controller.grpc
 
 import kotlinx.coroutines.flow.Flow
 import net.devh.boot.grpc.server.service.GrpcService
-import wedding.kanshasai.backend.controller.GrpcTool
 import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.InvalidValueException

@@ -3,9 +3,10 @@ package wedding.kanshasai.backend.infra.mapper
 import org.springframework.beans.factory.annotation.Autowired
 import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
 import wedding.kanshasai.backend.infra.MapperTestTool
-import wedding.kanshasai.backend.infra.dto.EventDto
-import wedding.kanshasai.backend.infra.dto.QuizDto
-import wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier
+import wedding.kanshasai.backend.infra.mysql.dto.EventDto
+import wedding.kanshasai.backend.infra.mysql.dto.QuizDto
+import wedding.kanshasai.backend.infra.mysql.dto.identifier.StandardIdentifier
+import wedding.kanshasai.backend.infra.mysql.mapper.QuizMapper
 
 @WeddingKanshasaiSpringBootTest
 class QuizMapperTests : MapperCRUDTest<QuizMapper, StandardIdentifier, QuizDto>() {

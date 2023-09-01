@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service
 import wedding.kanshasai.backend.domain.constant.Table
 import wedding.kanshasai.backend.domain.entity.Event
 import wedding.kanshasai.backend.domain.exception.DatabaseException
-import wedding.kanshasai.backend.infra.repository.EventRepository
+import wedding.kanshasai.backend.infra.mysql.repository.EventRepository
 
 @Service
 class EventService(

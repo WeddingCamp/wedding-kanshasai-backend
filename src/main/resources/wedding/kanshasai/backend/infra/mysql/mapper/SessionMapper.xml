@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wedding.kanshasai.backend.infra.mysql.mapper.SessionMapper">
+
+    <insert id="insert">
+        INSERT INTO sessions(
+            id,
+            event_id,
+            name,
+            state_id,
+            cover_screen_id,
+            current_quiz_id,
+            is_deleted
+        )
+        VALUES (
+            #{entity.identifier.id},
+            #{entity.eventId},
+            #{entity.name},
+            #{entity.stateId},
+            #{entity.coverScreenId},
+            #{entity.currentQuizId},
+            #{entity.isDeleted}
+        )
+    </insert>
+
+    <insert id="insertAll">
+        INSERT INTO sessions(
+            id,
+            event_id,
+            name,
+            state_id,
+            cover_screen_id,
+            current_quiz_id,
+            is_deleted
+        )
+        VALUES
+        <foreach collection="entities" item="entity" separator=",">
+            (
+                #{entity.identifier.id},
+                #{entity.eventId},
+                #{entity.name},
+                #{entity.stateId},
+                #{entity.coverScreenId},
+                #{entity.currentQuizId},
+                #{entity.isDeleted}
+            )
+        </foreach>
+    </insert>
+
+    <select id="select" resultMap="session">
+        SELECT
+            *
+        FROM
+            sessions
+        WHERE
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY
+            id
+    </select>
+
+    <select id="findById" resultMap="session">
+        SELECT
+            *
+        FROM
+            sessions
+        WHERE
+            id = #{identifier.id}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </select>
+
+    <update id="update">
+        UPDATE
+            sessions
+        SET
+            event_id = #{entity.eventId},
+            name = #{entity.name},
+            state_id = #{entity.stateId},
+            cover_screen_id = #{entity.coverScreenId},
+            current_quiz_id = #{entity.currentQuizId},
+            is_deleted = #{entity.isDeleted}
+        WHERE
+            id = #{entity.identifier.id}
+        AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
+    <update id="deleteById">
+        UPDATE
+            sessions
+        SET
+            is_deleted = true
+        WHERE
+            id = #{identifier.id}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
+    <resultMap id="session" type="wedding.kanshasai.backend.infra.mysql.dto.SessionDto">
+        <result property="eventId" column="event_id"/>
+        <result property="name" column="name"/>
+        <result property="stateId" column="state_id"/>
+        <result property="coverScreenId" column="cover_screen_id"/>
+        <result property="currentQuizId" column="current_quiz_id"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="identifier" resultMap="sessionIdentifier"/>
+    </resultMap>
+
+    <resultMap id="sessionIdentifier" type="wedding.kanshasai.backend.infra.mysql.dto.identifier.StandardIdentifier">
+        <id property="id" column="id"/>
+    </resultMap>
+</mapper>

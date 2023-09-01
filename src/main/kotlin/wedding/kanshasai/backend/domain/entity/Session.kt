@@ -2,7 +2,7 @@ package wedding.kanshasai.backend.domain.entity
 
 import wedding.kanshasai.backend.domain.value.CoverScreenType
 import wedding.kanshasai.backend.domain.value.UlidId
-import wedding.kanshasai.backend.infra.dto.SessionDto
+import wedding.kanshasai.backend.infra.mysql.dto.SessionDto
 import java.sql.Timestamp
 
 class Session private constructor(

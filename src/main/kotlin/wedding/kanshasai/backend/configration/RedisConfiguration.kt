@@ -12,7 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.listener.RedisMessageListenerContainer
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer
-import wedding.kanshasai.backend.infra.redis.type.RedisEvent
+import wedding.kanshasai.backend.infra.redis.event.RedisEvent
 
 @Configuration
 class RedisConfiguration(

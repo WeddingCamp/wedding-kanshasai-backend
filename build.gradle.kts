@@ -76,7 +76,7 @@ tasks.getByName<BootJar>("bootJar") {
 }
 
 noArg {
-    annotation("wedding.kanshasai.backend.configration.NoArg")
+    annotation("wedding.kanshasai.backend.annotation.NoArg")
 }
 
 configurations {

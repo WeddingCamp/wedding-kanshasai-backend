@@ -3,9 +3,10 @@ package wedding.kanshasai.backend.infra.mapper
 import org.springframework.beans.factory.annotation.Autowired
 import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
 import wedding.kanshasai.backend.infra.MapperTestTool
-import wedding.kanshasai.backend.infra.dto.ChoiceDto
-import wedding.kanshasai.backend.infra.dto.QuizDto
-import wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier
+import wedding.kanshasai.backend.infra.mysql.dto.ChoiceDto
+import wedding.kanshasai.backend.infra.mysql.dto.QuizDto
+import wedding.kanshasai.backend.infra.mysql.dto.identifier.StandardIdentifier
+import wedding.kanshasai.backend.infra.mysql.mapper.ChoiceMapper
 
 @WeddingKanshasaiSpringBootTest
 class ChoiceMapperTests : MapperCRUDTest<ChoiceMapper, StandardIdentifier, ChoiceDto>() {
