@@ -1,6 +1,6 @@
 package wedding.kanshasai.backend.domain.value
 
-import wedding.kanshasai.backend.configration.NoArg
+import wedding.kanshasai.backend.annotation.NoArg
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.v1.CoverScreenType as CoverScreenTypeGrpc
 

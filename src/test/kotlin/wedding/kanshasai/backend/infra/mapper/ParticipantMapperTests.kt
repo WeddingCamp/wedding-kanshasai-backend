@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
-import wedding.kanshasai.backend.infra.dto.ParticipantDto
-import wedding.kanshasai.backend.infra.dto.SessionDto
-import wedding.kanshasai.backend.infra.dto.identifier.StandardIdentifier
+import wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto
+import wedding.kanshasai.backend.infra.mysql.dto.SessionDto
+import wedding.kanshasai.backend.infra.mysql.dto.identifier.StandardIdentifier
+import wedding.kanshasai.backend.infra.mysql.mapper.ParticipantMapper
 
 @WeddingKanshasaiSpringBootTest
 class ParticipantMapperTests : MapperCRUDTest<ParticipantMapper, StandardIdentifier, ParticipantDto>() {

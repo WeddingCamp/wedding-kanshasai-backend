@@ -5,8 +5,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.springframework.beans.factory.annotation.Autowired
 import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
-import wedding.kanshasai.backend.infra.dto.IdentifiableDto
-import wedding.kanshasai.backend.infra.dto.identifier.DtoIdentifier
+import wedding.kanshasai.backend.infra.mysql.dto.IdentifiableDto
+import wedding.kanshasai.backend.infra.mysql.dto.identifier.DtoIdentifier
+import wedding.kanshasai.backend.infra.mysql.mapper.MapperCRUDBase
 
 @WeddingKanshasaiSpringBootTest
 abstract class MapperCRUDTest<MAPPER : MapperCRUDBase<IDENTIFIER, DTO>, IDENTIFIER : DtoIdentifier, DTO : IdentifiableDto<IDENTIFIER>> {

@@ -3,8 +3,9 @@ package wedding.kanshasai.backend.infra.mapper
 import org.springframework.beans.factory.annotation.Autowired
 import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
 import wedding.kanshasai.backend.infra.MapperTestTool
-import wedding.kanshasai.backend.infra.dto.ParticipantAnswerDto
-import wedding.kanshasai.backend.infra.dto.identifier.ParticipantAnswerIdentifier
+import wedding.kanshasai.backend.infra.mysql.dto.ParticipantAnswerDto
+import wedding.kanshasai.backend.infra.mysql.dto.identifier.ParticipantAnswerIdentifier
+import wedding.kanshasai.backend.infra.mysql.mapper.ParticipantAnswerMapper
 
 @WeddingKanshasaiSpringBootTest
 class ParticipantAnswerMapperTests : MapperCRUDTest<ParticipantAnswerMapper, ParticipantAnswerIdentifier, ParticipantAnswerDto>() {

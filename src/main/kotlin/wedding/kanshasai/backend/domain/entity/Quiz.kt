@@ -2,7 +2,7 @@ package wedding.kanshasai.backend.domain.entity
 
 import wedding.kanshasai.backend.domain.value.QuizType
 import wedding.kanshasai.backend.domain.value.UlidId
-import wedding.kanshasai.backend.infra.dto.interfaces.IQuiz
+import wedding.kanshasai.backend.infra.mysql.dto.interfaces.IQuiz
 import java.sql.Timestamp
 
 class Quiz private constructor(
