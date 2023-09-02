@@ -8,11 +8,13 @@ import redis.embedded.RedisServer
 
 @TestConfiguration
 @EnableConfigurationProperties(RedisProperties::class)
-class RedisTestAutoConfiguration {
+class RedisTestConfiguration(redisProperties: RedisProperties) {
+    init {
+        start(redisProperties)
+    }
 
     @PreDestroy
     fun preDestroy() {
-        // サーバを停止
         stop()
     }
 
