@@ -1,11 +1,10 @@
-package wedding.kanshasai.backend;
+package wedding.kanshasai.backend
 
 import jakarta.annotation.PreDestroy
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.TestConfiguration
 import redis.embedded.RedisServer
-
 
 @TestConfiguration
 @EnableConfigurationProperties(RedisProperties::class)
@@ -19,6 +18,7 @@ class RedisTestAutoConfiguration {
 
     companion object {
         private var redisServer: RedisServer? = null
+
         @Synchronized
         fun start(redisProperties: RedisProperties) {
             if (redisServer == null) {
