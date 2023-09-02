@@ -16,6 +16,7 @@ import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.NotFoundException
+import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
 import wedding.kanshasai.backend.infra.mysql.dto.EventDto
@@ -74,7 +75,7 @@ class SessionRepositoryTests {
         }
         assertEquals(expect.id, session.id)
         assertEquals(expect.name, session.name)
-        assertEquals(expect.stateId, session.stateId)
+        assertEquals(expect.state, session.state)
         assertEquals(expect.currentQuizId, session.currentQuizId)
         assertEquals(expect.currentIntroduction, session.currentIntroduction)
         assertEquals(expect.isCoverVisible, session.isCoverVisible)
@@ -119,7 +120,7 @@ class SessionRepositoryTests {
         }
         val createdSession = sessionRepository.createSession(event, sessionName).getOrThrow()
         assertEquals(sessionName, createdSession.name)
-        assertEquals(1, createdSession.stateId)
+        assertEquals(SessionState.INTRODUCTION, createdSession.state)
         assertEquals(null, createdSession.currentQuizId)
         assertEquals(null, createdSession.currentIntroduction)
         assertEquals(false, createdSession.isCoverVisible)
@@ -128,7 +129,7 @@ class SessionRepositoryTests {
         val foundSession = sessionRepository.findById(createdSession.id).getOrThrow()
         assertEquals(createdSession.id, foundSession.id)
         assertEquals(createdSession.name, foundSession.name)
-        assertEquals(createdSession.stateId, foundSession.stateId)
+        assertEquals(createdSession.state, foundSession.state)
         assertEquals(createdSession.currentQuizId, foundSession.currentQuizId)
         assertEquals(createdSession.currentIntroduction, foundSession.currentIntroduction)
         assertEquals(createdSession.isCoverVisible, foundSession.isCoverVisible)

@@ -101,5 +101,7 @@ class SessionState private constructor(private val value: SessionStateEnum) {
         val FINAL_RESULT_ANNOUNCEMENT = SessionState(SessionStateEnum.FINAL_RESULT_ANNOUNCEMENT)
         val FINISHED = SessionState(SessionStateEnum.FINISHED)
         val INTERIM_ANNOUNCEMENT = SessionState(SessionStateEnum.INTERIM_ANNOUNCEMENT)
+
+        val values = SessionStateEnum.values().map { SessionState(it) }
     }
 }

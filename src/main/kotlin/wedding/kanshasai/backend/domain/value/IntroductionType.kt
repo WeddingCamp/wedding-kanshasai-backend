@@ -41,5 +41,7 @@ class IntroductionType private constructor(val value: IntroductionScreenTypeEnum
             if (value == 3) return IntroductionType(IntroductionScreenTypeEnum.Introduction)
             throw InvalidArgumentException("Invalid CoverScreenType value. (value=$value)")
         }
+
+        val values = IntroductionScreenTypeEnum.values().map { IntroductionType(it) }
     }
 }

@@ -2,6 +2,8 @@ package wedding.kanshasai.backend.infra
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import wedding.kanshasai.backend.domain.state.SessionState
+import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mapper.*
 import wedding.kanshasai.backend.infra.mysql.dto.*
@@ -65,9 +67,9 @@ class MapperTestTool {
             sessionId.toStandardIdentifier(),
             eventDto.eventIdentifier.id,
             "Session_$sessionId",
-            (0..100).random(),
+            SessionState.values.random().toNumber(),
             maybeNull(UlidId.new().toByteArray()),
-            (1..3).random(),
+            IntroductionType.values.random().toNumber(),
             trueOrFalse,
         )
     }
