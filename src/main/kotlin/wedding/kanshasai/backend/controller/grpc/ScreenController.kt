@@ -22,6 +22,7 @@ class ScreenController(
 
         redisEventService.subscribe(CoverScreenRedisEvent::class, sessionId).collect { redisEvent ->
             val response = StreamScreenEventResponse.newBuilder().let {
+                it.eventType = ScreenEventType.SCREEN_EVENT_TYPE_COVER
                 it.coverScreenEvent = it.coverScreenEventBuilder.let { event ->
                     event.type = redisEvent.coverScreenType.toGrpcType()
                     event.build()
