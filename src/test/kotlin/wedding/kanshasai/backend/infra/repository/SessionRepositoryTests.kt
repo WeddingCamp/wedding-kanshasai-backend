@@ -75,8 +75,9 @@ class SessionRepositoryTests {
         assertEquals(expect.id, session.id)
         assertEquals(expect.name, session.name)
         assertEquals(expect.stateId, session.stateId)
-        assertEquals(expect.coverScreen, session.coverScreen)
         assertEquals(expect.currentQuizId, session.currentQuizId)
+        assertEquals(expect.currentIntroduction, session.currentIntroduction)
+        assertEquals(expect.isCoverVisible, session.isCoverVisible)
         assertEquals(expect.isDeleted, session.isDeleted)
     }
 
@@ -119,16 +120,18 @@ class SessionRepositoryTests {
         val createdSession = sessionRepository.createSession(event, sessionName).getOrThrow()
         assertEquals(sessionName, createdSession.name)
         assertEquals(1, createdSession.stateId)
-        assertNull(createdSession.coverScreen)
-        assertNull(createdSession.currentQuizId)
+        assertEquals(null, createdSession.currentQuizId)
+        assertEquals(null, createdSession.currentIntroduction)
+        assertEquals(false, createdSession.isCoverVisible)
         assertFalse(createdSession.isDeleted)
 
         val foundSession = sessionRepository.findById(createdSession.id).getOrThrow()
         assertEquals(createdSession.id, foundSession.id)
         assertEquals(createdSession.name, foundSession.name)
         assertEquals(createdSession.stateId, foundSession.stateId)
-        assertEquals(createdSession.coverScreen, foundSession.coverScreen)
         assertEquals(createdSession.currentQuizId, foundSession.currentQuizId)
+        assertEquals(createdSession.currentIntroduction, foundSession.currentIntroduction)
+        assertEquals(createdSession.isCoverVisible, foundSession.isCoverVisible)
         assertEquals(createdSession.isDeleted, foundSession.isDeleted)
     }
 

@@ -13,7 +13,7 @@ import wedding.kanshasai.v1.ParticipantServiceGrpcKt.ParticipantServiceCoroutine
 class ParticipantController(
     private val participantService: ParticipantService,
 ) : ParticipantServiceCoroutineImplBase() {
-    override suspend fun listParticipant(request: ListParticipantRequest): ListParticipantResponse {
+    override suspend fun listParticipants(request: ListParticipantsRequest): ListParticipantsResponse {
         if (request.sessionId.isNullOrEmpty()) throw InvalidArgumentException.requiredField("sessionId")
 
         val sessionId = try { UlidId.of(request.sessionId) } catch (e: InvalidValueException) {
@@ -22,7 +22,7 @@ class ParticipantController(
 
         val participantList = participantService.listParticipantsBySessionId(sessionId).getOrThrow()
         val grpcParticipantList = participantList.map { p ->
-            ListParticipantResponse.Participant.newBuilder().let {
+            ListParticipantsResponse.Participant.newBuilder().let {
                 it.name = p.name
                 it.participantId = p.id.toString()
                 it.sessionId = p.sessionId.toString()
@@ -31,7 +31,7 @@ class ParticipantController(
             }
         }
 
-        return ListParticipantResponse.newBuilder().let {
+        return ListParticipantsResponse.newBuilder().let {
             it.addAllParticipants(grpcParticipantList)
             it.build()
         }

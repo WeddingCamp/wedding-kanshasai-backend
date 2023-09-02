@@ -66,8 +66,9 @@ class MapperTestTool {
             eventDto.eventIdentifier.id,
             "Session_$sessionId",
             (0..100).random(),
-            maybeNull(listOf(1, 2, 9).random()),
             maybeNull(UlidId.new().toByteArray()),
+            (1..3).random(),
+            trueOrFalse,
         )
     }
 

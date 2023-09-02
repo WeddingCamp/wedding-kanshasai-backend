@@ -8,8 +8,9 @@
             event_id,
             name,
             state_id,
-            cover_screen_id,
             current_quiz_id,
+            current_introduction_id,
+            is_cover_visible,
             is_deleted
         )
         VALUES (
@@ -17,8 +18,9 @@
             #{entity.eventId},
             #{entity.name},
             #{entity.stateId},
-            #{entity.coverScreenId},
             #{entity.currentQuizId},
+            #{entity.currentIntroductionId},
+            #{entity.isCoverVisible},
             #{entity.isDeleted}
         )
     </insert>
@@ -29,8 +31,9 @@
             event_id,
             name,
             state_id,
-            cover_screen_id,
             current_quiz_id,
+            current_introduction_id,
+            is_cover_visible,
             is_deleted
         )
         VALUES
@@ -40,8 +43,9 @@
                 #{entity.eventId},
                 #{entity.name},
                 #{entity.stateId},
-                #{entity.coverScreenId},
                 #{entity.currentQuizId},
+                #{entity.currentIntroductionId},
+                #{entity.isCoverVisible},
                 #{entity.isDeleted}
             )
         </foreach>
@@ -76,8 +80,9 @@
             event_id = #{entity.eventId},
             name = #{entity.name},
             state_id = #{entity.stateId},
-            cover_screen_id = #{entity.coverScreenId},
             current_quiz_id = #{entity.currentQuizId},
+            current_introduction_id = #{entity.currentIntroductionId},
+            is_cover_visible = #{entity.isCoverVisible},
             is_deleted = #{entity.isDeleted}
         WHERE
             id = #{entity.identifier.id}
@@ -100,8 +105,9 @@
         <result property="eventId" column="event_id"/>
         <result property="name" column="name"/>
         <result property="stateId" column="state_id"/>
-        <result property="coverScreenId" column="cover_screen_id"/>
         <result property="currentQuizId" column="current_quiz_id"/>
+        <result property="currentIntroductionId" column="current_introduction_id"/>
+        <result property="isCoverVisible" column="is_cover_visible"/>
         <result property="isDeleted" column="is_deleted"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>

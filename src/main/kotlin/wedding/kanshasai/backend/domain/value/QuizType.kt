@@ -4,15 +4,10 @@ import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.v1.QuizType as QuizTypeGrpc
 
 class QuizType private constructor(private val value: QuizTypeEnum) {
-    val number: Int get() = value.number
 
-    override fun toString(): String {
-        return value.name
-    }
-
-    fun toGrpcType(): QuizTypeGrpc {
-        return value.grpcValue
-    }
+    override fun toString(): String = value.name
+    fun toNumber(): Int = value.number
+    fun toGrpcType(): QuizTypeGrpc = value.grpcValue
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

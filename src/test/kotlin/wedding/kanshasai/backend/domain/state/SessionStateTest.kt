@@ -37,13 +37,7 @@ class SessionStateTest {
         private fun sessionStateProvider(): Stream<Arguments> {
             return Stream.of(
                 arguments(
-                    SessionState.BEFORE_START,
-                    listOf(
-                        SessionState.EXPLAINING,
-                    ),
-                ),
-                arguments(
-                    SessionState.EXPLAINING,
+                    SessionState.INTRODUCTION,
                     listOf(
                         SessionState.QUIZ_WAITING,
                     ),

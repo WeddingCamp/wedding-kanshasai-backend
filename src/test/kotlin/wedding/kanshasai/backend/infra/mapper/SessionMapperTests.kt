@@ -31,8 +31,9 @@ class SessionMapperTests : MapperCRUDTest<SessionMapper, StandardIdentifier, Ses
                     sessionDto.copy().apply {
                         name = testTool.uuid
                         stateId = (0..100).random()
-                        coverScreenId = testTool.maybeNull((0..100).random())
                         currentQuizId = testTool.maybeNull(UlidId.new().toByteArray())
+                        currentIntroductionId = testTool.maybeNull((0..100).random())
+                        isCoverVisible = testTool.trueOrFalse
                         isDeleted = testTool.trueOrFalse
                         eventId = eventDtoList.random().eventIdentifier.id
                     },

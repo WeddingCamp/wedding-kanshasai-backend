@@ -8,8 +8,9 @@ interface ISession {
     var eventId: ByteArray
     var name: String
     var stateId: Int
-    var coverScreenId: Int?
+    var currentIntroductionId: Int?
     var currentQuizId: ByteArray?
+    var isCoverVisible: Boolean
     var isDeleted: Boolean
     var createdAt: Timestamp
     var updatedAt: Timestamp

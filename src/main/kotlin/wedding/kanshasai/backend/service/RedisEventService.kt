@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import org.springframework.data.redis.connection.MessageListener
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.listener.ChannelTopic
 import org.springframework.data.redis.listener.PatternTopic
 import org.springframework.data.redis.listener.RedisMessageListenerContainer
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
@@ -26,17 +27,18 @@ class RedisEventService(
     fun <T : RedisEvent> subscribe(eventType: KClass<out T>, sessionId: UlidId): Flow<T> = callbackFlow {
         val messageListener = MessageListener { message, pattern ->
             Jackson2JsonRedisSerializer(objectMapper, eventType.java).deserialize(message.body)?.let {
-                logger.debug { "Received message($pattern): $it" }
+                logger.debug { "Received message(${pattern?.let { it1 -> String(it1) }}): $it" }
                 trySend(it)
             }
         }
-        redisListenerContainer.addMessageListener(messageListener, PatternTopic("$sessionId-${eventType.simpleName}"))
+        redisListenerContainer.addMessageListener(messageListener, ChannelTopic("$sessionId-${eventType.simpleName}"))
         awaitClose {
             redisListenerContainer.removeMessageListener(messageListener)
         }
     }
 
     fun publish(event: RedisEvent, sessionId: UlidId) {
+        logger.debug { "Publish message: $event" }
         redisTemplate.convertAndSend("$sessionId-${event::class.simpleName}", event)
     }
 }
