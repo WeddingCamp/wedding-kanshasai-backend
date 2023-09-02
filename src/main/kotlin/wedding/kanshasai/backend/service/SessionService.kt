@@ -5,7 +5,6 @@ import wedding.kanshasai.backend.domain.constant.Table
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidStateException
-import wedding.kanshasai.backend.domain.exception.InvalidStateTransitionException
 import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.UlidId
@@ -56,7 +55,7 @@ class SessionService(
             throw DatabaseException.failedToRetrieve(Table.SESSION, sessionId, it)
         }
 
-        if(session.state != SessionState.INTRODUCTION) {
+        if (session.state != SessionState.INTRODUCTION) {
             throw InvalidStateException("Session state is not INTRODUCTION.")
         }
 

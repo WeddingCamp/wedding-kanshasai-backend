@@ -3,7 +3,6 @@ package wedding.kanshasai.backend.domain.state
 import io.github.oshai.kotlinlogging.KotlinLogging
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.InvalidStateTransitionException
-import wedding.kanshasai.backend.domain.value.QuizType
 
 private val logger = KotlinLogging.logger {}
 
@@ -26,7 +25,7 @@ class SessionState private constructor(private val value: SessionStateEnum) {
     }
 
     private enum class SessionStateEnum(
-        val number: Int
+        val number: Int,
     ) {
         INTRODUCTION(1) {
             override val nextStateList
@@ -65,7 +64,7 @@ class SessionState private constructor(private val value: SessionStateEnum) {
                 get() = listOf(QUIZ_WAITING)
         },
         ;
-        abstract val nextStateList: List<SessionStateEnum>;
+        abstract val nextStateList: List<SessionStateEnum>
     }
 
     fun next(nextState: SessionState) = runCatching {

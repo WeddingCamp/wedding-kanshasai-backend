@@ -17,7 +17,10 @@ class GrpcTool {
 
     fun parseIntroductionType(introductionType: IntroductionScreenTypeGrpc): IntroductionType {
         return try { IntroductionType.of(introductionType.number) } catch (e: InvalidValueException) {
-            throw InvalidArgumentException("Invalid introduction type (name='${introductionType.name}', number='${introductionType.number}')", e)
+            throw InvalidArgumentException(
+                "Invalid introduction type (name='${introductionType.name}', number='${introductionType.number}')",
+                e,
+            )
         } catch (e: IllegalArgumentException) {
             throw InvalidArgumentException("Invalid introduction type (name='${introductionType.name}')", e)
         }
