@@ -67,7 +67,14 @@ class SessionController(
     }
 
     override suspend fun setNextQuiz(request: SetNextQuizRequest): SetNextQuizResponse {
-        TODO("NOT IMPLEMENTED")
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+        val quizId = grpcTool.parseUlidId(request.quizId, "quizId")
+
+        sessionService.setNextQuiz(sessionId, quizId).getOrElse {
+            throw DatabaseException("Failed to set next quiz.", it)
+        }
+
+        return SetNextQuizResponse.newBuilder().build()
     }
 
     override suspend fun startQuiz(request: StartQuizRequest): StartQuizResponse {

@@ -1,5 +1,6 @@
 package wedding.kanshasai.backend.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 import wedding.kanshasai.backend.domain.constant.Table
 import wedding.kanshasai.backend.domain.entity.Session
@@ -11,6 +12,8 @@ import wedding.kanshasai.backend.infra.mysql.repository.QuizRepository
 import wedding.kanshasai.backend.infra.mysql.repository.SessionQuizRepository
 import wedding.kanshasai.backend.infra.mysql.repository.SessionRepository
 import wedding.kanshasai.backend.infra.redis.event.CoverScreenRedisEvent
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class SessionService(
@@ -44,5 +47,26 @@ class SessionService(
             throw DatabaseException.failedToUpdate(Table.SESSION, sessionId, it)
         }
         redisEventService.publish(CoverScreenRedisEvent(coverScreenType), sessionId)
+    }
+
+    fun setNextQuiz(sessionId: UlidId, quizId: UlidId): Result<Unit> = runCatching {
+        val session = sessionRepository.findById(sessionId).getOrElse {
+            throw DatabaseException.failedToRetrieve(Table.SESSION, sessionId, it)
+        }
+        val quiz = quizRepository.findById(quizId).getOrElse {
+            throw DatabaseException.failedToRetrieve(Table.QUIZ, quizId, it)
+        }
+
+        if (quiz.eventId != session.eventId) {
+            throw DatabaseException.failedToRetrieve(Table.QUIZ, quizId, null)
+        }
+        if (session.currentQuizId == quizId) {
+            logger.warn { "Quiz is already set to $quizId" }
+            return@runCatching
+        }
+
+        sessionRepository.updateCurrentQuiz(session, quiz).getOrElse {
+            throw DatabaseException.failedToUpdate(Table.SESSION, sessionId, it)
+        }
     }
 }

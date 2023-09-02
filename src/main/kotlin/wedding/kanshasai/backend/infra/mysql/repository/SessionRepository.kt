@@ -3,6 +3,7 @@ package wedding.kanshasai.backend.infra.mysql.repository
 import org.springframework.stereotype.Repository
 import wedding.kanshasai.backend.domain.constant.Table
 import wedding.kanshasai.backend.domain.entity.Event
+import wedding.kanshasai.backend.domain.entity.Quiz
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
@@ -44,6 +45,11 @@ class SessionRepository(
 
     fun updateCoverScreen(session: Session, coverScreenType: CoverScreenType): Result<Unit> = runCatching {
         val isSucceed = sessionMapper.update(session.toDto().copy(coverScreenId = coverScreenType.toNumber()))
+        if (!isSucceed) throw DatabaseException.failedToUpdate(TABLE, session.id, null)
+    }
+
+    fun updateCurrentQuiz(session: Session, quiz: Quiz): Result<Unit> = runCatching {
+        val isSucceed = sessionMapper.update(session.toDto().copy(currentQuizId = quiz.id.toByteArray()))
         if (!isSucceed) throw DatabaseException.failedToUpdate(TABLE, session.id, null)
     }
 }
