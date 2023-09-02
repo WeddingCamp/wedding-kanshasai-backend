@@ -1,6 +1,5 @@
 package wedding.kanshasai.backend.controller.grpc
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.joinAll
@@ -11,8 +10,6 @@ import wedding.kanshasai.backend.infra.redis.event.IntroductionRedisEvent
 import wedding.kanshasai.backend.service.RedisEventService
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ScreenServiceGrpcKt.ScreenServiceCoroutineImplBase
-
-val logger = KotlinLogging.logger {}
 
 @GrpcService
 class ScreenController(
@@ -49,7 +46,6 @@ class ScreenController(
                         }
                         it.build()
                     }
-                    logger.debug { "Send introduction screen event: $redisEvent" }
                     trySend(response)
                 }
             },
