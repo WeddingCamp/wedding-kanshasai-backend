@@ -61,9 +61,20 @@ class SessionController(
         }
 
         return ListSessionQuizzesResponse.newBuilder().let {
-            it.addAllQuizzes(grpcSessionQuizList)
+            it.addAllSessionQuizzes(grpcSessionQuizList)
             it.build()
         }
+    }
+
+    override suspend fun setNextIntroduction(request: SetNextIntroductionRequest): SetNextIntroductionResponse {
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+        val introductionType = grpcTool.parseIntroductionType(request.introductionScreenType)
+
+        sessionService.setIntroductionScreen(sessionId, introductionType).getOrElse {
+            throw DatabaseException("Failed to set introduction.", it)
+        }
+
+        return SetNextIntroductionResponse.newBuilder().build()
     }
 
     override suspend fun setNextQuiz(request: SetNextQuizRequest): SetNextQuizResponse {
@@ -87,12 +98,9 @@ class SessionController(
     }
 
     override suspend fun setCoverScreen(request: SetCoverScreenRequest): SetCoverScreenResponse {
-        if (request.sessionId.isNullOrEmpty()) throw InvalidArgumentException.requiredField("sessionId")
-
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
-        val coverScreenType = grpcTool.parseCoverScreenType(request.screenType)
 
-        sessionService.setCoverScreen(sessionId, coverScreenType).getOrElse {
+        sessionService.setCoverScreen(sessionId, request.isVisible).getOrElse {
             throw DatabaseException("Failed to set cover screen.", it)
         }
 

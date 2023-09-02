@@ -43,7 +43,7 @@ dependencies {
 
     // gRPC
     implementation("net.devh:grpc-spring-boot-starter:2.14.0.RELEASE")
-    implementation("wedding.kanshasai:protobuf:0.0.5")
+    implementation("wedding.kanshasai:protobuf:0.0.9")
 
     // Logging
     implementation("ch.qos.logback:logback-classic:1.4.8")
@@ -53,6 +53,7 @@ dependencies {
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2:2.2.220")
+    testImplementation("it.ozimov:embedded-redis:0.7.3")
 }
 
 tasks.withType<KotlinCompile> {

@@ -1,6 +1,7 @@
 package wedding.kanshasai.backend.domain.entity
 
-import wedding.kanshasai.backend.domain.value.CoverScreenType
+import wedding.kanshasai.backend.domain.state.SessionState
+import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.dto.SessionDto
 import java.sql.Timestamp
@@ -9,9 +10,10 @@ class Session private constructor(
     val id: UlidId,
     val eventId: UlidId,
     var name: String,
-    var stateId: Int,
-    var coverScreen: CoverScreenType?,
+    var state: SessionState,
     var currentQuizId: UlidId?,
+    var currentIntroduction: IntroductionType? = null,
+    var isCoverVisible: Boolean,
     var isDeleted: Boolean,
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
@@ -20,9 +22,10 @@ class Session private constructor(
         id.toStandardIdentifier(),
         eventId.toByteArray(),
         name,
-        stateId,
-        coverScreen?.toNumber(),
+        state.toNumber(),
         currentQuizId?.toByteArray(),
+        currentIntroduction?.toNumber(),
+        isCoverVisible,
         isDeleted,
         createdAt,
         updatedAt,
@@ -33,9 +36,10 @@ class Session private constructor(
                 UlidId.of(sessionDto.sessionIdentifier.id),
                 UlidId.of(sessionDto.eventId),
                 sessionDto.name,
-                sessionDto.stateId,
-                sessionDto.coverScreenId?.let(CoverScreenType::of),
+                SessionState.of(sessionDto.stateId),
                 sessionDto.currentQuizId?.let(UlidId::of),
+                sessionDto.currentIntroductionId?.let(IntroductionType::of),
+                sessionDto.isCoverVisible,
                 sessionDto.isDeleted,
                 sessionDto.createdAt,
                 sessionDto.updatedAt,

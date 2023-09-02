@@ -11,6 +11,7 @@ import org.springframework.test.annotation.DirtiesContext
     "grpc.server.inProcessName=test",
     "grpc.server.port=-1",
     "grpc.client.inProcess.address=in-process:test",
+    classes = [RedisTestConfiguration::class],
 )
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

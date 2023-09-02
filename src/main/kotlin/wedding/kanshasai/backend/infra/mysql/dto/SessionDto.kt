@@ -9,8 +9,9 @@ data class SessionDto(
     override var eventId: ByteArray = byteArrayOf(),
     override var name: String = "",
     override var stateId: Int = 1,
-    override var coverScreenId: Int? = null,
     override var currentQuizId: ByteArray? = null,
+    override var currentIntroductionId: Int? = null,
+    override var isCoverVisible: Boolean = false,
     override var isDeleted: Boolean = false,
     override var createdAt: Timestamp = Timestamp(0),
     override var updatedAt: Timestamp = Timestamp(0),
@@ -31,7 +32,7 @@ data class SessionDto(
         if (!eventId.contentEquals(other.eventId)) return false
         if (name != other.name) return false
         if (stateId != other.stateId) return false
-        if (coverScreenId != other.coverScreenId) return false
+        if (isCoverVisible != other.isCoverVisible) return false
         if (currentQuizId != null) {
             if (other.currentQuizId == null) return false
             if (!currentQuizId.contentEquals(other.currentQuizId)) return false
