@@ -2,6 +2,7 @@ package wedding.kanshasai.backend.controller.grpc
 
 import kotlinx.coroutines.flow.Flow
 import net.devh.boot.grpc.server.service.GrpcService
+import wedding.kanshasai.backend.controller.grpc.response.setParticipant
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.InvalidValueException
 import wedding.kanshasai.backend.domain.value.UlidId
@@ -21,14 +22,10 @@ class ParticipantController(
         }
 
         val participantList = participantService.listParticipantsBySessionId(sessionId).getOrThrow()
-        val grpcParticipantList = participantList.map { p ->
-            ListParticipantsResponse.Participant.newBuilder().let {
-                it.name = p.name
-                it.participantId = p.id.toString()
-                it.sessionId = p.sessionId.toString()
-                it.imageId = p.imageId.toString()
-                it.build()
-            }
+        val grpcParticipantList = participantList.map { participant ->
+            ListParticipantsResponse.Participant.newBuilder()
+                .setParticipant(participant)
+                .build()
         }
 
         return ListParticipantsResponse.newBuilder().let {

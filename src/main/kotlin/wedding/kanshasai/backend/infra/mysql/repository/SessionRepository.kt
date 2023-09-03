@@ -7,7 +7,6 @@ import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.NotFoundException
-import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.dto.SessionDto
 import wedding.kanshasai.backend.infra.mysql.mapper.EventMapper
@@ -42,13 +41,8 @@ class SessionRepository(
         return findById(id)
     }
 
-    fun updateCoverScreen(session: Session, isVisible: Boolean): Result<Unit> = runCatching {
-        val isSucceed = sessionMapper.update(session.toDto().copy(isCoverVisible = isVisible))
-        if (!isSucceed) throw DatabaseException.failedToUpdate(TABLE, session.id, null)
-    }
-
-    fun updateIntroductionScreen(session: Session, introductionType: IntroductionType): Result<Unit> = runCatching {
-        val isSucceed = sessionMapper.update(session.toDto().copy(currentIntroductionId = introductionType.toNumber()))
+    fun update(session: Session): Result<Unit> = runCatching {
+        val isSucceed = sessionMapper.update(session.toDto())
         if (!isSucceed) throw DatabaseException.failedToUpdate(TABLE, session.id, null)
     }
 }

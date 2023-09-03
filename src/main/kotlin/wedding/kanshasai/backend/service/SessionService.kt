@@ -8,12 +8,11 @@ import wedding.kanshasai.backend.domain.exception.InvalidStateException
 import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.UlidId
-import wedding.kanshasai.backend.infra.mysql.repository.EventRepository
-import wedding.kanshasai.backend.infra.mysql.repository.QuizRepository
-import wedding.kanshasai.backend.infra.mysql.repository.SessionQuizRepository
-import wedding.kanshasai.backend.infra.mysql.repository.SessionRepository
+import wedding.kanshasai.backend.infra.mysql.repository.*
 import wedding.kanshasai.backend.infra.redis.event.CoverScreenRedisEvent
 import wedding.kanshasai.backend.infra.redis.event.IntroductionRedisEvent
+import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEvent
+import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEventChoice
 
 @Service
 class SessionService(
@@ -22,6 +21,7 @@ class SessionService(
     private val quizRepository: QuizRepository,
     private val sessionQuizRepository: SessionQuizRepository,
     private val redisEventService: RedisEventService,
+    private val choiceRepository: ChoiceRepository,
 ) {
     fun createSession(eventId: UlidId, name: String): Result<Session> = runCatching {
         val event = eventRepository.findById(eventId).getOrElse {
@@ -44,7 +44,11 @@ class SessionService(
             throw DatabaseException.failedToRetrieve(Table.SESSION, sessionId, it)
         }
 
-        sessionRepository.updateCoverScreen(session, isVisible).getOrElse {
+        sessionRepository.update(
+            session.apply {
+                isCoverVisible = isVisible
+            },
+        ).getOrElse {
             throw DatabaseException.failedToUpdate(Table.SESSION, sessionId, it)
         }
         redisEventService.publish(CoverScreenRedisEvent(isVisible), sessionId)
@@ -59,9 +63,52 @@ class SessionService(
             throw InvalidStateException("Session state is not INTRODUCTION.")
         }
 
-        sessionRepository.updateIntroductionScreen(session, introductionType).getOrElse {
+        sessionRepository.update(
+            session.apply {
+                currentIntroduction = introductionType
+            },
+        ).getOrElse {
             throw DatabaseException.failedToUpdate(Table.SESSION, sessionId, it)
         }
         redisEventService.publish(IntroductionRedisEvent(introductionType), sessionId)
+    }
+
+    fun setNextQuiz(sessionId: UlidId, quizId: UlidId): Result<Unit> = runCatching {
+        val session = sessionRepository.findById(sessionId).getOrElse {
+            throw DatabaseException.failedToRetrieve(Table.SESSION, sessionId, it)
+        }
+        val quiz = quizRepository.findById(quizId).getOrElse {
+            throw DatabaseException.failedToRetrieve(Table.QUIZ, quizId, it)
+        }
+
+        sessionQuizRepository.find(session, quiz).getOrElse {
+            throw DatabaseException.failedToRetrieve(Table.SESSION_QUIZ, "sessionId", session.id, "quizId", quiz.id, it)
+        }
+        val choiceList = choiceRepository.listByQuizId(quiz.id).getOrElse {
+            throw DatabaseException.failedToRetrieve(Table.CHOICE, "quizId", quiz.id, it)
+        }
+        val nextState = session.state.next(SessionState.QUIZ_WAITING).getOrElse {
+            throw InvalidStateException("Current state cannot set quiz")
+        }
+
+        sessionRepository.update(
+            session.apply {
+                state = nextState
+                currentQuizId = quiz.id
+            },
+        ).getOrElse {
+            throw DatabaseException.failedToUpdate(Table.SESSION, sessionId, it)
+        }
+        redisEventService.publish(
+            NextQuizRedisEvent(
+                quiz.id.toString(),
+                quiz.body,
+                quiz.type.toGrpcType(),
+                choiceList.map {
+                    NextQuizRedisEventChoice(it.id.toString(), it.body)
+                },
+            ),
+            sessionId,
+        )
     }
 }

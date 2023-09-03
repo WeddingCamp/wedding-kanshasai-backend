@@ -5,8 +5,13 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import net.devh.boot.grpc.server.service.GrpcService
+import wedding.kanshasai.backend.controller.grpc.response.setCoverScreenEvent
+import wedding.kanshasai.backend.controller.grpc.response.setIntroductionScreenEvent
+import wedding.kanshasai.backend.controller.grpc.response.setQuizEvent
 import wedding.kanshasai.backend.infra.redis.event.CoverScreenRedisEvent
 import wedding.kanshasai.backend.infra.redis.event.IntroductionRedisEvent
+import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEvent
+import wedding.kanshasai.backend.service.ChoiceService
 import wedding.kanshasai.backend.service.RedisEventService
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ScreenServiceGrpcKt.ScreenServiceCoroutineImplBase
@@ -14,6 +19,7 @@ import wedding.kanshasai.v1.ScreenServiceGrpcKt.ScreenServiceCoroutineImplBase
 @GrpcService
 class ScreenController(
     private val redisEventService: RedisEventService,
+    private val choiceService: ChoiceService,
     private val grpcTool: GrpcTool,
 ) : ScreenServiceCoroutineImplBase() {
     override suspend fun sendMessage(request: SendMessageRequest): SendMessageResponse {
@@ -25,28 +31,26 @@ class ScreenController(
         val subscribers = listOf(
             launch {
                 redisEventService.subscribe(CoverScreenRedisEvent::class, sessionId).collect { redisEvent ->
-                    val response = StreamScreenEventResponse.newBuilder().let {
-                        it.screenEventType = ScreenEventType.SCREEN_EVENT_TYPE_COVER
-                        it.coverScreenEvent = it.coverScreenEventBuilder.let { event ->
-                            event.isVisible = redisEvent.isVisible
-                            event.build()
-                        }
-                        it.build()
-                    }
-                    trySend(response)
+                    StreamScreenEventResponse.newBuilder()
+                        .setCoverScreenEvent(redisEvent)
+                        .build()
+                        .let(::trySend)
                 }
             },
             launch {
                 redisEventService.subscribe(IntroductionRedisEvent::class, sessionId).collect { redisEvent ->
-                    val response = StreamScreenEventResponse.newBuilder().let {
-                        it.screenEventType = ScreenEventType.SCREEN_EVENT_TYPE_INTRODUCTION
-                        it.introductionScreenEvent = it.introductionScreenEventBuilder.let { event ->
-                            event.introductionScreenType = redisEvent.introductionType.toGrpcType()
-                            event.build()
-                        }
-                        it.build()
-                    }
-                    trySend(response)
+                    StreamScreenEventResponse.newBuilder()
+                        .setIntroductionScreenEvent(redisEvent)
+                        .build()
+                        .let(::trySend)
+                }
+            },
+            launch {
+                redisEventService.subscribe(NextQuizRedisEvent::class, sessionId).collect { redisEvent ->
+                    StreamScreenEventResponse.newBuilder()
+                        .setQuizEvent(redisEvent)
+                        .build()
+                        .let(::trySend)
                 }
             },
         )
