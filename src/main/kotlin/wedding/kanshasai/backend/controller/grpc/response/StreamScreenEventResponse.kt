@@ -31,9 +31,9 @@ fun StreamScreenEventResponse.Builder.setQuizEvent(event: NextQuizRedisEvent): S
         .setBody(event.quizBody)
         .setQuizType(event.quizType)
         .addAllChoices(
-            event.choiceList.map { choicePair ->
+            event.choiceList.map { choice ->
                 StreamScreenEventResponse.Choice.newBuilder()
-                    .setChoice(choicePair)
+                    .setChoice(choice)
                     .build()
             },
         )
