@@ -15,11 +15,10 @@ import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
 import wedding.kanshasai.backend.any
 import wedding.kanshasai.backend.domain.entity.Participant
 import wedding.kanshasai.backend.domain.entity.Session
-import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
-import wedding.kanshasai.backend.domain.exception.NotFoundException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
+import wedding.kanshasai.backend.infra.exception.DatabaseException
 import wedding.kanshasai.backend.infra.mysql.dto.EventDto
 import wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto
 import wedding.kanshasai.backend.infra.mysql.dto.QuizDto
@@ -104,25 +103,25 @@ class ParticipantRepositoryTests {
                 null,
             ),
             arguments(
-                "異常系 存在しない参加者IDを渡すとNotFoundExceptionが投げられる",
+                "異常系 存在しない参加者IDを渡すとDatabaseExceptionが投げられる",
                 UlidId.of(INVALID_PARTICIPANT_ID),
                 null,
-                NotFoundException::class.java,
+                DatabaseException::class.java,
             ),
         )
     }
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("listBySessionId_parameters")
-    @DisplayName("listBySessionId()")
-    fun <T : Throwable> listBySessionId_test(testCaseName: String, id: UlidId, expect: List<ParticipantDto>?, throwable: Class<T>?) {
+    @MethodSource("listBySession_parameters")
+    @DisplayName("listBySession()")
+    fun <T : Throwable> listBySessionId_test(testCaseName: String, session: Session, expect: List<ParticipantDto>?, throwable: Class<T>?) {
         if (throwable != null) {
             assertThrows(throwable) {
-                participantRepository.listBySessionId(id).getOrThrow()
+                participantRepository.listBySession(session).getOrThrow()
             }
             return
         }
-        val participantList = participantRepository.listBySessionId(id).getOrThrow()
+        val participantList = participantRepository.listBySession(session).getOrThrow()
         expect?.map { Participant.of(it) }?.forEach { expectParticipant ->
             val participant = participantList.find { participant -> participant.id == expectParticipant.id }
             assertNotNull(participant)
@@ -136,25 +135,19 @@ class ParticipantRepositoryTests {
         }
     }
 
-    fun listBySessionId_parameters(): Stream<Arguments> {
+    fun listBySession_parameters(): Stream<Arguments> {
         return Stream.of(
             arguments(
                 "正常系 正しいセッションIDを渡すと参加者の配列が返される",
-                UlidId.of(sessionDto.sessionIdentifier.id),
+                Session.of(sessionDto),
                 participantDtoList,
                 null,
             ),
             arguments(
                 "正常系 クイズが0件なセッションIDを渡すと0件の参加者の配列が返される",
-                UlidId.of(participantEmptySessionDto.sessionIdentifier.id),
+                Session.of(participantEmptySessionDto),
                 listOf<QuizDto>(),
                 null,
-            ),
-            arguments(
-                "異常系 存在しないセッションIDを渡すとNotFoundExceptionが投げられる",
-                UlidId.of(INVALID_SESSION_ID),
-                null,
-                NotFoundException::class.java,
             ),
         )
     }
@@ -225,14 +218,6 @@ class ParticipantRepositoryTests {
                 participantDto.name,
                 participantDto.imageId?.let(UlidId::of),
                 null,
-                false,
-            ),
-            arguments(
-                "異常系 DBに存在しないセッションを渡すとNotFoundExceptionが投げられる",
-                Session.of(SessionDto(UlidId.new().toStandardIdentifier(), eventDto.eventIdentifier.id)),
-                "participant_name",
-                null,
-                NotFoundException::class.java,
                 false,
             ),
             arguments(

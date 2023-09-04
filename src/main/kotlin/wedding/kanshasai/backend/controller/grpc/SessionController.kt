@@ -6,8 +6,9 @@ import wedding.kanshasai.backend.controller.grpc.response.setChoice
 import wedding.kanshasai.backend.controller.grpc.response.setQuiz
 import wedding.kanshasai.backend.controller.grpc.response.setSession
 import wedding.kanshasai.backend.controller.grpc.response.setSessionQuiz
-import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
+import wedding.kanshasai.backend.domain.exception.NotFoundException
+import wedding.kanshasai.backend.infra.exception.DatabaseException
 import wedding.kanshasai.backend.service.SessionQuizService
 import wedding.kanshasai.backend.service.SessionService
 import wedding.kanshasai.v1.*
@@ -33,7 +34,7 @@ class SessionController(
     override suspend fun listSessionQuizzes(request: ListSessionQuizzesRequest): ListSessionQuizzesResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
         val sessionQuizList = sessionQuizService.listQuizBySessionId(sessionId).getOrElse {
-            throw DatabaseException("Failed to retrieve session quizzes.", it)
+            throw NotFoundException("SessionQuiz not found.", it)
         }
 
         val grpcSessionQuizList = sessionQuizList.map { (quiz, sessionQuiz, choiceList) ->
@@ -59,7 +60,7 @@ class SessionController(
         val introductionType = grpcTool.parseIntroductionType(request.introductionScreenType)
 
         sessionService.setIntroductionScreen(sessionId, introductionType).getOrElse {
-            throw DatabaseException("Failed to set introduction.", it)
+            throw NotFoundException("Session not found.", it)
         }
 
         return SetNextIntroductionResponse.newBuilder().build()

@@ -35,6 +35,7 @@ class GrpcExceptionHandler {
 
         val metadata = Metadata()
         metadata.put(Metadata.Key.of(REQUEST_ID_KEY, Metadata.ASCII_STRING_MARSHALLER), MDC.get(REQUEST_ID_KEY))
+        logger.info { metadata.toString() }
 
         return status
             .withCause(e)

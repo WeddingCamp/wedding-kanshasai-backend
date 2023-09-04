@@ -1,8 +1,10 @@
 package wedding.kanshasai.backend.infra.mysql.mapper
 
 import org.apache.ibatis.annotations.Param
+import wedding.kanshasai.backend.infra.mysql.dto.IdentifiableDto
+import wedding.kanshasai.backend.infra.mysql.dto.identifier.DtoIdentifier
 
-interface MapperCRUDBase<IDENTIFIER, DTO> {
+interface MapperCRUDBase<IDENTIFIER : DtoIdentifier, DTO : IdentifiableDto<IDENTIFIER>> {
     // CREATE
     fun insert(
         @Param("entity") entity: DTO,

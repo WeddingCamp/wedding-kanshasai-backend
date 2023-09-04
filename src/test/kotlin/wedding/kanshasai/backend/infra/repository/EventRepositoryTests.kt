@@ -11,9 +11,9 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
 import wedding.kanshasai.backend.domain.entity.Event
-import wedding.kanshasai.backend.domain.exception.NotFoundException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
+import wedding.kanshasai.backend.infra.exception.DatabaseException
 import wedding.kanshasai.backend.infra.mysql.dto.EventDto
 import wedding.kanshasai.backend.infra.mysql.repository.EventRepository
 import java.util.stream.Stream
@@ -77,7 +77,7 @@ class EventRepositoryTests {
                 "異常系 存在しないイベントIDを渡すとNotFoundExceptionが投げられる",
                 UlidId.of(INVALID_EVENT_ID),
                 null,
-                NotFoundException::class.java,
+                DatabaseException::class.java,
             ),
         )
     }

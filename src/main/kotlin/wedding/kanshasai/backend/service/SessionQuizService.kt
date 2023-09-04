@@ -1,15 +1,14 @@
 package wedding.kanshasai.backend.service
 
 import org.springframework.stereotype.Service
-import wedding.kanshasai.backend.domain.constant.Table
 import wedding.kanshasai.backend.domain.entity.Choice
 import wedding.kanshasai.backend.domain.entity.Quiz
 import wedding.kanshasai.backend.domain.entity.SessionQuiz
-import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.repository.ChoiceRepository
 import wedding.kanshasai.backend.infra.mysql.repository.SessionQuizRepository
 import wedding.kanshasai.backend.infra.mysql.repository.SessionRepository
+import wedding.kanshasai.backend.service.exception.FailedOperationException
 
 @Service
 class SessionQuizService(
@@ -18,20 +17,18 @@ class SessionQuizService(
     private val sessionQuizRepository: SessionQuizRepository,
 ) {
     fun listQuizBySessionId(sessionId: UlidId): Result<List<Triple<Quiz, SessionQuiz, List<Choice>>>> = runCatching {
-        sessionRepository.findById(sessionId).getOrElse {
-            throw DatabaseException.failedToRetrieve(Table.SESSION, sessionId, it)
-        }
-        val sessionQuizList = sessionQuizRepository.listBySession(sessionId).getOrElse {
-            throw DatabaseException.failedToRetrieve(Table.SESSION_QUIZ, "sessionId", sessionId, it)
-        }
-        sessionQuizList.map { (quiz, sessionQuiz) ->
-            Triple(
-                quiz,
-                sessionQuiz,
-                choiceRepository.listByQuizId(quiz.id).getOrElse {
-                    throw DatabaseException.failedToRetrieve(Table.CHOICE, "quizId", quiz.id, it)
-                },
-            )
+        try {
+            val session = sessionRepository.findById(sessionId).getOrThrow()
+            val sessionQuizList = sessionQuizRepository.listBySession(session).getOrThrow()
+            sessionQuizList.map { (quiz, sessionQuiz) ->
+                Triple(
+                    quiz,
+                    sessionQuiz,
+                    choiceRepository.listByQuiz(quiz).getOrThrow(),
+                )
+            }
+        } catch (e: Exception) {
+            throw FailedOperationException("Failed to list quiz by session id.", e)
         }
     }
 }

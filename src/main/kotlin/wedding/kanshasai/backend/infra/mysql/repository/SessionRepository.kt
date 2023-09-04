@@ -4,45 +4,37 @@ import org.springframework.stereotype.Repository
 import wedding.kanshasai.backend.domain.constant.Table
 import wedding.kanshasai.backend.domain.entity.Event
 import wedding.kanshasai.backend.domain.entity.Session
-import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
-import wedding.kanshasai.backend.domain.exception.NotFoundException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.dto.SessionDto
-import wedding.kanshasai.backend.infra.mysql.mapper.EventMapper
 import wedding.kanshasai.backend.infra.mysql.mapper.SessionMapper
-
-private val TABLE = Table.SESSION
 
 @Repository
 class SessionRepository(
-    private val eventMapper: EventMapper,
     private val sessionMapper: SessionMapper,
-) {
+) : RepositoryBase() {
+    override val table = Table.SESSION
+
     fun findById(id: UlidId): Result<Session> = runCatching {
-        val result = sessionMapper.findById(id.toStandardIdentifier())
-        if (result == null) throw NotFoundException.record(TABLE, id, null)
+        val result = findById(sessionMapper, id.toStandardIdentifier())
         Session.of(result)
     }
 
     fun createSession(event: Event, name: String): Result<Session> = runCatching {
         if (name.isEmpty()) throw InvalidArgumentException.empty("name")
-        if (eventMapper.findById(event.id.toStandardIdentifier()) == null) {
-            throw NotFoundException.record(Table.EVENT, event.id, null)
-        }
-        val id = UlidId.new()
+
+        val sessionId = UlidId.new()
         val sessionDto = SessionDto(
-            id.toStandardIdentifier(),
+            sessionId.toStandardIdentifier(),
             event.id.toByteArray(),
             name,
         )
-        val result = sessionMapper.insert(sessionDto)
-        if (result != 1) throw DatabaseException.incorrectNumberOfInsert(TABLE, 1, result, null)
-        return findById(id)
+        insert(sessionMapper, sessionDto)
+
+        return findById(sessionId)
     }
 
     fun update(session: Session): Result<Unit> = runCatching {
-        val isSucceed = sessionMapper.update(session.toDto())
-        if (!isSucceed) throw DatabaseException.failedToUpdate(TABLE, session.id, null)
+        update(sessionMapper, session.toDto())
     }
 }
