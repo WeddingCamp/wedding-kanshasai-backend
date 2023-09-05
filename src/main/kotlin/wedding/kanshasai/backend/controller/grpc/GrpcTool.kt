@@ -10,6 +10,7 @@ import wedding.kanshasai.v1.IntroductionScreenType as IntroductionScreenTypeGrpc
 @Component
 class GrpcTool {
     fun parseUlidId(rawUlidId: String, fieldName: String): UlidId {
+        if (rawUlidId.isEmpty()) throw InvalidArgumentException.requiredField(fieldName)
         return try { UlidId.of(rawUlidId) } catch (e: InvalidValueException) {
             throw InvalidArgumentException("'$fieldName' cannot be parsed as ULID format.", e)
         }

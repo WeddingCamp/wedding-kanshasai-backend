@@ -10,8 +10,8 @@ import org.junit.jupiter.params.provider.Arguments.arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
+import wedding.kanshasai.backend.domain.entity.Event
 import wedding.kanshasai.backend.domain.entity.Quiz
-import wedding.kanshasai.backend.domain.exception.NotFoundException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
 import wedding.kanshasai.backend.infra.mysql.dto.EventDto
@@ -59,17 +59,17 @@ class QuizRepositoryTests {
     }
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("listByEventId_parameters")
-    @DisplayName("listByEventId()")
-    fun <T : Throwable> listByEventId_test(testCaseName: String, id: UlidId, expect: List<QuizDto>?, throwable: Class<T>?) {
+    @MethodSource("listByEvent_parameters")
+    @DisplayName("listByEvent()")
+    fun <T : Throwable> listByEvent_test(testCaseName: String, event: Event, expect: List<QuizDto>?, throwable: Class<T>?) {
         if (throwable != null) {
             assertThrows(throwable) {
-                quizRepository.listByEventId(id).getOrThrow()
+                quizRepository.listByEvent(event).getOrThrow()
             }
             return
         }
 
-        val quizList = quizRepository.listByEventId(id).getOrThrow()
+        val quizList = quizRepository.listByEvent(event).getOrThrow()
         expect?.map { Quiz.of(it) }?.forEach { expectQuiz ->
             val quiz = quizList.find { quiz -> quiz.id == expectQuiz.id }
             assertNotNull(quiz)
@@ -84,25 +84,19 @@ class QuizRepositoryTests {
         }
     }
 
-    fun listByEventId_parameters(): Stream<Arguments> {
+    fun listByEvent_parameters(): Stream<Arguments> {
         return Stream.of(
             arguments(
                 "正常系 正しいイベントIDを渡すとクイズの配列が返される",
-                UlidId.of(eventDto.eventIdentifier.id),
+                Event.of(eventDto),
                 quizDtoList,
                 null,
             ),
             arguments(
                 "正常系 クイズが0件なイベントIDを渡すと0件のクイズの配列が返される",
-                UlidId.of(quizEmptyEventDto.eventIdentifier.id),
+                Event.of(quizEmptyEventDto),
                 listOf<QuizDto>(),
                 null,
-            ),
-            arguments(
-                "異常系 存在しないイベントIDを渡すとNotFoundExceptionが投げられる",
-                UlidId.of(INVALID_EVENT_ID),
-                null,
-                NotFoundException::class.java,
             ),
         )
     }

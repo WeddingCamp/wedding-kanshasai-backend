@@ -13,12 +13,11 @@ import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
 import wedding.kanshasai.backend.any
 import wedding.kanshasai.backend.domain.entity.Event
 import wedding.kanshasai.backend.domain.entity.Session
-import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
-import wedding.kanshasai.backend.domain.exception.NotFoundException
 import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
+import wedding.kanshasai.backend.infra.exception.DatabaseException
 import wedding.kanshasai.backend.infra.mysql.dto.EventDto
 import wedding.kanshasai.backend.infra.mysql.dto.SessionDto
 import wedding.kanshasai.backend.infra.mysql.mapper.SessionMapper
@@ -91,10 +90,10 @@ class SessionRepositoryTests {
                 null,
             ),
             arguments(
-                "異常系 存在しないセッションIDを渡すとNotFoundExceptionが投げられる",
+                "異常系 存在しないセッションIDを渡すとDatabaseExceptionが投げられる",
                 UlidId.of(INVALID_SESSION_ID),
                 null,
-                NotFoundException::class.java,
+                DatabaseException::class.java,
             ),
         )
     }
@@ -150,13 +149,6 @@ class SessionRepositoryTests {
                 Event.of(eventDto),
                 sessionDto.name,
                 null,
-                false,
-            ),
-            arguments(
-                "異常系 DBに存在しないイベントを渡すとNotFoundExceptionが投げられる",
-                Event.of(EventDto(UlidId.new().toStandardIdentifier(), "event_name")),
-                "session_name",
-                NotFoundException::class.java,
                 false,
             ),
             arguments(

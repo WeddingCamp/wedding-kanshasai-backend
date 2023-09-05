@@ -18,11 +18,10 @@ import wedding.kanshasai.backend.WeddingKanshasaiSpringBootTest
 import wedding.kanshasai.backend.domain.entity.Quiz
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.entity.SessionQuiz
-import wedding.kanshasai.backend.domain.exception.DatabaseException
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
-import wedding.kanshasai.backend.domain.exception.NotFoundException
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
+import wedding.kanshasai.backend.infra.exception.DatabaseException
 import wedding.kanshasai.backend.infra.mysql.dto.EventDto
 import wedding.kanshasai.backend.infra.mysql.dto.QuizDto
 import wedding.kanshasai.backend.infra.mysql.dto.SessionDto
@@ -87,11 +86,11 @@ class SessionQuizRepositoryTests {
     fun <T : Throwable> find_test(testCaseName: String, session: Session, quiz: Quiz, expect: SessionQuiz?, throwable: Class<T>?) {
         if (throwable != null) {
             assertThrows(throwable) {
-                sessionQuizRepository.find(session, quiz).getOrThrow()
+                sessionQuizRepository.findById(session, quiz).getOrThrow()
             }
             return
         }
-        val sessionQuiz = sessionQuizRepository.find(session, quiz).getOrThrow()
+        val sessionQuiz = sessionQuizRepository.findById(session, quiz).getOrThrow()
         if (expect == null) {
             assertNull(sessionQuiz)
             return
@@ -113,25 +112,25 @@ class SessionQuizRepositoryTests {
                 null,
             ),
             arguments(
-                "異常系 存在しないセッションIDと存在するクイズIDを渡すとNotFoundExceptionが投げられる",
+                "異常系 存在しないセッションIDと存在するクイズIDを渡すとDatabaseExceptionが投げられる",
                 Session.of(sessionDto.copy(sessionIdentifier = UlidId.new().toStandardIdentifier())),
                 Quiz.of(insertedQuizDtoList.first()),
                 null,
-                NotFoundException::class.java,
+                DatabaseException::class.java,
             ),
             arguments(
-                "異常系 存在するセッションIDと存在しないクイズIDを渡すとNotFoundExceptionが投げられる",
+                "異常系 存在するセッションIDと存在しないクイズIDを渡すとDatabaseExceptionが投げられる",
                 Session.of(sessionDto),
                 Quiz.of(insertedQuizDtoList.first().copy(quizIdentifier = UlidId.new().toStandardIdentifier())),
                 null,
-                NotFoundException::class.java,
+                DatabaseException::class.java,
             ),
             arguments(
-                "異常系 存在しないセッションIDと存在しないクイズIDを渡すとNotFoundExceptionが投げられる",
+                "異常系 存在しないセッションIDと存在しないクイズIDを渡すとDatabaseExceptionが投げられる",
                 Session.of(sessionDto.copy(sessionIdentifier = UlidId.new().toStandardIdentifier())),
                 Quiz.of(insertedQuizDtoList.first().copy(quizIdentifier = UlidId.new().toStandardIdentifier())),
                 null,
-                NotFoundException::class.java,
+                DatabaseException::class.java,
             ),
         )
     }
@@ -206,11 +205,11 @@ class SessionQuizRepositoryTests {
                 false,
             ),
             arguments(
-                "異常系 存在しないセッションIDを渡すとNotFoundExceptionが投げられる",
+                "異常系 存在しないセッションIDを渡すとInvalidArgumentExceptionが投げられる",
                 Session.of(SessionDto(UlidId.new().toStandardIdentifier(), UlidId.new().toByteArray())),
                 quizDtoList.map { Quiz.of(it) },
                 null,
-                NotFoundException::class.java,
+                InvalidArgumentException::class.java,
                 false,
             ),
             arguments(
