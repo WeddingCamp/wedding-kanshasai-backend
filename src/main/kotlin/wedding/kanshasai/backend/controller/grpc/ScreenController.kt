@@ -11,7 +11,6 @@ import wedding.kanshasai.backend.controller.grpc.response.setQuizEvent
 import wedding.kanshasai.backend.infra.redis.event.CoverScreenRedisEvent
 import wedding.kanshasai.backend.infra.redis.event.IntroductionRedisEvent
 import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEvent
-import wedding.kanshasai.backend.service.ChoiceService
 import wedding.kanshasai.backend.service.RedisEventService
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ScreenServiceGrpcKt.ScreenServiceCoroutineImplBase
@@ -19,7 +18,6 @@ import wedding.kanshasai.v1.ScreenServiceGrpcKt.ScreenServiceCoroutineImplBase
 @GrpcService
 class ScreenController(
     private val redisEventService: RedisEventService,
-    private val choiceService: ChoiceService,
     private val grpcTool: GrpcTool,
 ) : ScreenServiceCoroutineImplBase() {
     override suspend fun sendMessage(request: SendMessageRequest): SendMessageResponse {

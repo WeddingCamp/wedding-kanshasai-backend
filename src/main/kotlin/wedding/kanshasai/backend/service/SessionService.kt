@@ -30,6 +30,10 @@ class SessionService(
         return session
     }
 
+    fun findById(sessionId: UlidId): Session {
+        return sessionRepository.findById(sessionId).getOrThrowService()
+    }
+
     fun setCoverScreen(sessionId: UlidId, isVisible: Boolean) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
         sessionRepository.update(session.apply { isCoverVisible = isVisible }).getOrThrowService()

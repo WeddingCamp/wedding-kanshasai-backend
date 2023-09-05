@@ -78,6 +78,10 @@ class SessionState private constructor(private val value: SessionStateEnum) {
         return@runCatching nextState
     }
 
+    fun isGameInProgress(): Boolean {
+        return value != SessionStateEnum.INTRODUCTION && value != SessionStateEnum.FINISHED
+    }
+
     companion object {
         fun of(value: Int): SessionState {
             if (value == 1) return SessionState(SessionStateEnum.INTRODUCTION)
