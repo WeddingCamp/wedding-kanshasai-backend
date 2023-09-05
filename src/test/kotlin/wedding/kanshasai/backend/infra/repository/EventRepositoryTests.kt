@@ -74,7 +74,7 @@ class EventRepositoryTests {
                 null,
             ),
             arguments(
-                "異常系 存在しないイベントIDを渡すとNotFoundExceptionが投げられる",
+                "異常系 存在しないイベントIDを渡すとDatabaseExceptionが投げられる",
                 UlidId.of(INVALID_EVENT_ID),
                 null,
                 DatabaseException::class.java,
