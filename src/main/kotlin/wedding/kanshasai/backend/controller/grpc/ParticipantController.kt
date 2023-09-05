@@ -7,9 +7,6 @@ import kotlinx.coroutines.launch
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.controller.grpc.response.*
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
-import wedding.kanshasai.backend.domain.state.SessionState
-import wedding.kanshasai.backend.infra.redis.event.CoverScreenRedisEvent
-import wedding.kanshasai.backend.infra.redis.event.IntroductionRedisEvent
 import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEvent
 import wedding.kanshasai.backend.service.ParticipantService
 import wedding.kanshasai.backend.service.RedisEventService
@@ -83,7 +80,7 @@ class ParticipantController(
             .setCurrentStateEvent(
                 StreamParticipantEventResponse.CurrentStateEvent.newBuilder()
                     .setIsGameInProgress(session.state.isGameInProgress())
-                    .build()
+                    .build(),
             )
             .build()
             .let(::trySend)
