@@ -1,17 +1,25 @@
 package wedding.kanshasai.backend.controller.grpc
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import net.devh.boot.grpc.server.service.GrpcService
-import wedding.kanshasai.backend.controller.grpc.response.setParticipant
+import wedding.kanshasai.backend.controller.grpc.response.*
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
+import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEvent
 import wedding.kanshasai.backend.service.ParticipantService
+import wedding.kanshasai.backend.service.RedisEventService
+import wedding.kanshasai.backend.service.SessionService
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ParticipantServiceGrpcKt.ParticipantServiceCoroutineImplBase
 
 @GrpcService
 class ParticipantController(
     private val participantService: ParticipantService,
+    private val sessionService: SessionService,
     private val grpcTool: GrpcTool,
+    private val redisEventService: RedisEventService,
 ) : ParticipantServiceCoroutineImplBase() {
     override suspend fun listParticipants(request: ListParticipantsRequest): ListParticipantsResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
@@ -62,7 +70,31 @@ class ParticipantController(
         TODO("NOT IMPLEMENTED")
     }
 
-    override fun streamParticipantEvent(request: StreamParticipantEventRequest): Flow<StreamParticipantEventResponse> {
-        TODO("NOT IMPLEMENTED")
+    override fun streamParticipantEvent(request: StreamParticipantEventRequest): Flow<StreamParticipantEventResponse> = callbackFlow {
+        val participantId = grpcTool.parseUlidId(request.participantId, "participantId")
+        val participant = participantService.findById(participantId)
+
+        val session = sessionService.findById(participant.sessionId)
+
+        StreamParticipantEventResponse.newBuilder()
+            .setCurrentStateEvent(
+                StreamParticipantEventResponse.CurrentStateEvent.newBuilder()
+                    .setIsGameInProgress(session.state.isGameInProgress())
+                    .build(),
+            )
+            .build()
+            .let(::trySend)
+
+        val subscribers = listOf(
+            launch {
+                redisEventService.subscribe(NextQuizRedisEvent::class, session.id).collect { redisEvent ->
+                    StreamParticipantEventResponse.newBuilder()
+                        .setNextQuizEvent(redisEvent)
+                        .build()
+                        .let(::trySend)
+                }
+            },
+        )
+        subscribers.joinAll()
     }
 }

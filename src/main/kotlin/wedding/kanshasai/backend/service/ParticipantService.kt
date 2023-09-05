@@ -11,6 +11,10 @@ class ParticipantService(
     private val sessionRepository: SessionRepository,
     private val participantRepository: ParticipantRepository,
 ) {
+    fun findById(participantId: UlidId): Participant {
+        return participantRepository.findById(participantId).getOrThrowService()
+    }
+
     fun listParticipantsBySessionId(sessionId: UlidId): List<Participant> {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
         return participantRepository.listBySession(session).getOrThrowService()
