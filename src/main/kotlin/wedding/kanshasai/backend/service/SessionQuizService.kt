@@ -8,7 +8,6 @@ import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.repository.ChoiceRepository
 import wedding.kanshasai.backend.infra.mysql.repository.SessionQuizRepository
 import wedding.kanshasai.backend.infra.mysql.repository.SessionRepository
-import wedding.kanshasai.backend.service.exception.FailedOperationException
 
 @Service
 class SessionQuizService(
@@ -16,19 +15,15 @@ class SessionQuizService(
     private val sessionRepository: SessionRepository,
     private val sessionQuizRepository: SessionQuizRepository,
 ) {
-    fun listQuizBySessionId(sessionId: UlidId): Result<List<Triple<Quiz, SessionQuiz, List<Choice>>>> = runCatching {
-        try {
-            val session = sessionRepository.findById(sessionId).getOrThrow()
-            val sessionQuizList = sessionQuizRepository.listBySession(session).getOrThrow()
-            sessionQuizList.map { (quiz, sessionQuiz) ->
-                Triple(
-                    quiz,
-                    sessionQuiz,
-                    choiceRepository.listByQuiz(quiz).getOrThrow(),
-                )
-            }
-        } catch (e: Exception) {
-            throw FailedOperationException("Failed to list quiz by session id.", e)
+    fun listQuizBySessionId(sessionId: UlidId): List<Triple<Quiz, SessionQuiz, List<Choice>>> {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+        val sessionQuizList = sessionQuizRepository.listBySession(session).getOrThrowService()
+        return sessionQuizList.map { (quiz, sessionQuiz) ->
+            Triple(
+                quiz,
+                sessionQuiz,
+                choiceRepository.listByQuiz(quiz).getOrThrowService(),
+            )
         }
     }
 }

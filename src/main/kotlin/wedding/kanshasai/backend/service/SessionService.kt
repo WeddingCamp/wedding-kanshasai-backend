@@ -11,7 +11,6 @@ import wedding.kanshasai.backend.infra.redis.event.CoverScreenRedisEvent
 import wedding.kanshasai.backend.infra.redis.event.IntroductionRedisEvent
 import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEvent
 import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEventChoice
-import wedding.kanshasai.backend.service.exception.FailedOperationException
 
 @Service
 class SessionService(
@@ -22,75 +21,57 @@ class SessionService(
     private val redisEventService: RedisEventService,
     private val choiceRepository: ChoiceRepository,
 ) {
-    fun createSession(eventId: UlidId, name: String): Result<Session> = runCatching {
-        try {
-            // TODO: Transaction切る
-            val event = eventRepository.findById(eventId).getOrThrow()
-            val quizList = quizRepository.listByEvent(event).getOrThrow()
-            val session = sessionRepository.createSession(event, name).getOrThrow()
-            sessionQuizRepository.insertQuizList(session, quizList).getOrThrow()
-            session
-        } catch (e: Exception) {
-            throw FailedOperationException("Create session failed.", e)
-        }
+    fun createSession(eventId: UlidId, name: String): Session {
+        // TODO: Transaction切る
+        val event = eventRepository.findById(eventId).getOrThrowService()
+        val quizList = quizRepository.listByEvent(event).getOrThrowService()
+        val session = sessionRepository.createSession(event, name).getOrThrowService()
+        sessionQuizRepository.insertQuizList(session, quizList).getOrThrowService()
+        return session
     }
 
-    fun setCoverScreen(sessionId: UlidId, isVisible: Boolean): Result<Unit> = runCatching {
-        try {
-            val session = sessionRepository.findById(sessionId).getOrThrow()
-            sessionRepository.update(session.apply { isCoverVisible = isVisible }).getOrThrow()
-            redisEventService.publish(CoverScreenRedisEvent(isVisible), sessionId)
-        } catch (e: Exception) {
-            throw FailedOperationException("Set cover screen failed.", e)
-        }
+    fun setCoverScreen(sessionId: UlidId, isVisible: Boolean) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+        sessionRepository.update(session.apply { isCoverVisible = isVisible }).getOrThrowService()
+        redisEventService.publish(CoverScreenRedisEvent(isVisible), sessionId)
     }
 
-    fun setIntroductionScreen(sessionId: UlidId, introductionType: IntroductionType): Result<Unit> = runCatching {
-        try {
-            val session = sessionRepository.findById(sessionId).getOrThrow()
+    fun setIntroductionScreen(sessionId: UlidId, introductionType: IntroductionType) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
 
-            if (session.state != SessionState.INTRODUCTION) {
-                throw InvalidStateException("Session state is not INTRODUCTION.")
-            }
-
-            sessionRepository.update(session.apply { currentIntroduction = introductionType }).getOrThrow()
-            redisEventService.publish(IntroductionRedisEvent(introductionType), sessionId)
-        } catch (e: Exception) {
-            throw FailedOperationException("Set introduction screen failed.", e)
+        if (session.state != SessionState.INTRODUCTION) {
+            throw InvalidStateException("Session state is not INTRODUCTION.")
         }
+
+        sessionRepository.update(session.apply { currentIntroduction = introductionType }).getOrThrowService()
+        redisEventService.publish(IntroductionRedisEvent(introductionType), sessionId)
     }
 
-    fun setNextQuiz(sessionId: UlidId, quizId: UlidId): Result<Unit> = runCatching {
-        try {
-            val session = sessionRepository.findById(sessionId).getOrThrow()
-            val quiz = quizRepository.findById(quizId).getOrThrow()
-            sessionQuizRepository.findById(session, quiz).getOrThrow()
-            val choiceList = choiceRepository.listByQuiz(quiz).getOrThrow()
+    fun setNextQuiz(sessionId: UlidId, quizId: UlidId) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+        val quiz = quizRepository.findById(quizId).getOrThrowService()
+        sessionQuizRepository.findById(session, quiz).getOrThrowService()
+        val choiceList = choiceRepository.listByQuiz(quiz).getOrThrowService()
 
-            val nextState = session.state.next(SessionState.QUIZ_WAITING).getOrElse {
-                throw InvalidStateException("Current state cannot set quiz")
-            }
+        val nextState = session.state.next(SessionState.QUIZ_WAITING).getOrThrowService()
 
-            sessionRepository.update(
-                session.apply {
-                    state = nextState
-                    currentQuizId = quiz.id
+        sessionRepository.update(
+            session.apply {
+                state = nextState
+                currentQuizId = quiz.id
+            },
+        ).getOrThrowService()
+
+        redisEventService.publish(
+            NextQuizRedisEvent(
+                quiz.id.toString(),
+                quiz.body,
+                quiz.type.toGrpcType(),
+                choiceList.map {
+                    NextQuizRedisEventChoice(it.id.toString(), it.body)
                 },
-            ).getOrThrow()
-
-            redisEventService.publish(
-                NextQuizRedisEvent(
-                    quiz.id.toString(),
-                    quiz.body,
-                    quiz.type.toGrpcType(),
-                    choiceList.map {
-                        NextQuizRedisEventChoice(it.id.toString(), it.body)
-                    },
-                ),
-                sessionId,
-            )
-        } catch (e: Exception) {
-            throw FailedOperationException("Set next quiz failed.", e)
-        }
+            ),
+            sessionId,
+        )
     }
 }

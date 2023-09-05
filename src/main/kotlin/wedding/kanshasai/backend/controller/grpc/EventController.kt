@@ -22,7 +22,7 @@ class EventController(
     }
 
     override suspend fun listEvents(request: ListEventsRequest): ListEventsResponse {
-        val eventList = eventService.listEventAll().getOrThrow()
+        val eventList = eventService.listEventAll()
         val grpcEventList = eventList.map { p ->
             ListEventsResponse.Event.newBuilder().let {
                 it.eventId = p.id.toString()

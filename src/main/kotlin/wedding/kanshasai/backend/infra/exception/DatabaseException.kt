@@ -1,30 +1,10 @@
 package wedding.kanshasai.backend.infra.exception
 
 import wedding.kanshasai.backend.domain.constant.Table
-import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.dto.identifier.DtoIdentifier
 
-class DatabaseException(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause) {
+open class DatabaseException(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause) {
     companion object {
-        fun retrieve(table: Table, cause: Throwable?): DatabaseException {
-            return DatabaseException("Failed to retrieve from '${table.tableName}'.", cause)
-        }
-        fun retrieve(table: Table, id: DtoIdentifier, cause: Throwable?): DatabaseException {
-            return retrieve(table, "id", id, cause)
-        }
-        fun retrieve(table: Table, columnName: String, id: DtoIdentifier, cause: Throwable?): DatabaseException {
-            return DatabaseException("Failed to retrieve from '${table.tableName}' ($columnName=$id).", cause)
-        }
-        fun retrieve(
-            table: Table,
-            columnName1: String,
-            id1: UlidId,
-            columnName2: String,
-            id2: UlidId,
-            cause: Throwable?,
-        ): DatabaseException {
-            return DatabaseException("Failed to retrieve from '${table.tableName}' ($columnName1=$id1, $columnName2=$id2).", cause)
-        }
         fun insert(table: Table, cause: Throwable?): DatabaseException {
             return DatabaseException("Failed to insert into '${table.tableName}'.", cause)
         }

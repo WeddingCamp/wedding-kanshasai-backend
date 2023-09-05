@@ -4,8 +4,6 @@ import kotlinx.coroutines.flow.Flow
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.controller.grpc.response.setParticipant
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
-import wedding.kanshasai.backend.domain.exception.InvalidValueException
-import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.service.ParticipantService
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ParticipantServiceGrpcKt.ParticipantServiceCoroutineImplBase
@@ -13,15 +11,12 @@ import wedding.kanshasai.v1.ParticipantServiceGrpcKt.ParticipantServiceCoroutine
 @GrpcService
 class ParticipantController(
     private val participantService: ParticipantService,
+    private val grpcTool: GrpcTool,
 ) : ParticipantServiceCoroutineImplBase() {
     override suspend fun listParticipants(request: ListParticipantsRequest): ListParticipantsResponse {
-        if (request.sessionId.isNullOrEmpty()) throw InvalidArgumentException.requiredField("sessionId")
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
 
-        val sessionId = try { UlidId.of(request.sessionId) } catch (e: InvalidValueException) {
-            throw InvalidArgumentException("'sessionId' cannot be parsed as ULID format.", e)
-        }
-
-        val participantList = participantService.listParticipantsBySessionId(sessionId).getOrThrow()
+        val participantList = participantService.listParticipantsBySessionId(sessionId)
         val grpcParticipantList = participantList.map { participant ->
             ListParticipantsResponse.Participant.newBuilder()
                 .setParticipant(participant)
@@ -40,20 +35,15 @@ class ParticipantController(
 
     override suspend fun createParticipant(request: CreateParticipantRequest): CreateParticipantResponse {
         if (request.name.isNullOrEmpty()) throw InvalidArgumentException.requiredField("name")
-        if (request.sessionId.isNullOrEmpty()) throw InvalidArgumentException.requiredField("sessionId")
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
 
         val imageId = if (request.imageId.isEmpty()) {
             null
         } else {
-            try { UlidId.of(request.imageId) } catch (e: InvalidValueException) {
-                throw InvalidArgumentException("'imageId' cannot be parsed as ULID format.", e)
-            }
-        }
-        val sessionId = try { UlidId.of(request.sessionId) } catch (e: InvalidValueException) {
-            throw InvalidArgumentException("'sessionId' cannot be parsed as ULID format.", e)
+            grpcTool.parseUlidId(request.imageId, "imageId")
         }
 
-        val participant = participantService.createParticipant(sessionId, request.name, imageId).getOrThrow()
+        val participant = participantService.createParticipant(sessionId, request.name, imageId)
 
         return CreateParticipantResponse.newBuilder().let {
             it.name = participant.name

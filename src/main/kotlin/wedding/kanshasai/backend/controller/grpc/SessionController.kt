@@ -7,8 +7,6 @@ import wedding.kanshasai.backend.controller.grpc.response.setQuiz
 import wedding.kanshasai.backend.controller.grpc.response.setSession
 import wedding.kanshasai.backend.controller.grpc.response.setSessionQuiz
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
-import wedding.kanshasai.backend.domain.exception.NotFoundException
-import wedding.kanshasai.backend.infra.exception.DatabaseException
 import wedding.kanshasai.backend.service.SessionQuizService
 import wedding.kanshasai.backend.service.SessionService
 import wedding.kanshasai.v1.*
@@ -24,7 +22,7 @@ class SessionController(
         if (request.name.isNullOrEmpty()) throw InvalidArgumentException.requiredField("name")
         val eventId = grpcTool.parseUlidId(request.eventId, "eventId")
 
-        val session = sessionService.createSession(eventId, request.name).getOrThrow()
+        val session = sessionService.createSession(eventId, request.name)
 
         return CreateSessionResponse.newBuilder()
             .setSession(session)
@@ -33,9 +31,8 @@ class SessionController(
 
     override suspend fun listSessionQuizzes(request: ListSessionQuizzesRequest): ListSessionQuizzesResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
-        val sessionQuizList = sessionQuizService.listQuizBySessionId(sessionId).getOrElse {
-            throw NotFoundException("SessionQuiz not found.", it)
-        }
+
+        val sessionQuizList = sessionQuizService.listQuizBySessionId(sessionId)
 
         val grpcSessionQuizList = sessionQuizList.map { (quiz, sessionQuiz, choiceList) ->
             val grpcChoiceList = choiceList.map { choice ->
@@ -49,7 +46,6 @@ class SessionController(
                 .addAllChoices(grpcChoiceList)
                 .build()
         }
-
         return ListSessionQuizzesResponse.newBuilder()
             .addAllSessionQuizzes(grpcSessionQuizList)
             .build()
@@ -59,9 +55,7 @@ class SessionController(
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
         val introductionType = grpcTool.parseIntroductionType(request.introductionScreenType)
 
-        sessionService.setIntroductionScreen(sessionId, introductionType).getOrElse {
-            throw NotFoundException("Session not found.", it)
-        }
+        sessionService.setIntroductionScreen(sessionId, introductionType)
 
         return SetNextIntroductionResponse.newBuilder().build()
     }
@@ -70,9 +64,7 @@ class SessionController(
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
         val quizId = grpcTool.parseUlidId(request.quizId, "quizId")
 
-        sessionService.setNextQuiz(sessionId, quizId).getOrElse {
-            throw DatabaseException("Failed to set next quiz.", it)
-        }
+        sessionService.setNextQuiz(sessionId, quizId)
 
         return SetNextQuizResponse.newBuilder().build()
     }
@@ -96,9 +88,7 @@ class SessionController(
     override suspend fun setCoverScreen(request: SetCoverScreenRequest): SetCoverScreenResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
 
-        sessionService.setCoverScreen(sessionId, request.isVisible).getOrElse {
-            throw DatabaseException("Failed to set cover screen.", it)
-        }
+        sessionService.setCoverScreen(sessionId, request.isVisible)
 
         return SetCoverScreenResponse.newBuilder().build()
     }
