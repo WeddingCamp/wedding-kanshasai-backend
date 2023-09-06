@@ -13,6 +13,7 @@ import wedding.kanshasai.backend.service.RedisEventService
 import wedding.kanshasai.backend.service.SessionService
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ParticipantServiceGrpcKt.ParticipantServiceCoroutineImplBase
+import wedding.kanshasai.backend.domain.value.ParticipantType
 
 @GrpcService
 class ParticipantController(
@@ -51,7 +52,8 @@ class ParticipantController(
             grpcTool.parseUlidId(request.imageId, "imageId")
         }
 
-        val participant = participantService.createParticipant(sessionId, request.name, imageId)
+        val type = ParticipantType.of(request.participantType.number)
+        val participant = participantService.createParticipant(sessionId, request.name, imageId, type)
 
         return CreateParticipantResponse.newBuilder().let {
             it.name = participant.name

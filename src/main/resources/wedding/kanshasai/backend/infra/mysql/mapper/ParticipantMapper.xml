@@ -8,6 +8,7 @@
             session_id,
             name,
             image_id,
+            type,
             is_deleted
         )
         VALUES (
@@ -15,6 +16,7 @@
             #{entity.sessionId},
             #{entity.name},
             #{entity.imageId},
+            #{entity.type},
             #{entity.isDeleted}
         )
     </insert>
@@ -25,6 +27,7 @@
             session_id,
             name,
             image_id,
+            type,
             is_deleted
         )
         VALUES
@@ -34,6 +37,7 @@
                 #{entity.sessionId},
                 #{entity.name},
                 #{entity.imageId},
+                #{entity.type},
                 #{entity.isDeleted}
             )
         </foreach>
@@ -68,6 +72,7 @@
             session_id = #{entity.sessionId},
             name = #{entity.name},
             image_id = #{entity.imageId},
+            type = #{entity.type},
             is_deleted = #{entity.isDeleted}
         WHERE
             id = #{entity.identifier.id}
@@ -103,6 +108,7 @@
         <result property="sessionId" column="session_id"/>
         <result property="name" column="name"/>
         <result property="imageId" column="image_id"/>
+        <result property="type" column="type"/>
         <result property="isDeleted" column="is_deleted"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>

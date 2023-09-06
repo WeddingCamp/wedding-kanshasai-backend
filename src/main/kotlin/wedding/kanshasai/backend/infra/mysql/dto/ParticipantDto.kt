@@ -9,6 +9,7 @@ data class ParticipantDto(
     override var sessionId: ByteArray = byteArrayOf(),
     override var name: String = "",
     override var imageId: ByteArray? = null,
+    override var type: Int = 0,
     override var isDeleted: Boolean = false,
     var createdAt: Timestamp = Timestamp(0),
     var updatedAt: Timestamp = Timestamp(0),
@@ -29,6 +30,7 @@ data class ParticipantDto(
         if (!sessionId.contentEquals(other.sessionId)) return false
         if (name != other.name) return false
         if (!imageId.contentEquals(other.imageId)) return false
+        if (type != other.type) return false
         if (isDeleted != other.isDeleted) return false
 
         return true

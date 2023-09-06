@@ -36,10 +36,10 @@ class IntroductionType private constructor(val value: IntroductionScreenTypeEnum
 
     companion object {
         fun of(value: Int): IntroductionType {
-            if (value == 1) return IntroductionType(IntroductionScreenTypeEnum.WELCOME)
-            if (value == 2) return IntroductionType(IntroductionScreenTypeEnum.RULE)
-            if (value == 3) return IntroductionType(IntroductionScreenTypeEnum.Introduction)
-            throw InvalidArgumentException("Invalid CoverScreenType value. (value=$value)")
+            values.forEach {
+                if (it.toNumber() == value) return it
+            }
+            throw InvalidArgumentException("Invalid IntroductionType value. (value=$value)")
         }
 
         val values = IntroductionScreenTypeEnum.values().map { IntroductionType(it) }
