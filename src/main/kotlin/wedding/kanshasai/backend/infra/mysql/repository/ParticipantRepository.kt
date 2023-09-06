@@ -5,6 +5,7 @@ import wedding.kanshasai.backend.domain.constant.Table
 import wedding.kanshasai.backend.domain.entity.Participant
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
+import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto
 import wedding.kanshasai.backend.infra.mysql.mapper.ParticipantMapper
@@ -24,7 +25,7 @@ class ParticipantRepository(
         participantMapper.listBySessionId(session.id.toByteArray()).map(Participant::of)
     }
 
-    fun createParticipant(session: Session, name: String, imageId: UlidId?): Result<Participant> = runCatching {
+    fun createParticipant(session: Session, name: String, imageId: UlidId?, type: ParticipantType): Result<Participant> = runCatching {
         if (name.isEmpty()) throw InvalidArgumentException.empty("name")
 
         val participantId = UlidId.new()
@@ -33,6 +34,7 @@ class ParticipantRepository(
             session.id.toByteArray(),
             name,
             imageId?.toByteArray(),
+            type.toNumber(),
         )
         insert(participantMapper, participantDto)
 

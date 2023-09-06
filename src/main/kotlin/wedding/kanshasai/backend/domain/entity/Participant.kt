@@ -1,5 +1,6 @@
 package wedding.kanshasai.backend.domain.entity
 
+import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto
 import java.sql.Timestamp
@@ -9,6 +10,7 @@ class Participant private constructor(
     val sessionId: UlidId,
     var name: String,
     var imageId: UlidId?,
+    var type: ParticipantType,
     var isDeleted: Boolean,
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
@@ -20,6 +22,7 @@ class Participant private constructor(
                 UlidId.of(participantDto.sessionId),
                 participantDto.name,
                 participantDto.imageId?.let(UlidId::of),
+                ParticipantType.of(participantDto.type),
                 participantDto.isDeleted,
                 participantDto.createdAt,
                 participantDto.updatedAt,

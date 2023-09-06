@@ -16,6 +16,7 @@ import wedding.kanshasai.backend.any
 import wedding.kanshasai.backend.domain.entity.Participant
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
+import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
 import wedding.kanshasai.backend.infra.exception.DatabaseException
@@ -160,6 +161,7 @@ class ParticipantRepositoryTests {
         session: Session,
         participantName: String,
         imageId: UlidId?,
+        type: ParticipantType,
         throwable: Class<T>?,
         dbFailFlag: Boolean,
     ) {
@@ -168,22 +170,24 @@ class ParticipantRepositoryTests {
         }
         if (throwable != null) {
             assertThrows(throwable) {
-                participantRepository.createParticipant(session, participantName, imageId).getOrThrow()
+                participantRepository.createParticipant(session, participantName, imageId, type).getOrThrow()
             }
             return
         }
-        val createdParticipant = participantRepository.createParticipant(session, participantName, imageId).getOrThrow()
+        val createdParticipant = participantRepository.createParticipant(session, participantName, imageId, type).getOrThrow()
         assertEquals(participantName, createdParticipant.name)
         assertEquals(session.id, createdParticipant.sessionId)
         assertEquals(imageId, createdParticipant.imageId)
+        assertEquals(type, createdParticipant.type)
         assertFalse(createdParticipant.isDeleted)
 
-        val foundSession = participantRepository.findById(createdParticipant.id).getOrThrow()
-        assertEquals(createdParticipant.id, foundSession.id)
-        assertEquals(createdParticipant.name, foundSession.name)
-        assertEquals(createdParticipant.sessionId, foundSession.sessionId)
-        assertEquals(createdParticipant.imageId, foundSession.imageId)
-        assertEquals(createdParticipant.isDeleted, foundSession.isDeleted)
+        val foundParticipant = participantRepository.findById(createdParticipant.id).getOrThrow()
+        assertEquals(createdParticipant.id, foundParticipant.id)
+        assertEquals(createdParticipant.name, foundParticipant.name)
+        assertEquals(createdParticipant.sessionId, foundParticipant.sessionId)
+        assertEquals(createdParticipant.imageId, foundParticipant.imageId)
+        assertEquals(createdParticipant.type, foundParticipant.type)
+        assertEquals(createdParticipant.isDeleted, foundParticipant.isDeleted)
     }
 
     fun createParticipant_parameters(): Stream<Arguments> {
@@ -193,6 +197,7 @@ class ParticipantRepositoryTests {
                 Session.of(sessionDto),
                 "participant_name",
                 UlidId.new(),
+                ParticipantType.values.random(),
                 null,
                 false,
             ),
@@ -201,6 +206,7 @@ class ParticipantRepositoryTests {
                 Session.of(sessionDto),
                 "participant_name",
                 null,
+                ParticipantType.values.random(),
                 null,
                 false,
             ),
@@ -209,6 +215,7 @@ class ParticipantRepositoryTests {
                 Session.of(sessionDto),
                 participantDto.name,
                 UlidId.new(),
+                ParticipantType.values.random(),
                 null,
                 false,
             ),
@@ -217,6 +224,7 @@ class ParticipantRepositoryTests {
                 Session.of(sessionDto),
                 participantDto.name,
                 participantDto.imageId?.let(UlidId::of),
+                ParticipantType.values.random(),
                 null,
                 false,
             ),
@@ -225,6 +233,7 @@ class ParticipantRepositoryTests {
                 Session.of(sessionDto),
                 "",
                 null,
+                ParticipantType.values.random(),
                 InvalidArgumentException::class.java,
                 false,
             ),
@@ -233,6 +242,7 @@ class ParticipantRepositoryTests {
                 Session.of(SessionDto(UlidId.new().toStandardIdentifier(), eventDto.eventIdentifier.id)),
                 "",
                 null,
+                ParticipantType.values.random(),
                 InvalidArgumentException::class.java,
                 false,
             ),
@@ -241,6 +251,7 @@ class ParticipantRepositoryTests {
                 Session.of(sessionDto),
                 "participant_name",
                 null,
+                ParticipantType.values.random(),
                 DatabaseException::class.java,
                 true,
             ),

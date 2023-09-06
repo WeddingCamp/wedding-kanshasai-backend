@@ -9,4 +9,5 @@ fun ListParticipantsResponse.Participant.Builder.setParticipant(participant: Par
     participantId = participant.id.toString()
     sessionId = participant.sessionId.toString()
     imageId = participant.imageId.toString()
+    participantType = participant.type.toGrpcType()
 }

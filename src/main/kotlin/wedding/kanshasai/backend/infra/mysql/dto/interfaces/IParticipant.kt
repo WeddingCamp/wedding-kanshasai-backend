@@ -7,5 +7,6 @@ interface IParticipant {
     var sessionId: ByteArray
     var name: String
     var imageId: ByteArray?
+    var type: Int
     var isDeleted: Boolean
 }
