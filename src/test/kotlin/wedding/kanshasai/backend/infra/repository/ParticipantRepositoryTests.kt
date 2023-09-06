@@ -16,6 +16,7 @@ import wedding.kanshasai.backend.any
 import wedding.kanshasai.backend.domain.entity.Participant
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
+import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
 import wedding.kanshasai.backend.infra.exception.DatabaseException
@@ -25,7 +26,6 @@ import wedding.kanshasai.backend.infra.mysql.dto.QuizDto
 import wedding.kanshasai.backend.infra.mysql.dto.SessionDto
 import wedding.kanshasai.backend.infra.mysql.mapper.ParticipantMapper
 import wedding.kanshasai.backend.infra.mysql.repository.ParticipantRepository
-import wedding.kanshasai.backend.domain.value.ParticipantType
 import java.util.stream.Stream
 
 @WeddingKanshasaiSpringBootTest
