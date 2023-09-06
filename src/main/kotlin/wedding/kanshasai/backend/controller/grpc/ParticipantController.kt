@@ -7,13 +7,13 @@ import kotlinx.coroutines.launch
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.controller.grpc.response.*
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
+import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEvent
 import wedding.kanshasai.backend.service.ParticipantService
 import wedding.kanshasai.backend.service.RedisEventService
 import wedding.kanshasai.backend.service.SessionService
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ParticipantServiceGrpcKt.ParticipantServiceCoroutineImplBase
-import wedding.kanshasai.backend.domain.value.ParticipantType
 
 @GrpcService
 class ParticipantController(
