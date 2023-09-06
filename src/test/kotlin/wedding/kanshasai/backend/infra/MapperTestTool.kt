@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.IntroductionType
+import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mapper.*
 import wedding.kanshasai.backend.infra.mysql.dto.*
@@ -86,6 +87,7 @@ class MapperTestTool {
             sessionDto.sessionIdentifier.id,
             "Participant_$participantId",
             imageId?.toByteArray() ?: maybeNull(UlidId.new().toByteArray()),
+            ParticipantType.values.random().toNumber(),
         )
     }
 
