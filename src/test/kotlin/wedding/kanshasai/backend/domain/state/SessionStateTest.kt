@@ -48,30 +48,18 @@ class SessionStateTest {
                 arguments(
                     SessionState.QUIZ_WAITING,
                     listOf(
-                        SessionState.QUIZ_ANSWERING,
+                        SessionState.QUIZ_PLAYING,
                         SessionState.INTERIM_ANNOUNCEMENT,
                     ),
                 ),
                 arguments(
-                    SessionState.QUIZ_ANSWERING,
+                    SessionState.QUIZ_PLAYING,
                     listOf(
-                        SessionState.QUIZ_DEADLINE_PASSED,
+                        SessionState.QUIZ_RESULT,
                     ),
                 ),
                 arguments(
-                    SessionState.QUIZ_DEADLINE_PASSED,
-                    listOf(
-                        SessionState.QUIZ_CORRECT_ANSWER,
-                    ),
-                ),
-                arguments(
-                    SessionState.QUIZ_CORRECT_ANSWER,
-                    listOf(
-                        SessionState.QUIZ_FASTEST_RANKING,
-                    ),
-                ),
-                arguments(
-                    SessionState.QUIZ_FASTEST_RANKING,
+                    SessionState.QUIZ_RESULT,
                     listOf(
                         SessionState.FINAL_RESULT_ANNOUNCEMENT,
                         SessionState.QUIZ_WAITING,

@@ -33,21 +33,13 @@ class SessionState private constructor(private val value: SessionStateEnum) {
         },
         QUIZ_WAITING(10) {
             override val nextStateList
-                get() = listOf(QUIZ_ANSWERING, INTERIM_ANNOUNCEMENT)
+                get() = listOf(QUIZ_PLAYING, INTERIM_ANNOUNCEMENT)
         },
-        QUIZ_ANSWERING(20) {
+        QUIZ_PLAYING(20) {
             override val nextStateList
-                get() = listOf(QUIZ_DEADLINE_PASSED)
+                get() = listOf(QUIZ_RESULT)
         },
-        QUIZ_DEADLINE_PASSED(30) {
-            override val nextStateList
-                get() = listOf(QUIZ_CORRECT_ANSWER)
-        },
-        QUIZ_CORRECT_ANSWER(40) {
-            override val nextStateList
-                get() = listOf(QUIZ_FASTEST_RANKING)
-        },
-        QUIZ_FASTEST_RANKING(50) {
+        QUIZ_RESULT(50) {
             override val nextStateList
                 get() = listOf(FINAL_RESULT_ANNOUNCEMENT, QUIZ_WAITING)
         },
@@ -84,24 +76,16 @@ class SessionState private constructor(private val value: SessionStateEnum) {
 
     companion object {
         fun of(value: Int): SessionState {
-            if (value == 1) return SessionState(SessionStateEnum.INTRODUCTION)
-            if (value == 10) return SessionState(SessionStateEnum.QUIZ_WAITING)
-            if (value == 20) return SessionState(SessionStateEnum.QUIZ_ANSWERING)
-            if (value == 30) return SessionState(SessionStateEnum.QUIZ_DEADLINE_PASSED)
-            if (value == 40) return SessionState(SessionStateEnum.QUIZ_CORRECT_ANSWER)
-            if (value == 50) return SessionState(SessionStateEnum.QUIZ_FASTEST_RANKING)
-            if (value == 60) return SessionState(SessionStateEnum.FINAL_RESULT_ANNOUNCEMENT)
-            if (value == 9999) return SessionState(SessionStateEnum.FINISHED)
-            if (value == 1000) return SessionState(SessionStateEnum.INTERIM_ANNOUNCEMENT)
+            SessionStateEnum.values().forEach {
+                if (it.number == value) return SessionState(it)
+            }
             throw InvalidArgumentException("Invalid SessionState value. (value=$value)")
         }
 
         val INTRODUCTION = SessionState(SessionStateEnum.INTRODUCTION)
         val QUIZ_WAITING = SessionState(SessionStateEnum.QUIZ_WAITING)
-        val QUIZ_ANSWERING = SessionState(SessionStateEnum.QUIZ_ANSWERING)
-        val QUIZ_DEADLINE_PASSED = SessionState(SessionStateEnum.QUIZ_DEADLINE_PASSED)
-        val QUIZ_CORRECT_ANSWER = SessionState(SessionStateEnum.QUIZ_CORRECT_ANSWER)
-        val QUIZ_FASTEST_RANKING = SessionState(SessionStateEnum.QUIZ_FASTEST_RANKING)
+        val QUIZ_PLAYING = SessionState(SessionStateEnum.QUIZ_PLAYING)
+        val QUIZ_RESULT = SessionState(SessionStateEnum.QUIZ_RESULT)
         val FINAL_RESULT_ANNOUNCEMENT = SessionState(SessionStateEnum.FINAL_RESULT_ANNOUNCEMENT)
         val FINISHED = SessionState(SessionStateEnum.FINISHED)
         val INTERIM_ANNOUNCEMENT = SessionState(SessionStateEnum.INTERIM_ANNOUNCEMENT)
