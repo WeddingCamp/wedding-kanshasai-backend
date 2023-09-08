@@ -23,11 +23,13 @@ class SessionStateTest {
                 assertEquals(it.toString(), sessionState.toString())
             }
 
-            if (it == sessionState || validTransitionDestinationList.contains(it)) {
+            if (validTransitionDestinationList.contains(it)) {
                 assertDoesNotThrow {
                     sessionState.next(it).getOrThrow()
                 }
             } else {
+                println(sessionState)
+                println(it)
                 assertThrows<InvalidStateTransitionException> {
                     sessionState.next(it).getOrThrow()
                 }
@@ -42,14 +44,22 @@ class SessionStateTest {
                 arguments(
                     SessionState.INTRODUCTION,
                     listOf(
+                        SessionState.INTRODUCTION,
                         SessionState.QUIZ_WAITING,
                     ),
                 ),
                 arguments(
                     SessionState.QUIZ_WAITING,
                     listOf(
-                        SessionState.QUIZ_PLAYING,
+                        SessionState.QUIZ_WAITING,
+                        SessionState.QUIZ_SHOWING,
                         SessionState.INTERIM_ANNOUNCEMENT,
+                    ),
+                ),
+                arguments(
+                    SessionState.QUIZ_SHOWING,
+                    listOf(
+                        SessionState.QUIZ_PLAYING,
                     ),
                 ),
                 arguments(
@@ -61,6 +71,7 @@ class SessionStateTest {
                 arguments(
                     SessionState.QUIZ_RESULT,
                     listOf(
+                        SessionState.QUIZ_RESULT,
                         SessionState.FINAL_RESULT_ANNOUNCEMENT,
                         SessionState.QUIZ_WAITING,
                     ),
@@ -68,6 +79,7 @@ class SessionStateTest {
                 arguments(
                     SessionState.FINAL_RESULT_ANNOUNCEMENT,
                     listOf(
+                        SessionState.FINAL_RESULT_ANNOUNCEMENT,
                         SessionState.FINISHED,
                     ),
                 ),
@@ -78,6 +90,7 @@ class SessionStateTest {
                 arguments(
                     SessionState.INTERIM_ANNOUNCEMENT,
                     listOf(
+                        SessionState.INTERIM_ANNOUNCEMENT,
                         SessionState.QUIZ_WAITING,
                     ),
                 ),

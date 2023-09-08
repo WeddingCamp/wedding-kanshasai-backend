@@ -23,12 +23,12 @@ class QuizType private constructor(private val value: QuizTypeEnum) {
     }
 
     private enum class QuizTypeEnum(
-        val number: Int,
         val grpcValue: QuizTypeGrpc,
+        val number: Int = grpcValue.number,
     ) {
-        FOUR_CHOICES_QUIZ(1, QuizTypeGrpc.QUIZ_TYPE_FOUR_CHOICES_QUIZ),
-        SORT_IMAGE_QUIZ(2, QuizTypeGrpc.QUIZ_TYPE_SORT_IMAGE_QUIZ),
-        REALTIME_FOUR_CHOICE_QUIZ(3, QuizTypeGrpc.QUIZ_TYPE_SORT_IMAGE_QUIZ), // TODO: QUIZ_TYPE_REALTIME_FOUR_CHOICE_QUIZに変更する
+        FOUR_CHOICES_QUIZ(QuizTypeGrpc.QUIZ_TYPE_FOUR_CHOICES_QUIZ),
+        SORT_IMAGE_QUIZ(QuizTypeGrpc.QUIZ_TYPE_SORT_IMAGE_QUIZ),
+        REALTIME_FOUR_CHOICE_QUIZ(QuizTypeGrpc.QUIZ_TYPE_REALTIME_FOUR_CHOICE_QUIZ),
     }
 
     companion object {

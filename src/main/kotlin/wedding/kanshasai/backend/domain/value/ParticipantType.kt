@@ -26,11 +26,11 @@ class ParticipantType private constructor(val value: ParticipantTypeEnum) {
     }
 
     enum class ParticipantTypeEnum(
-        val number: Int,
         val grpcValue: ParticipantTypeGrpc,
+        val number: Int = grpcValue.number,
     ) {
-        GROOM(1, ParticipantTypeGrpc.PARTICIPANT_TYPE_GROOM),
-        BRIDE(2, ParticipantTypeGrpc.PARTICIPANT_TYPE_BRIDE),
+        GROOM(ParticipantTypeGrpc.PARTICIPANT_TYPE_GROOM),
+        BRIDE(ParticipantTypeGrpc.PARTICIPANT_TYPE_BRIDE),
     }
 
     companion object {

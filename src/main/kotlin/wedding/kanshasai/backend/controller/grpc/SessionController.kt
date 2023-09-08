@@ -51,13 +51,13 @@ class SessionController(
             .build()
     }
 
-    override suspend fun setNextIntroduction(request: SetNextIntroductionRequest): SetNextIntroductionResponse {
+    override suspend fun setIntroduction(request: SetIntroductionRequest): SetIntroductionResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
-        val introductionType = grpcTool.parseIntroductionType(request.introductionScreenType)
+        val introductionType = grpcTool.parseIntroductionType(request.introductionType)
 
         sessionService.setIntroductionScreen(sessionId, introductionType)
 
-        return SetNextIntroductionResponse.newBuilder().build()
+        return SetIntroductionResponse.newBuilder().build()
     }
 
     override suspend fun setNextQuiz(request: SetNextQuizRequest): SetNextQuizResponse {
@@ -69,8 +69,20 @@ class SessionController(
         return SetNextQuizResponse.newBuilder().build()
     }
 
+    override suspend fun showQuiz(request: ShowQuizRequest): ShowQuizResponse {
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+
+        sessionService.showQuiz(sessionId)
+
+        return ShowQuizResponse.newBuilder().build()
+    }
+
     override suspend fun startQuiz(request: StartQuizRequest): StartQuizResponse {
-        TODO("NOT IMPLEMENTED")
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+
+        sessionService.startQuiz(sessionId)
+
+        return StartQuizResponse.newBuilder().build()
     }
 
     override suspend fun showQuizResult(request: ShowQuizResultRequest): ShowQuizResultResponse {

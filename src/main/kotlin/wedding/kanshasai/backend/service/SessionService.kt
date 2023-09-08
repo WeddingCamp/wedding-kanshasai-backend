@@ -1,5 +1,6 @@
 package wedding.kanshasai.backend.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.InvalidStateException
@@ -7,10 +8,9 @@ import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.repository.*
-import wedding.kanshasai.backend.infra.redis.event.CoverScreenRedisEvent
-import wedding.kanshasai.backend.infra.redis.event.IntroductionRedisEvent
-import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEvent
-import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEventChoice
+import wedding.kanshasai.backend.infra.redis.event.*
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class SessionService(
@@ -53,11 +53,11 @@ class SessionService(
 
     fun setNextQuiz(sessionId: UlidId, quizId: UlidId) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
+        val nextState = session.state.next(SessionState.QUIZ_WAITING).getOrThrowService()
+
         val quiz = quizRepository.findById(quizId).getOrThrowService()
         sessionQuizRepository.findById(session, quiz).getOrThrowService()
         val choiceList = choiceRepository.listByQuiz(quiz).getOrThrowService()
-
-        val nextState = session.state.next(SessionState.QUIZ_WAITING).getOrThrowService()
 
         sessionRepository.update(
             session.apply {
@@ -72,7 +72,69 @@ class SessionService(
                 quiz.body,
                 quiz.type.toGrpcType(),
                 choiceList.map {
-                    NextQuizRedisEventChoice(it.id.toString(), it.body)
+                    QuizChoiceRedisEvent(it.id.toString(), it.body)
+                },
+            ),
+            sessionId,
+        )
+    }
+
+    fun showQuiz(sessionId: UlidId) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+        val nextState = session.state.next(SessionState.QUIZ_SHOWING).getOrThrowService()
+
+        val quizId = session.currentQuizId
+        if (quizId == null) {
+            throw InvalidStateException("Current quiz is not set.")
+        }
+        val quiz = quizRepository.findById(quizId).getOrThrowService()
+        sessionQuizRepository.findById(session, quiz).getOrThrowService()
+        val choiceList = choiceRepository.listByQuiz(quiz).getOrThrowService()
+
+        sessionRepository.update(
+            session.apply {
+                state = nextState
+            },
+        ).getOrThrowService()
+
+        redisEventService.publish(
+            ShowQuizRedisEvent(
+                quiz.id.toString(),
+                quiz.body,
+                quiz.type.toGrpcType(),
+                choiceList.map {
+                    QuizChoiceRedisEvent(it.id.toString(), it.body)
+                },
+            ),
+            sessionId,
+        )
+    }
+
+    fun startQuiz(sessionId: UlidId) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+        val nextState = session.state.next(SessionState.QUIZ_PLAYING).getOrThrowService()
+
+        val quizId = session.currentQuizId
+        if (quizId == null) {
+            throw InvalidStateException("Current quiz is not set.")
+        }
+        val quiz = quizRepository.findById(quizId).getOrThrowService()
+        sessionQuizRepository.findById(session, quiz).getOrThrowService()
+        val choiceList = choiceRepository.listByQuiz(quiz).getOrThrowService()
+
+        sessionRepository.update(
+            session.apply {
+                state = nextState
+            },
+        ).getOrThrowService()
+
+        redisEventService.publish(
+            StartQuizRedisEvent(
+                quiz.id.toString(),
+                quiz.body,
+                quiz.type.toGrpcType(),
+                choiceList.map {
+                    QuizChoiceRedisEvent(it.id.toString(), it.body)
                 },
             ),
             sessionId,

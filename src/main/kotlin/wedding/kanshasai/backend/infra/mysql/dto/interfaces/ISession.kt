@@ -10,6 +10,7 @@ interface ISession {
     var stateId: Int
     var currentQuizId: ByteArray?
     var currentIntroductionId: Int?
+    var currentQuizResultId: Int?
     var isCoverVisible: Boolean
     var isDeleted: Boolean
     var createdAt: Timestamp

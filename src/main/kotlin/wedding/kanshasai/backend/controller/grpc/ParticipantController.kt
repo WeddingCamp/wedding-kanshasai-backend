@@ -81,7 +81,7 @@ class ParticipantController(
         StreamParticipantEventResponse.newBuilder()
             .setCurrentStateEvent(
                 StreamParticipantEventResponse.CurrentStateEvent.newBuilder()
-                    .setIsGameInProgress(session.state.isGameInProgress())
+                    .setGameState(session.state.getGameState())
                     .build(),
             )
             .build()
