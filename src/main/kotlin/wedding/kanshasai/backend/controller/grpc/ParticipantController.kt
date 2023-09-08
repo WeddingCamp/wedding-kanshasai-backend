@@ -9,7 +9,6 @@ import wedding.kanshasai.backend.controller.grpc.response.*
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.infra.redis.event.PreQuizRedisEvent
-import wedding.kanshasai.backend.infra.redis.event.ShowQuizRedisEvent
 import wedding.kanshasai.backend.infra.redis.event.StartQuizRedisEvent
 import wedding.kanshasai.backend.service.ParticipantService
 import wedding.kanshasai.backend.service.RedisEventService
