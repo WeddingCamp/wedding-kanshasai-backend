@@ -40,7 +40,7 @@ class ScreenController(
                 }
             },
             launch {
-                redisEventService.subscribe(NextQuizRedisEvent::class, sessionId).collect { redisEvent ->
+                redisEventService.subscribe(PreQuizRedisEvent::class, sessionId).collect { redisEvent ->
                     StreamScreenEventResponse.newBuilder()
                         .setPreQuizEvent(redisEvent)
                         .build()

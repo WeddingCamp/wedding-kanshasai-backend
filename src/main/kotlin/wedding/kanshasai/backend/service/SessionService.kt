@@ -67,7 +67,7 @@ class SessionService(
         ).getOrThrowService()
 
         redisEventService.publish(
-            NextQuizRedisEvent(
+            PreQuizRedisEvent(
                 quiz.id.toString(),
                 quiz.body,
                 quiz.type.toGrpcType(),
