@@ -4,7 +4,7 @@ import wedding.kanshasai.backend.annotation.NoArg
 import wedding.kanshasai.v1.QuizType
 
 @NoArg
-data class NextQuizRedisEvent(
+data class PreQuizRedisEvent(
     override var quizId: String,
     override var quizBody: String,
     override var quizType: QuizType,

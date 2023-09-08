@@ -36,7 +36,7 @@ fun buildQuizEvent(event: QuizRedisEvent): StreamScreenEventResponse.QuizEvent {
         .build()
 }
 
-fun StreamScreenEventResponse.Builder.setPreQuizEvent(event: NextQuizRedisEvent): StreamScreenEventResponse.Builder = apply {
+fun StreamScreenEventResponse.Builder.setPreQuizEvent(event: PreQuizRedisEvent): StreamScreenEventResponse.Builder = apply {
     screenEventType = ScreenEventType.SCREEN_EVENT_TYPE_PRE_QUIZ
     preQuizEvent = buildQuizEvent(event)
 }

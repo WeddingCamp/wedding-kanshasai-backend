@@ -8,7 +8,9 @@ import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.controller.grpc.response.*
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.value.ParticipantType
-import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEvent
+import wedding.kanshasai.backend.infra.redis.event.PreQuizRedisEvent
+import wedding.kanshasai.backend.infra.redis.event.ShowQuizRedisEvent
+import wedding.kanshasai.backend.infra.redis.event.StartQuizRedisEvent
 import wedding.kanshasai.backend.service.ParticipantService
 import wedding.kanshasai.backend.service.RedisEventService
 import wedding.kanshasai.backend.service.SessionService
@@ -89,9 +91,17 @@ class ParticipantController(
 
         val subscribers = listOf(
             launch {
-                redisEventService.subscribe(NextQuizRedisEvent::class, session.id).collect { redisEvent ->
+                redisEventService.subscribe(PreQuizRedisEvent::class, session.id).collect { redisEvent ->
                     StreamParticipantEventResponse.newBuilder()
-                        .setNextQuizEvent(redisEvent)
+                        .setPreQuizEvent(redisEvent)
+                        .build()
+                        .let(::trySend)
+                }
+            },
+            launch {
+                redisEventService.subscribe(StartQuizRedisEvent::class, session.id).collect { redisEvent ->
+                    StreamParticipantEventResponse.newBuilder()
+                        .setStartQuizEvent(redisEvent)
                         .build()
                         .let(::trySend)
                 }
