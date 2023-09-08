@@ -2,7 +2,7 @@ package wedding.kanshasai.backend.domain.value
 
 import wedding.kanshasai.backend.annotation.NoArg
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
-import wedding.kanshasai.v1.IntroductionScreenType as IntroductionScreenTypeGrpc
+import wedding.kanshasai.v1.IntroductionType as IntroductionTypeGrpc
 
 @NoArg
 class IntroductionType private constructor(val value: IntroductionScreenTypeEnum) {
@@ -10,7 +10,7 @@ class IntroductionType private constructor(val value: IntroductionScreenTypeEnum
 
     fun toNumber(): Int = value.number
 
-    fun toGrpcType(): IntroductionScreenTypeGrpc = value.grpcValue
+    fun toGrpcType(): IntroductionTypeGrpc = value.grpcValue
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -26,12 +26,12 @@ class IntroductionType private constructor(val value: IntroductionScreenTypeEnum
     }
 
     enum class IntroductionScreenTypeEnum(
-        val number: Int,
-        val grpcValue: IntroductionScreenTypeGrpc,
+        val grpcValue: IntroductionTypeGrpc,
+        val number: Int = grpcValue.number,
     ) {
-        WELCOME(1, IntroductionScreenTypeGrpc.INTRODUCTION_SCREEN_TYPE_WELCOME),
-        RULE(2, IntroductionScreenTypeGrpc.INTRODUCTION_SCREEN_TYPE_RULE),
-        Introduction(3, IntroductionScreenTypeGrpc.INTRODUCTION_SCREEN_TYPE_LOGO),
+        WELCOME(IntroductionTypeGrpc.INTRODUCTION_TYPE_WELCOME),
+        RULE(IntroductionTypeGrpc.INTRODUCTION_TYPE_RULE),
+        LOGO(IntroductionTypeGrpc.INTRODUCTION_TYPE_LOGO),
     }
 
     companion object {

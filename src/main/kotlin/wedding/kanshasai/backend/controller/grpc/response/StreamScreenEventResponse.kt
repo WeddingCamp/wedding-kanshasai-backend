@@ -1,9 +1,6 @@
 package wedding.kanshasai.backend.controller.grpc.response
 
-import wedding.kanshasai.backend.infra.redis.event.CoverScreenRedisEvent
-import wedding.kanshasai.backend.infra.redis.event.IntroductionRedisEvent
-import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEvent
-import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEventChoice
+import wedding.kanshasai.backend.infra.redis.event.*
 import wedding.kanshasai.v1.ScreenEventType
 import wedding.kanshasai.v1.StreamScreenEventResponse
 
@@ -19,14 +16,13 @@ fun StreamScreenEventResponse.Builder.setIntroductionScreenEvent(
         IntroductionRedisEvent,
 ): StreamScreenEventResponse.Builder = apply {
     screenEventType = ScreenEventType.SCREEN_EVENT_TYPE_INTRODUCTION
-    introductionScreenEvent = this.introductionScreenEventBuilder
-        .setIntroductionScreenType(event.introductionType.toGrpcType())
+    introductionEvent = this.introductionEventBuilder
+        .setIntroductionType(event.introductionType.toGrpcType())
         .build()
 }
 
-fun StreamScreenEventResponse.Builder.setQuizEvent(event: NextQuizRedisEvent): StreamScreenEventResponse.Builder = apply {
-    screenEventType = ScreenEventType.SCREEN_EVENT_TYPE_QUIZ
-    quizEvent = this.quizEventBuilder
+fun buildQuizEvent(event: QuizRedisEvent): StreamScreenEventResponse.QuizEvent {
+    return StreamScreenEventResponse.QuizEvent.newBuilder()
         .setQuizId(event.quizId)
         .setBody(event.quizBody)
         .setQuizType(event.quizType)
@@ -40,8 +36,22 @@ fun StreamScreenEventResponse.Builder.setQuizEvent(event: NextQuizRedisEvent): S
         .build()
 }
 
-fun StreamScreenEventResponse.Choice.Builder.setChoice(choicePair: NextQuizRedisEventChoice):
-    StreamScreenEventResponse.Choice.Builder = apply {
+fun StreamScreenEventResponse.Builder.setPreQuizEvent(event: NextQuizRedisEvent): StreamScreenEventResponse.Builder = apply {
+    screenEventType = ScreenEventType.SCREEN_EVENT_TYPE_PRE_QUIZ
+    preQuizEvent = buildQuizEvent(event)
+}
+
+fun StreamScreenEventResponse.Builder.setShowQuizEvent(event: ShowQuizRedisEvent): StreamScreenEventResponse.Builder = apply {
+    screenEventType = ScreenEventType.SCREEN_EVENT_TYPE_SHOW_QUIZ
+    showQuizEvent = buildQuizEvent(event)
+}
+
+fun StreamScreenEventResponse.Builder.setStartQuizEvent(event: StartQuizRedisEvent): StreamScreenEventResponse.Builder = apply {
+    screenEventType = ScreenEventType.SCREEN_EVENT_TYPE_QUIZ_START
+    quizStartEvent = buildQuizEvent(event)
+}
+
+fun StreamScreenEventResponse.Choice.Builder.setChoice(choicePair: QuizChoiceRedisEvent): StreamScreenEventResponse.Choice.Builder = apply {
     choiceId = choicePair.choiceId
     body = choicePair.body
 }

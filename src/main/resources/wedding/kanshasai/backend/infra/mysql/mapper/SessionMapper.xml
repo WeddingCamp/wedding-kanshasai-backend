@@ -10,6 +10,7 @@
             state_id,
             current_quiz_id,
             current_introduction_id,
+            current_quiz_result_id,
             is_cover_visible,
             is_deleted
         )
@@ -20,6 +21,7 @@
             #{entity.stateId},
             #{entity.currentQuizId},
             #{entity.currentIntroductionId},
+            #{entity.currentQuizResultId},
             #{entity.isCoverVisible},
             #{entity.isDeleted}
         )
@@ -33,6 +35,7 @@
             state_id,
             current_quiz_id,
             current_introduction_id,
+            current_quiz_result_id,
             is_cover_visible,
             is_deleted
         )
@@ -45,6 +48,7 @@
                 #{entity.stateId},
                 #{entity.currentQuizId},
                 #{entity.currentIntroductionId},
+                #{entity.currentQuizResultId},
                 #{entity.isCoverVisible},
                 #{entity.isDeleted}
             )
@@ -82,6 +86,7 @@
             state_id = #{entity.stateId},
             current_quiz_id = #{entity.currentQuizId},
             current_introduction_id = #{entity.currentIntroductionId},
+            current_quiz_result_id = #{entity.currentQuizResultId},
             is_cover_visible = #{entity.isCoverVisible},
             is_deleted = #{entity.isDeleted}
         WHERE
@@ -107,6 +112,7 @@
         <result property="stateId" column="state_id"/>
         <result property="currentQuizId" column="current_quiz_id"/>
         <result property="currentIntroductionId" column="current_introduction_id"/>
+        <result property="currentQuizResultId" column="current_quiz_result_id"/>
         <result property="isCoverVisible" column="is_cover_visible"/>
         <result property="isDeleted" column="is_deleted"/>
         <result property="createdAt" column="created_at"/>

@@ -5,12 +5,8 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import net.devh.boot.grpc.server.service.GrpcService
-import wedding.kanshasai.backend.controller.grpc.response.setCoverScreenEvent
-import wedding.kanshasai.backend.controller.grpc.response.setIntroductionScreenEvent
-import wedding.kanshasai.backend.controller.grpc.response.setQuizEvent
-import wedding.kanshasai.backend.infra.redis.event.CoverScreenRedisEvent
-import wedding.kanshasai.backend.infra.redis.event.IntroductionRedisEvent
-import wedding.kanshasai.backend.infra.redis.event.NextQuizRedisEvent
+import wedding.kanshasai.backend.controller.grpc.response.*
+import wedding.kanshasai.backend.infra.redis.event.*
 import wedding.kanshasai.backend.service.RedisEventService
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ScreenServiceGrpcKt.ScreenServiceCoroutineImplBase
@@ -46,7 +42,23 @@ class ScreenController(
             launch {
                 redisEventService.subscribe(NextQuizRedisEvent::class, sessionId).collect { redisEvent ->
                     StreamScreenEventResponse.newBuilder()
-                        .setQuizEvent(redisEvent)
+                        .setPreQuizEvent(redisEvent)
+                        .build()
+                        .let(::trySend)
+                }
+            },
+            launch {
+                redisEventService.subscribe(ShowQuizRedisEvent::class, sessionId).collect { redisEvent ->
+                    StreamScreenEventResponse.newBuilder()
+                        .setShowQuizEvent(redisEvent)
+                        .build()
+                        .let(::trySend)
+                }
+            },
+            launch {
+                redisEventService.subscribe(StartQuizRedisEvent::class, sessionId).collect { redisEvent ->
+                    StreamScreenEventResponse.newBuilder()
+                        .setStartQuizEvent(redisEvent)
                         .build()
                         .let(::trySend)
                 }

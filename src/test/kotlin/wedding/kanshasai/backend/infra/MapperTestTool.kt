@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component
 import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.ParticipantType
+import wedding.kanshasai.backend.domain.value.QuizResultType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mapper.*
 import wedding.kanshasai.backend.infra.mysql.dto.*
@@ -71,6 +72,7 @@ class MapperTestTool {
             SessionState.values.random().toNumber(),
             maybeNull(UlidId.new().toByteArray()),
             IntroductionType.values.random().toNumber(),
+            QuizResultType.values.random().toNumber(),
             trueOrFalse,
         )
     }

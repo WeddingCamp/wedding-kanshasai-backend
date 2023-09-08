@@ -11,6 +11,7 @@ data class SessionDto(
     override var stateId: Int = 1,
     override var currentQuizId: ByteArray? = null,
     override var currentIntroductionId: Int? = null,
+    override var currentQuizResultId: Int? = null,
     override var isCoverVisible: Boolean = false,
     override var isDeleted: Boolean = false,
     override var createdAt: Timestamp = Timestamp(0),
@@ -37,6 +38,8 @@ data class SessionDto(
             if (other.currentQuizId == null) return false
             if (!currentQuizId.contentEquals(other.currentQuizId)) return false
         } else if (other.currentQuizId != null) return false
+        if (currentIntroductionId != other.currentIntroductionId) return false
+        if (currentQuizResultId != other.currentQuizResultId) return false
         if (isDeleted != other.isDeleted) return false
 
         return true
