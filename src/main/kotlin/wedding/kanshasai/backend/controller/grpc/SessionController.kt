@@ -86,7 +86,12 @@ class SessionController(
     }
 
     override suspend fun showQuizResult(request: ShowQuizResultRequest): ShowQuizResultResponse {
-        TODO("NOT IMPLEMENTED")
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+        val quizResultType = grpcTool.parseQuizResultType(request.quizResultScreenType)
+
+        sessionService.showQuizResult(sessionId, quizResultType)
+
+        return ShowQuizResultResponse.newBuilder().build()
     }
 
     override suspend fun cancelCurrentQuiz(request: CancelCurrentQuizRequest): CancelCurrentQuizResponse {

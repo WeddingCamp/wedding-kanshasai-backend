@@ -101,6 +101,21 @@
             (is_deleted = false OR is_deleted = #{includeDeleted})
     </update>
 
+    <select id="listBySessionIdAndQuizId" resultMap="participantAnswer">
+        SELECT
+            *
+        FROM
+            participant_answers
+        WHERE
+            session_id = #{sessionId}
+        AND
+            quiz_id = #{quizId}
+        AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY
+            participant_id
+    </select>
+
     <resultMap id="participantAnswer" type="wedding.kanshasai.backend.infra.mysql.dto.ParticipantAnswerDto">
         <id property="participantId" column="participant_id"/>
         <id property="sessionId" column="session_id"/>

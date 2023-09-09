@@ -42,6 +42,10 @@ class QuizResultType private constructor(val value: ResultScreenTypeEnum) {
             throw InvalidArgumentException("Invalid QuizResultScreenType value. (value=$value)")
         }
 
-        val values = ResultScreenTypeEnum.values().map { QuizResultType(it) }
+        val values = QuizResultType.ResultScreenTypeEnum.values().map(::QuizResultType)
+
+        val VOTE_LIST = QuizResultType(ResultScreenTypeEnum.VOTE_LIST)
+        val RESULT = QuizResultType(ResultScreenTypeEnum.RESULT)
+        val FASTEST_RANKING = QuizResultType(ResultScreenTypeEnum.FASTEST_RANKING)
     }
 }

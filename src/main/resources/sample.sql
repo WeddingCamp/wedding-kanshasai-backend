@@ -462,7 +462,7 @@ VALUES (
 UPDATE
     quizzes
 SET
-    correct_answer = '{"choiceIdList": [""]}'
+    correct_answer = '{"choiceIdList": []}'
 WHERE
     id = 0x018a0d02de33559ad790bd62305712ce;
 
@@ -590,6 +590,13 @@ VALUES (
     0x018a0d02de653a1ab4a6f50e30532807,
     '1_9_4 回答4'
 );
+
+UPDATE
+    quizzes
+SET
+    correct_answer = '{"choiceIdList": []}'
+WHERE
+        id = 0x018a0d02de653a1ab4a6f50e30532807;
 
 INSERT INTO quizzes (
     id,
@@ -1118,7 +1125,7 @@ VALUES (
 UPDATE
     quizzes
 SET
-    correct_answer = '{"choiceIdList": [""]}'
+    correct_answer = '{"choiceIdList": []}'
 WHERE
     id = 0x018a0d02df1ebc092b0875fffe99460b;
 
@@ -1246,6 +1253,13 @@ VALUES (
     0x018a0d02df4d345b03490265732dbb80,
     '2_9_4 回答4'
 );
+
+UPDATE
+    quizzes
+SET
+    correct_answer = '{"choiceIdList": []}'
+WHERE
+        id = 0x018a0d02df4d345b03490265732dbb80;
 
 INSERT INTO quizzes (
     id,

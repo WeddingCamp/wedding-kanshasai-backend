@@ -41,6 +41,6 @@ class ParticipantType private constructor(val value: ParticipantTypeEnum) {
             throw InvalidArgumentException("Invalid ParticipantType value. (value=$value)")
         }
 
-        val values = ParticipantTypeEnum.values().map { ParticipantType(it) }
+        val values = ParticipantTypeEnum.values().map(::ParticipantType)
     }
 }

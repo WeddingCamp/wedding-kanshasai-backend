@@ -63,6 +63,22 @@ class ScreenController(
                         .let(::trySend)
                 }
             },
+            launch {
+                redisEventService.subscribe(QuizVoteListRedisEvent::class, sessionId).collect { redisEvent ->
+                    StreamScreenEventResponse.newBuilder()
+                        .setQuizVoteListEvent(redisEvent)
+                        .build()
+                        .let(::trySend)
+                }
+            },
+            launch {
+                redisEventService.subscribe(QuizResultRedisEvent::class, sessionId).collect { redisEvent ->
+                    StreamScreenEventResponse.newBuilder()
+                        .setQuizResultEvent(redisEvent)
+                        .build()
+                        .let(::trySend)
+                }
+            },
         )
         subscribers.joinAll()
     }

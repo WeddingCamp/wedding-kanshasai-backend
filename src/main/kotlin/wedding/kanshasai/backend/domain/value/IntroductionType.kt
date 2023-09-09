@@ -42,6 +42,6 @@ class IntroductionType private constructor(val value: IntroductionScreenTypeEnum
             throw InvalidArgumentException("Invalid IntroductionType value. (value=$value)")
         }
 
-        val values = IntroductionScreenTypeEnum.values().map { IntroductionType(it) }
+        val values = IntroductionScreenTypeEnum.values().map(::IntroductionType)
     }
 }

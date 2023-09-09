@@ -33,6 +33,7 @@ class Session private constructor(
         createdAt,
         updatedAt,
     )
+
     companion object {
         fun of(sessionDto: SessionDto): Session {
             return Session(
