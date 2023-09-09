@@ -29,7 +29,7 @@ class GrpcTool {
         }
     }
 
-    fun parseQuizResultScreenType(quizResultScreenType: QuizResultScreenTypeGrpc): QuizResultType {
+    fun parseQuizResultType(quizResultScreenType: QuizResultScreenTypeGrpc): QuizResultType {
         return try { QuizResultType.of(quizResultScreenType.number) } catch (e: InvalidValueException) {
             throw InvalidArgumentException(
                 "Invalid quiz result screen type (name='${quizResultScreenType.name}', number='${quizResultScreenType.number}')",

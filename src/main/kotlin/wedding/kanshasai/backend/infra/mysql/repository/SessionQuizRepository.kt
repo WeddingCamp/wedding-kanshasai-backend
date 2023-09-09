@@ -41,4 +41,8 @@ class SessionQuizRepository(
         }
         insertAll(sessionQuizMapper, sessionQuizDtoList)
     }
+
+    fun update(sessionQuiz: SessionQuiz): Result<Unit> = runCatching {
+        update(sessionQuizMapper, sessionQuiz.toDto())
+    }
 }

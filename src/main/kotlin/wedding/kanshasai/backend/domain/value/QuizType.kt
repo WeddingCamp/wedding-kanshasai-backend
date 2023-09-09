@@ -38,5 +38,11 @@ class QuizType private constructor(private val value: QuizTypeEnum) {
             if (value == 3) return QuizType(QuizTypeEnum.REALTIME_FOUR_CHOICE_QUIZ)
             throw InvalidArgumentException("Invalid QuizType value. (value=$value)")
         }
+
+        val values = QuizType.QuizTypeEnum.values().map(::QuizType)
+
+        val FOUR_CHOICES_QUIZ = QuizType(QuizTypeEnum.FOUR_CHOICES_QUIZ)
+        val SORT_IMAGE_QUIZ = QuizType(QuizTypeEnum.SORT_IMAGE_QUIZ)
+        val REALTIME_FOUR_CHOICE_QUIZ = QuizType(QuizTypeEnum.REALTIME_FOUR_CHOICE_QUIZ)
     }
 }
