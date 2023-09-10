@@ -16,7 +16,7 @@ class SessionQuizRepository(
 ) : RepositoryBase() {
     override val table = Table.SESSION_QUIZ
 
-    fun findById(session: Session, quiz: Quiz): Result<SessionQuiz> = runCatching {
+    fun find(session: Session, quiz: Quiz): Result<SessionQuiz> = runCatching {
         val id = SessionQuizIdentifier(session.id.toByteArray(), quiz.id.toByteArray())
         val result = findById(sessionQuizMapper, id)
         SessionQuiz.of(result)
