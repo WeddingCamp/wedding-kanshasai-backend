@@ -61,12 +61,28 @@ class SessionService(
         redisEventService.publish(IntroductionRedisEvent(introductionType), sessionId)
     }
 
+    fun finishQuiz(sessionId: UlidId) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+
+        if (session.state != SessionState.QUIZ_PLAYING) {
+            throw InvalidStateException("Session state is not QUIZ_PLAYING.")
+        }
+        val nextState = session.state.next(SessionState.QUIZ_RESULT).getOrThrowService()
+
+        sessionRepository.update(session.apply { state = nextState }).getOrThrowService()
+    }
+
     fun setNextQuiz(sessionId: UlidId, quizId: UlidId) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
         val nextState = session.state.next(SessionState.QUIZ_WAITING).getOrThrowService()
 
         val quiz = quizRepository.findById(quizId).getOrThrowService()
-        sessionQuizRepository.findById(session, quiz).getOrThrowService()
+        val sessionQuiz = sessionQuizRepository.find(session, quiz).getOrThrowService()
+
+        if (sessionQuiz.isCompleted) {
+            throw InvalidStateException("Quiz is already completed. (quizId=$quizId)")
+        }
+
         val choiceList = choiceRepository.listByQuiz(quiz).getOrThrowService()
 
         sessionRepository.update(
@@ -194,7 +210,7 @@ class SessionService(
             throw InvalidStateException("Current quiz is not set.")
         }
         val quiz = quizRepository.findById(quizId).getOrThrowService()
-        val sessionQuiz = sessionQuizRepository.findById(this, quiz).getOrThrowService()
+        val sessionQuiz = sessionQuizRepository.find(this, quiz).getOrThrowService()
         val choiceList = choiceRepository.listByQuiz(quiz).getOrThrowService()
         return Triple(quiz, choiceList, sessionQuiz)
     }

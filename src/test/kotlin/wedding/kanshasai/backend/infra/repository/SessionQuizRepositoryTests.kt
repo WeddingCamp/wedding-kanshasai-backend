@@ -86,11 +86,11 @@ class SessionQuizRepositoryTests {
     fun <T : Throwable> find_test(testCaseName: String, session: Session, quiz: Quiz, expect: SessionQuiz?, throwable: Class<T>?) {
         if (throwable != null) {
             assertThrows(throwable) {
-                sessionQuizRepository.findById(session, quiz).getOrThrow()
+                sessionQuizRepository.find(session, quiz).getOrThrow()
             }
             return
         }
-        val sessionQuiz = sessionQuizRepository.findById(session, quiz).getOrThrow()
+        val sessionQuiz = sessionQuizRepository.find(session, quiz).getOrThrow()
         if (expect == null) {
             assertNull(sessionQuiz)
             return

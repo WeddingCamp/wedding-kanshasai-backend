@@ -10,9 +10,7 @@ import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.infra.redis.event.PreQuizRedisEvent
 import wedding.kanshasai.backend.infra.redis.event.StartQuizRedisEvent
-import wedding.kanshasai.backend.service.ParticipantService
-import wedding.kanshasai.backend.service.RedisEventService
-import wedding.kanshasai.backend.service.SessionService
+import wedding.kanshasai.backend.service.*
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ParticipantServiceGrpcKt.ParticipantServiceCoroutineImplBase
 
@@ -20,6 +18,7 @@ import wedding.kanshasai.v1.ParticipantServiceGrpcKt.ParticipantServiceCoroutine
 class ParticipantController(
     private val participantService: ParticipantService,
     private val sessionService: SessionService,
+    private val participantAnswerService: ParticipantAnswerService,
     private val grpcTool: GrpcTool,
     private val redisEventService: RedisEventService,
 ) : ParticipantServiceCoroutineImplBase() {
@@ -70,7 +69,15 @@ class ParticipantController(
     }
 
     override suspend fun setAnswer(request: SetAnswerRequest): SetAnswerResponse {
-        TODO("NOT IMPLEMENTED")
+        val participantId = grpcTool.parseUlidId(request.participantId, "participantId")
+        val quizId = grpcTool.parseUlidId(request.quizId, "quizId")
+
+        if (request.answer.isEmpty()) throw InvalidArgumentException.requiredField("choiceId")
+        if (request.time <= 0) throw InvalidArgumentException("time must be positive number.")
+
+        participantAnswerService.setAnswer(participantId, quizId, request.answer, request.time)
+
+        return SetAnswerResponse.newBuilder().build()
     }
 
     override fun streamParticipantEvent(request: StreamParticipantEventRequest): Flow<StreamParticipantEventResponse> = callbackFlow {
