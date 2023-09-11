@@ -44,7 +44,7 @@ class ParticipantAnswerMapperTests : MapperCRUDTest<ParticipantAnswerMapper, Par
                         // TODO: 依存している関係も入れ替えたい
                         participantAnswerDto.copy().apply {
                             answer = testTool.uuid
-                            time = testTool.maybeNull((Math.random() * 10).toFloat())
+                            time = (Math.random() * 10).toFloat()
                             isDeleted = testTool.trueOrFalse
                         },
                     )

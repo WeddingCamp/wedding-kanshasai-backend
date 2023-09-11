@@ -10,7 +10,7 @@ class ParticipantAnswer private constructor(
     val quizId: UlidId,
     val participantId: UlidId,
     val answer: String,
-    var time: Float?,
+    var time: Float,
     var isDeleted: Boolean,
     val createdAt: Timestamp,
     val updatedAt: Timestamp,

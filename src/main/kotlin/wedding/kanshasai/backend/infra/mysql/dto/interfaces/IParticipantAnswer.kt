@@ -6,7 +6,7 @@ import java.sql.Timestamp
 interface IParticipantAnswer {
     var participantAnswerIdentifier: ParticipantAnswerIdentifier
     var answer: String
-    var time: Float?
+    var time: Float
     var isDeleted: Boolean
     var createdAt: Timestamp
     var updatedAt: Timestamp

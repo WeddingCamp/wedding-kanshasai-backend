@@ -7,7 +7,7 @@ import java.sql.Timestamp
 data class ParticipantAnswerDto(
     override var participantAnswerIdentifier: ParticipantAnswerIdentifier = ParticipantAnswerIdentifier(),
     override var answer: String = "",
-    override var time: Float? = null,
+    override var time: Float = 9999f,
     override var isDeleted: Boolean = false,
     override var createdAt: Timestamp = Timestamp(0),
     override var updatedAt: Timestamp = Timestamp(0),
