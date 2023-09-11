@@ -13,6 +13,7 @@ import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.QuizResultType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.repository.*
+import wedding.kanshasai.backend.infra.redis.entity.ParticipantQuizTimeRedisEntity
 import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceRedisEntity
 import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceWithCountRedisEntity
 import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceWithResultRedisEntity
@@ -28,6 +29,7 @@ class SessionService(
     private val sessionQuizRepository: SessionQuizRepository,
     private val redisEventService: RedisEventService,
     private val choiceRepository: ChoiceRepository,
+    private val participantRepository: ParticipantRepository,
     private val participantAnswerRepository: ParticipantAnswerRepository,
     private val objectMapper: ObjectMapper,
 ) {
@@ -195,6 +197,21 @@ class SessionService(
                             quiz.getCorrectAnswer(objectMapper).choiceIdList.contains(it.id.toString()),
                         )
                     },
+                )
+            }
+            QuizResultType.FASTEST_RANKING -> {
+                QuizFastestRankingRedisEvent(
+                    participantAnswerList
+                        .filter { quiz.getCorrectAnswer(objectMapper).choiceIdList.contains(it.answer) }
+                        .sortedBy { it.time }
+                        .map {
+                            val participant = participantRepository.findById(it.participantId).getOrThrowService()
+                            ParticipantQuizTimeRedisEntity(
+                                participant.name,
+                                participant.imageId.toString(),
+                                it.time,
+                            )
+                        },
                 )
             }
             else -> {

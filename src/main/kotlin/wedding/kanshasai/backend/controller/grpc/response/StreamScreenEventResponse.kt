@@ -98,6 +98,21 @@ fun Builder.setQuizResultEvent(event: QuizResultRedisEvent): Builder = apply {
     quizResultEvent = buildQuizResultEvent(event)
 }
 
+fun Builder.setQuizFastestRankingEvent(event: QuizFastestRankingRedisEvent): Builder = apply {
+    screenEventType = ScreenEventType.SCREEN_EVENT_TYPE_QUIZ_RESULT_FASTEST
+    quizTimeResultEvent = this.quizTimeResultEventBuilder
+        .addAllParticipantQuizTimes(
+            event.participantQuizTimeList.map { participantQuizTime ->
+                QuizTimeResultEvent.ParticipantQuizTime.newBuilder()
+                    .setParticipantName(participantQuizTime.participantName)
+                    .setParticipantImageId(participantQuizTime.participantImageId)
+                    .setTime(participantQuizTime.time)
+                    .build()
+            },
+        )
+        .build()
+}
+
 fun Choice.Builder.setChoice(choicePair: AbstractQuizChoiceRedisEntity): Choice.Builder = apply {
     choiceId = choicePair.choiceId
     body = choicePair.body

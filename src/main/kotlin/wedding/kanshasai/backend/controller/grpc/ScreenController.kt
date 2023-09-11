@@ -89,6 +89,14 @@ class ScreenController(
                         .let(::trySend)
                 }
             },
+            launch {
+                redisEventService.subscribe(QuizFastestRankingRedisEvent::class, sessionId).collect { redisEvent ->
+                    StreamScreenEventResponse.newBuilder()
+                        .setQuizFastestRankingEvent(redisEvent)
+                        .build()
+                        .let(::trySend)
+                }
+            },
         )
         subscribers.joinAll()
     }
