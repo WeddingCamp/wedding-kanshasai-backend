@@ -147,7 +147,7 @@ class MapperTestTool {
         return ParticipantAnswerDto(
             ParticipantAnswerIdentifier(participantDto.participantIdentifier.id, sessionQuizDto.sessionQuizIdentifier),
             "{\"answer\": \"${(1..4).random()}\"}",
-            maybeNull((Math.random() * 10).toFloat()),
+            (Math.random() * 10).toFloat(),
         )
     }
 
