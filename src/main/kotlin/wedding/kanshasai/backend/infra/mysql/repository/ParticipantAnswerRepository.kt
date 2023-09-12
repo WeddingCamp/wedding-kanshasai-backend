@@ -56,6 +56,13 @@ class ParticipantAnswerRepository(
         return find(session, quiz, participant)
     }
 
+    fun deleteBySessionQuiz(sessionQuiz: SessionQuiz): Result<Unit> = runCatching {
+        participantAnswerMapper.deleteBySessionIdAndQuizId(
+            sessionQuiz.sessionId.toByteArray(),
+            sessionQuiz.quizId.toByteArray(),
+        )
+    }
+
     fun listBySessionQuiz(sessionQuiz: SessionQuiz): Result<List<ParticipantAnswer>> = runCatching {
         participantAnswerMapper.listBySessionIdAndQuizId(
             sessionQuiz.sessionId.toByteArray(),
