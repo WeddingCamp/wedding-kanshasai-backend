@@ -12,4 +12,9 @@ interface ParticipantAnswerMapper : MapperCRUDBase<ParticipantAnswerIdentifier, 
         @Param("quizId") quizId: ByteArray,
         @Param("includeDeleted") includeDeleted: Boolean = false,
     ): List<ParticipantAnswerDto>
+
+    fun deleteBySessionIdAndQuizId(
+        @Param("sessionId") sessionId: ByteArray,
+        @Param("quizId") quizId: ByteArray,
+    ): Int
 }

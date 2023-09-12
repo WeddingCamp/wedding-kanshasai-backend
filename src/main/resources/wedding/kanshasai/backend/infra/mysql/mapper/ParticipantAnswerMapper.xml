@@ -108,13 +108,22 @@
             participant_answers
         WHERE
             session_id = #{sessionId}
-        AND
+          AND
             quiz_id = #{quizId}
-        AND
+          AND
             (is_deleted = false OR is_deleted = #{includeDeleted})
         ORDER BY
             participant_id
     </select>
+
+    <delete id="deleteBySessionIdAndQuizId">
+        DELETE FROM
+            participant_answers
+        WHERE
+            session_id = #{sessionId}
+          AND
+            quiz_id = #{quizId}
+    </delete>
 
     <resultMap id="participantAnswer" type="wedding.kanshasai.backend.infra.mysql.dto.ParticipantAnswerDto">
         <id property="participantId" column="participant_id"/>

@@ -221,6 +221,29 @@ class SessionService(
         redisEventService.publish(redisEvent, sessionId)
     }
 
+    fun cancelCurrentQuiz(sessionId: UlidId) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+        if (!listOf(SessionState.QUIZ_SHOWING, SessionState.QUIZ_PLAYING).contains(session.state)) {
+            throw InvalidStateException("Session state is not QUIZ_SHOWING or QUIZ_PLAYING.")
+        }
+        val nextState = SessionState.QUIZ_WAITING
+        val quizId = session.currentQuizId ?: throw InvalidStateException("Current quiz is not set.")
+        val quiz = quizRepository.findById(quizId).getOrThrowService()
+        val sessionQuiz = sessionQuizRepository.find(session, quiz).getOrThrowService()
+
+        sessionRepository.update(
+            session.apply {
+                state = nextState
+                currentQuizId = null
+            },
+        ).getOrThrowService()
+
+        participantAnswerRepository.deleteBySessionQuiz(sessionQuiz).getOrThrowService()
+
+        // TODO: クイズキャンセルイベントを送信する
+        // redisEventService.publish(CancelQuizRedisEvent(), sessionId)
+    }
+
     fun Session.getCurrentQuiz(): Triple<Quiz, List<Choice>, SessionQuiz> {
         val quizId = this.currentQuizId
         if (quizId == null) {
