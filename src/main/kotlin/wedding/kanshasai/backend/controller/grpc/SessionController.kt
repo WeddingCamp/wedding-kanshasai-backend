@@ -29,6 +29,22 @@ class SessionController(
             .build()
     }
 
+    override suspend fun listSessions(request: ListSessionsRequest): ListSessionsResponse {
+        val eventId = grpcTool.parseUlidId(request.eventId, "eventId")
+        val includeFinished = request.includeFinished
+
+        val sessionList = sessionService.listSessions(eventId, includeFinished)
+            .map {
+                ListSessionsResponse.Session.newBuilder()
+                    .setSession(it)
+                    .build()
+            }
+
+        return ListSessionsResponse.newBuilder()
+            .addAllSessions(sessionList)
+            .build()
+    }
+
     override suspend fun listSessionQuizzes(request: ListSessionQuizzesRequest): ListSessionQuizzesResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
 
