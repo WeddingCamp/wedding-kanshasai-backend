@@ -13,5 +13,23 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
       database: ${REDIS_DATABASE:0}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY:}
+      secretKey: ${AWS_SECRET_KEY:}
+    stack:
+      auto: false
+    region:
+      auto: false
+      static: ${AWS_REGION:}
+    s3:
+      endpoint: ${AWS_S3_ENDPOINT:}
+      bucket: ${AWS_S3_BUCKET:}
 
 mybatis.configuration.map-underscore-to-camel-case: true

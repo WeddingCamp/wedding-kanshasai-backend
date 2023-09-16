@@ -1,18 +1,30 @@
 package wedding.kanshasai.backend.controller.grpc
 
+import com.amazonaws.services.s3.AmazonS3
+import com.amazonaws.services.s3.AmazonS3Client
+import com.amazonaws.services.s3.model.Bucket
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import net.devh.boot.grpc.server.service.GrpcService
+import wedding.kanshasai.backend.configration.S3Configuration
 import wedding.kanshasai.backend.controller.grpc.response.*
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.service.*
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ParticipantServiceGrpcKt.ParticipantServiceCoroutineImplBase
+import java.util.*
 
 @GrpcService
 class ParticipantController(
     private val participantService: ParticipantService,
     private val participantAnswerService: ParticipantAnswerService,
     private val grpcTool: GrpcTool,
+    private val redisEventService: RedisEventService,
+    private val s3Client: AmazonS3,
+    private val s3Bucket: Bucket,
 ) : ParticipantServiceCoroutineImplBase() {
     override suspend fun listParticipants(request: ListParticipantsRequest): ListParticipantsResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
@@ -51,13 +63,19 @@ class ParticipantController(
             it.name = participant.name
             it.participantId = participant.id.toString()
             it.sessionId = participant.sessionId.toString()
-            it.imageUrl = participant.imageId.toString() // TODO: 画像のURLを返す
+            if(participant.imageId != null) it.imageUrl = participant.imageId.toString() // TODO: 画像のURLを返す
             it.build()
         }
     }
 
     override suspend fun updateParticipant(request: UpdateParticipantRequest): UpdateParticipantResponse {
-        TODO("NOT IMPLEMENTED")
+        s3Client.putObject(
+            s3Bucket.name,
+            "TEST_KEY",
+            "test")
+
+        val url = s3Client.generatePresignedUrl(s3Bucket.name, "TEST_KEY2", Date(System.currentTimeMillis() + 1000 * 60 * 60))
+        return UpdateParticipantResponse.newBuilder().setImageUrl(url.toString()).build()
     }
 
     override suspend fun setAnswer(request: SetAnswerRequest): SetAnswerResponse {

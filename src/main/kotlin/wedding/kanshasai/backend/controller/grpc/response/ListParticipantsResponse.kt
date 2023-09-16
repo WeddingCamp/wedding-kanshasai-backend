@@ -8,6 +8,6 @@ fun ListParticipantsResponse.Participant.Builder.setParticipant(participant: Par
     name = participant.name
     participantId = participant.id.toString()
     sessionId = participant.sessionId.toString()
-    imageUrl = participant.imageId.toString() // TODO: 画像のURLを返すようにする
+    if(participant.imageId != null) imageUrl = participant.imageId.toString() // TODO: 画像のURLを返すようにする
     participantType = participant.type.toGrpcType()
 }
