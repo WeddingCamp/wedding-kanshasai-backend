@@ -38,8 +38,11 @@ class SessionRepository(
     fun listByEvent(event: Event, includeFinished: Boolean): Result<List<Session>> = runCatching {
         sessionMapper.listByEventId(event.id.toByteArray())
             .filter {
-                if (includeFinished) true
-                else SessionState.of(it.stateId) != SessionState.FINISHED
+                if (includeFinished) {
+                    true
+                } else {
+                    SessionState.of(it.stateId) != SessionState.FINISHED
+                }
             }
             .map(Session::of)
     }
