@@ -46,20 +46,20 @@ class ParticipantController(
         if (request.name.isNullOrEmpty()) throw InvalidArgumentException.requiredField("name")
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
 
-        val imageId = if (request.imageId.isEmpty()) {
+        val imageUrl = if (request.imageUrl.isEmpty()) {
             null
         } else {
-            grpcTool.parseUlidId(request.imageId, "imageId")
+            grpcTool.parseUlidId(request.imageUrl, "imageUrl")
         }
 
         val type = ParticipantType.of(request.participantType.number)
-        val participant = participantService.createParticipant(sessionId, request.name, imageId, type)
+        val participant = participantService.createParticipant(sessionId, request.name, imageUrl, type)
 
         return CreateParticipantResponse.newBuilder().let {
             it.name = participant.name
             it.participantId = participant.id.toString()
             it.sessionId = participant.sessionId.toString()
-            it.imageId = participant.imageId.toString()
+            it.imageUrl = participant.imageId.toString() // TODO: 画像のURLを返す
             it.build()
         }
     }

@@ -7,7 +7,7 @@ import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.QuizResultType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.v1.IntroductionType as IntroductionTypeGrpc
-import wedding.kanshasai.v1.QuizResultScreenType as QuizResultScreenTypeGrpc
+import wedding.kanshasai.v1.QuizResultType as QuizResultTypeGrpc
 
 @Component
 class GrpcTool {
@@ -29,14 +29,14 @@ class GrpcTool {
         }
     }
 
-    fun parseQuizResultType(quizResultScreenType: QuizResultScreenTypeGrpc): QuizResultType {
-        return try { QuizResultType.of(quizResultScreenType.number) } catch (e: InvalidValueException) {
+    fun parseQuizResultType(quizResultType: QuizResultTypeGrpc): QuizResultType {
+        return try { QuizResultType.of(quizResultType.number) } catch (e: InvalidValueException) {
             throw InvalidArgumentException(
-                "Invalid quiz result screen type (name='${quizResultScreenType.name}', number='${quizResultScreenType.number}')",
+                "Invalid quiz result type (name='${quizResultType.name}', number='${quizResultType.number}')",
                 e,
             )
         } catch (e: IllegalArgumentException) {
-            throw InvalidArgumentException("Invalid quiz result screen type (name='${quizResultScreenType.name}')", e)
+            throw InvalidArgumentException("Invalid quiz result type (name='${quizResultType.name}')", e)
         }
     }
 }

@@ -87,7 +87,7 @@ class SessionController(
 
     override suspend fun showQuizResult(request: ShowQuizResultRequest): ShowQuizResultResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
-        val quizResultType = grpcTool.parseQuizResultType(request.quizResultScreenType)
+        val quizResultType = grpcTool.parseQuizResultType(request.quizResultType)
 
         sessionService.showQuizResult(sessionId, quizResultType)
 
@@ -106,12 +106,12 @@ class SessionController(
         TODO("NOT IMPLEMENTED")
     }
 
-    override suspend fun setCoverScreen(request: SetCoverScreenRequest): SetCoverScreenResponse {
+    override suspend fun setCover(request: SetCoverRequest): SetCoverResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
 
         sessionService.setCoverScreen(sessionId, request.isVisible)
 
-        return SetCoverScreenResponse.newBuilder().build()
+        return SetCoverResponse.newBuilder().build()
     }
 
     override fun streamSessionEvent(request: StreamSessionEventRequest): Flow<StreamSessionEventResponse> {
