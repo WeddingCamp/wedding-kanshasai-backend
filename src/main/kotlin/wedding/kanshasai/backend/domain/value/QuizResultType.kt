@@ -2,15 +2,15 @@ package wedding.kanshasai.backend.domain.value
 
 import wedding.kanshasai.backend.annotation.NoArg
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
-import wedding.kanshasai.v1.QuizResultScreenType as QuizResultScreenTypeGrpc
+import wedding.kanshasai.v1.QuizResultType as QuizResultTypeGrpc
 
 @NoArg
-class QuizResultType private constructor(val value: ResultScreenTypeEnum) {
+class QuizResultType private constructor(val value: QuizResultTypeEnum) {
     override fun toString(): String = value.name
 
     fun toNumber(): Int = value.number
 
-    fun toGrpcType(): QuizResultScreenTypeGrpc = value.grpcValue
+    fun toGrpcType(): QuizResultTypeGrpc = value.grpcValue
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -25,13 +25,13 @@ class QuizResultType private constructor(val value: ResultScreenTypeEnum) {
         return value.hashCode()
     }
 
-    enum class ResultScreenTypeEnum(
-        val grpcValue: QuizResultScreenTypeGrpc,
+    enum class QuizResultTypeEnum(
+        val grpcValue: QuizResultTypeGrpc,
         val number: Int = grpcValue.number,
     ) {
-        VOTE_LIST(QuizResultScreenTypeGrpc.QUIZ_RESULT_SCREEN_TYPE_VOTE_LIST),
-        RESULT(QuizResultScreenTypeGrpc.QUIZ_RESULT_SCREEN_TYPE_RESULT),
-        FASTEST_RANKING(QuizResultScreenTypeGrpc.QUIZ_RESULT_SCREEN_TYPE_FASTEST_RANKING),
+        VOTE_LIST(QuizResultTypeGrpc.QUIZ_RESULT_TYPE_VOTE_LIST),
+        RESULT(QuizResultTypeGrpc.QUIZ_RESULT_TYPE_RESULT),
+        FASTEST_RANKING(QuizResultTypeGrpc.QUIZ_RESULT_TYPE_FASTEST_RANKING),
     }
 
     companion object {
@@ -39,13 +39,13 @@ class QuizResultType private constructor(val value: ResultScreenTypeEnum) {
             values.forEach {
                 if (it.toNumber() == value) return it
             }
-            throw InvalidArgumentException("Invalid QuizResultScreenType value. (value=$value)")
+            throw InvalidArgumentException("Invalid QuizResultType value. (value=$value)")
         }
 
-        val values = QuizResultType.ResultScreenTypeEnum.values().map(::QuizResultType)
+        val values = QuizResultType.QuizResultTypeEnum.values().map(::QuizResultType)
 
-        val VOTE_LIST = QuizResultType(ResultScreenTypeEnum.VOTE_LIST)
-        val RESULT = QuizResultType(ResultScreenTypeEnum.RESULT)
-        val FASTEST_RANKING = QuizResultType(ResultScreenTypeEnum.FASTEST_RANKING)
+        val VOTE_LIST = QuizResultType(QuizResultTypeEnum.VOTE_LIST)
+        val RESULT = QuizResultType(QuizResultTypeEnum.RESULT)
+        val FASTEST_RANKING = QuizResultType(QuizResultTypeEnum.FASTEST_RANKING)
     }
 }

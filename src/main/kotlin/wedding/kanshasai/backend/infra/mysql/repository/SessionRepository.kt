@@ -5,6 +5,7 @@ import wedding.kanshasai.backend.domain.constant.Table
 import wedding.kanshasai.backend.domain.entity.Event
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
+import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.dto.SessionDto
 import wedding.kanshasai.backend.infra.mysql.mapper.SessionMapper
@@ -32,6 +33,18 @@ class SessionRepository(
         insert(sessionMapper, sessionDto)
 
         return findById(sessionId)
+    }
+
+    fun listByEvent(event: Event, includeFinished: Boolean): Result<List<Session>> = runCatching {
+        sessionMapper.listByEventId(event.id.toByteArray())
+            .filter {
+                if (includeFinished) {
+                    true
+                } else {
+                    SessionState.of(it.stateId) != SessionState.FINISHED
+                }
+            }
+            .map(Session::of)
     }
 
     fun update(session: Session): Result<Unit> = runCatching {

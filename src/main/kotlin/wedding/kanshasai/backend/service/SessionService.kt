@@ -46,6 +46,11 @@ class SessionService(
         return sessionRepository.findById(sessionId).getOrThrowService()
     }
 
+    fun listSessions(eventId: UlidId, includeFinished: Boolean): List<Session> {
+        val event = eventRepository.findById(eventId).getOrThrowService()
+        return sessionRepository.listByEvent(event, includeFinished).getOrThrowService()
+    }
+
     fun setCoverScreen(sessionId: UlidId, isVisible: Boolean) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
         sessionRepository.update(session.apply { isCoverVisible = isVisible }).getOrThrowService()

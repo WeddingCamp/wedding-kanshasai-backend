@@ -106,6 +106,19 @@
             (is_deleted = false OR is_deleted = #{includeDeleted})
     </update>
 
+    <select id="listByEventId" resultMap="session">
+        SELECT
+            *
+        FROM
+            sessions
+        WHERE
+            event_id = #{eventId}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY
+            id
+    </select>
+
     <resultMap id="session" type="wedding.kanshasai.backend.infra.mysql.dto.SessionDto">
         <result property="eventId" column="event_id"/>
         <result property="name" column="name"/>

@@ -105,7 +105,7 @@ fun Builder.setQuizFastestRankingEvent(event: QuizFastestRankingRedisEvent): Bui
             event.participantQuizTimeList.map { participantQuizTime ->
                 QuizTimeResultEvent.ParticipantQuizTime.newBuilder()
                     .setParticipantName(participantQuizTime.participantName)
-                    .setParticipantImageId(participantQuizTime.participantImageId)
+                    .setParticipantImageUrl(participantQuizTime.participantImageId) // TODO: 画像のURLを返すようにする
                     .setTime(participantQuizTime.time)
                     .build()
             },
