@@ -1,6 +1,5 @@
 package wedding.kanshasai.backend.controller.grpc
 
-import kotlinx.coroutines.flow.Flow
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.controller.grpc.response.setChoice
 import wedding.kanshasai.backend.controller.grpc.response.setQuiz
@@ -128,9 +127,5 @@ class SessionController(
         sessionService.setCoverScreen(sessionId, request.isVisible)
 
         return SetCoverResponse.newBuilder().build()
-    }
-
-    override fun streamSessionEvent(request: StreamSessionEventRequest): Flow<StreamSessionEventResponse> {
-        TODO("NOT IMPLEMENTED")
     }
 }

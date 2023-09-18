@@ -1,3 +1,7 @@
 package wedding.kanshasai.backend.infra.redis.event
 
-interface RedisEvent
+import wedding.kanshasai.v1.EventType
+
+interface RedisEvent {
+    val eventType: EventType
+}
