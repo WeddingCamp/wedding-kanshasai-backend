@@ -1,7 +1,5 @@
 package wedding.kanshasai.backend.controller.grpc
 
-import com.amazonaws.services.s3.AmazonS3
-import com.amazonaws.services.s3.model.Bucket
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.controller.grpc.response.*
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
@@ -16,9 +14,6 @@ class ParticipantController(
     private val participantService: ParticipantService,
     private val participantAnswerService: ParticipantAnswerService,
     private val grpcTool: GrpcTool,
-    private val redisEventService: RedisEventService,
-    private val s3Client: AmazonS3,
-    private val s3Bucket: Bucket,
 ) : ParticipantServiceCoroutineImplBase() {
     override suspend fun listParticipants(request: ListParticipantsRequest): ListParticipantsResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
