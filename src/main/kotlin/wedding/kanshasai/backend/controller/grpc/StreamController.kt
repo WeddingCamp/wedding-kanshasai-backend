@@ -66,7 +66,9 @@ class StreamController(
         val participant = if (listOf(StreamType.STREAM_TYPE_PARTICIPANT).contains(request.type)) {
             val participantId = grpcTool.parseUlidId(request.participantId, "participantId")
             participantService.findById(participantId)
-        } else null
+        } else {
+            null
+        }
 
         val session = if (participant != null) {
             sessionService.findById(participant.sessionId)
