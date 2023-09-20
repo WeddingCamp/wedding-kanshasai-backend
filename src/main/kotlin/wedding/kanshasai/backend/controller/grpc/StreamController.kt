@@ -80,7 +80,7 @@ class StreamController(
         StreamEventResponse.newBuilder()
             .setSessionState(
                 StreamEventResponse.SessionState.newBuilder()
-                    .setSimpleSessionState(session.state.getGameState())
+                    .setSimpleSessionState(session.state.getSimpleSessionState())
                     .build(),
             )
             .build()
