@@ -36,9 +36,10 @@ class StreamController(
             QuizSpeedRankingRedisEvent::class,
         ),
         StreamType.STREAM_TYPE_PARTICIPANT to listOf(
-            QuizAnswerListRedisEvent::class,
+            PreQuizRedisEvent::class,
+            ShowQuizRedisEvent::class,
+            StartQuizRedisEvent::class,
             QuizResultRedisEvent::class,
-            QuizSpeedRankingRedisEvent::class,
         ),
         StreamType.STREAM_TYPE_MANAGER to listOf(
             CoverRedisEvent::class,
