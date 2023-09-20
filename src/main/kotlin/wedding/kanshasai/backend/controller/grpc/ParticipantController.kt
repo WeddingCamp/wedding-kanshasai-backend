@@ -63,14 +63,7 @@ class ParticipantController(
     }
 
     override suspend fun updateParticipant(request: UpdateParticipantRequest): UpdateParticipantResponse {
-        s3Client.putObject(
-            s3Bucket.name,
-            "TEST_KEY",
-            "test",
-        )
-
-        val url = s3Client.generatePresignedUrl(s3Bucket.name, "TEST_KEY2", Date(System.currentTimeMillis() + 1000 * 60 * 60))
-        return UpdateParticipantResponse.newBuilder().setImageUrl(url.toString()).build()
+        TODO("NOT IMPLEMENTED")
     }
 
     override suspend fun setAnswer(request: SetAnswerRequest): SetAnswerResponse {
