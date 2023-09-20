@@ -16,13 +16,16 @@ class ParticipantController(
 ) : ParticipantServiceCoroutineImplBase() {
     override suspend fun listParticipants(request: ListParticipantsRequest): ListParticipantsResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+        val participantType = if (request.hasParticipantType()) ParticipantType.of(request.participantType.number) else null
 
         val participantList = participantService.listParticipantsBySessionId(sessionId)
-        val grpcParticipantList = participantList.map { participant ->
-            ListParticipantsResponse.Participant.newBuilder()
-                .setParticipant(participant)
-                .build()
-        }
+        val grpcParticipantList = participantList
+            .filter { participantType == null || it.type == participantType }
+            .map { participant ->
+                ListParticipantsResponse.Participant.newBuilder()
+                    .setParticipant(participant)
+                    .build()
+            }
 
         return ListParticipantsResponse.newBuilder().let {
             it.addAllParticipants(grpcParticipantList)
