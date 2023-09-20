@@ -3,7 +3,7 @@ package wedding.kanshasai.backend.domain.state
 import io.github.oshai.kotlinlogging.KotlinLogging
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.InvalidStateTransitionException
-import wedding.kanshasai.v1.GameState
+import wedding.kanshasai.v1.SimpleSessionState
 
 private val logger = KotlinLogging.logger {}
 
@@ -74,10 +74,10 @@ class SessionState private constructor(private val value: SessionStateEnum) {
         return@runCatching nextState
     }
 
-    fun getGameState(): GameState {
-        if (this == INTRODUCTION) return GameState.GAME_STATE_BEFORE_START
-        if (this == FINISHED) return GameState.GAME_STATE_FINISHED
-        return GameState.GAME_STATE_DURING_THE_GAME
+    fun getSimpleSessionState(): SimpleSessionState {
+        if (this == INTRODUCTION) return SimpleSessionState.SIMPLE_SESSION_STATE_BEFORE_START
+        if (this == FINISHED) return SimpleSessionState.SIMPLE_SESSION_STATE_FINISHED
+        return SimpleSessionState.SIMPLE_SESSION_STATE_DURING_THE_GAME
     }
 
     companion object {

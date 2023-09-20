@@ -54,7 +54,7 @@ class SessionService(
     fun setCoverScreen(sessionId: UlidId, isVisible: Boolean) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
         sessionRepository.update(session.apply { isCoverVisible = isVisible }).getOrThrowService()
-        redisEventService.publish(CoverScreenRedisEvent(isVisible), sessionId)
+        redisEventService.publish(CoverRedisEvent(isVisible), sessionId)
     }
 
     fun setIntroductionScreen(sessionId: UlidId, introductionType: IntroductionType) {
@@ -175,7 +175,7 @@ class SessionService(
 
         val redisEvent = when (quizResultType) {
             QuizResultType.VOTE_LIST -> {
-                QuizVoteListRedisEvent(
+                QuizAnswerListRedisEvent(
                     quiz.id.toString(),
                     quiz.body,
                     quiz.type.toGrpcType(),
@@ -205,7 +205,7 @@ class SessionService(
                 )
             }
             QuizResultType.FASTEST_RANKING -> {
-                QuizFastestRankingRedisEvent(
+                QuizSpeedRankingRedisEvent(
                     participantAnswerList
                         .filter { quiz.getCorrectAnswer(objectMapper).choiceIdList.contains(it.answer) }
                         .sortedBy { it.time }
