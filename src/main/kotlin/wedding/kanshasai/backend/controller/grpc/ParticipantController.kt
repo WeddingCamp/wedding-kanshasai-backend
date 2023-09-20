@@ -51,7 +51,7 @@ class ParticipantController(
             it.name = participant.name
             it.participantId = participant.id.toString()
             it.sessionId = participant.sessionId.toString()
-            it.imageUrl = participant.imageId.toString() // TODO: 画像のURLを返す
+            if (participant.imageId != null) it.imageUrl = participant.imageId.toString() // TODO: 画像のURLを返す
             it.build()
         }
     }

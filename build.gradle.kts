@@ -38,6 +38,9 @@ dependencies {
     implementation("com.mysql:mysql-connector-j:8.1.0")
     implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0")
 
+    // Cloud
+    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
