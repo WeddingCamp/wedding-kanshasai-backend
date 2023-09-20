@@ -7,7 +7,6 @@ import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.service.*
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ParticipantServiceGrpcKt.ParticipantServiceCoroutineImplBase
-import java.util.*
 
 @GrpcService
 class ParticipantController(
