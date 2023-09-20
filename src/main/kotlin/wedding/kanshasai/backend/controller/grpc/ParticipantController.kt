@@ -1,14 +1,8 @@
 package wedding.kanshasai.backend.controller.grpc
 
 import com.amazonaws.services.s3.AmazonS3
-import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.Bucket
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 import net.devh.boot.grpc.server.service.GrpcService
-import wedding.kanshasai.backend.configration.S3Configuration
 import wedding.kanshasai.backend.controller.grpc.response.*
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.value.ParticipantType
@@ -63,7 +57,7 @@ class ParticipantController(
             it.name = participant.name
             it.participantId = participant.id.toString()
             it.sessionId = participant.sessionId.toString()
-            if(participant.imageId != null) it.imageUrl = participant.imageId.toString() // TODO: 画像のURLを返す
+            if (participant.imageId != null) it.imageUrl = participant.imageId.toString() // TODO: 画像のURLを返す
             it.build()
         }
     }
@@ -72,7 +66,8 @@ class ParticipantController(
         s3Client.putObject(
             s3Bucket.name,
             "TEST_KEY",
-            "test")
+            "test",
+        )
 
         val url = s3Client.generatePresignedUrl(s3Bucket.name, "TEST_KEY2", Date(System.currentTimeMillis() + 1000 * 60 * 60))
         return UpdateParticipantResponse.newBuilder().setImageUrl(url.toString()).build()
