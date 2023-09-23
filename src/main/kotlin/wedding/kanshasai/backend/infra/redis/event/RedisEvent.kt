@@ -1,9 +1,7 @@
 package wedding.kanshasai.backend.infra.redis.event
 
 import wedding.kanshasai.backend.annotation.NoArg
-import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.IntroductionType
-import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.redis.entity.*
 import wedding.kanshasai.v1.EventType
 import wedding.kanshasai.v1.QuizType
@@ -63,7 +61,7 @@ interface RedisEvent {
     }
 
     @NoArg
-    data class CurrentState (
+    data class CurrentState(
         val simpleSessionState: SimpleSessionState,
         val sessionState: String,
         override val sessionId: String,

@@ -110,7 +110,7 @@ class SessionService(
                     QuizChoiceRedisEntity(it.id.toString(), it.body)
                 },
                 session.id.toString(),
-            )
+            ),
         )
         redisEventService.publishState(session.state, nextState, session.id)
     }
@@ -135,7 +135,7 @@ class SessionService(
                     QuizChoiceRedisEntity(it.id.toString(), it.body)
                 },
                 session.id.toString(),
-            )
+            ),
         )
         redisEventService.publishState(session.state, nextState, session.id)
     }
