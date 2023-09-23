@@ -10,8 +10,11 @@ import org.springframework.data.redis.listener.ChannelTopic
 import org.springframework.data.redis.listener.ReactiveRedisMessageListenerContainer
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
 import org.springframework.stereotype.Service
+import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.UlidId
+
 import wedding.kanshasai.backend.infra.redis.event.RedisEvent
+import kotlin.math.log
 import kotlin.reflect.KClass
 
 private val logger = KotlinLogging.logger {}
@@ -35,8 +38,16 @@ class RedisEventService(
         }
     }
 
-    fun publish(event: RedisEvent, sessionId: UlidId) {
-        logger.debug { "Publish message: $event" }
-        redisTemplate.convertAndSend("$sessionId-${event::class.simpleName}", event)
+    fun publish(vararg events: RedisEvent) {
+        events.forEach { event ->
+            logger.debug { "Publish message: $event" }
+            redisTemplate.convertAndSend("${event.sessionId}-${event::class.simpleName}", event)
+        }
+    }
+
+    fun publishState(currentState: SessionState, nextState: SessionState, sessionId: UlidId) {
+        logger.info { "Publish state: $currentState -> $nextState" }
+        if (currentState == nextState) return
+        publish(RedisEvent.CurrentState(nextState.toSimpleSessionState(), nextState.toString(), sessionId.toString()))
     }
 }

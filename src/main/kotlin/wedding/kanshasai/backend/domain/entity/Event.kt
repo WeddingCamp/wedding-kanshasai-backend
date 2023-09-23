@@ -11,6 +11,16 @@ class Event private constructor(
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
 ) {
+    fun clone(): Event {
+        return Event(
+            id,
+            name,
+            isDeleted,
+            createdAt,
+            updatedAt,
+        )
+    }
+
     companion object {
         fun of(eventDto: EventDto): Event {
             return Event(

@@ -15,6 +15,18 @@ class Participant private constructor(
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
 ) {
+    fun clone(): Participant {
+        return Participant(
+            id,
+            sessionId,
+            name,
+            imageId,
+            type,
+            isDeleted,
+            createdAt,
+            updatedAt,
+        )
+    }
     companion object {
         fun of(participantDto: ParticipantDto): Participant {
             return Participant(

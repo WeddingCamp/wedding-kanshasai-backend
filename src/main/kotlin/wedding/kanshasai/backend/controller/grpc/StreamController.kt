@@ -26,40 +26,44 @@ class StreamController(
 
     val map = mapOf(
         StreamType.STREAM_TYPE_SCREEN to listOf(
-            CoverRedisEvent::class,
-            IntroductionRedisEvent::class,
-            PreQuizRedisEvent::class,
-            ShowQuizRedisEvent::class,
-            StartQuizRedisEvent::class,
-            QuizAnswerListRedisEvent::class,
-            QuizResultRedisEvent::class,
-            QuizSpeedRankingRedisEvent::class,
+            RedisEvent.Cover::class,
+            RedisEvent.Introduction::class,
+            RedisEvent.PreQuiz::class,
+            RedisEvent.ShowQuiz::class,
+            RedisEvent.StartQuiz::class,
+            RedisEvent.QuizAnswerList::class,
+            RedisEvent.QuizResult::class,
+            RedisEvent.QuizSpeedRanking::class,
+            RedisEvent.CurrentState::class,
         ),
         StreamType.STREAM_TYPE_PARTICIPANT to listOf(
-            PreQuizRedisEvent::class,
-            ShowQuizRedisEvent::class,
-            StartQuizRedisEvent::class,
-            QuizResultRedisEvent::class,
+            RedisEvent.PreQuiz::class,
+            RedisEvent.ShowQuiz::class,
+            RedisEvent.StartQuiz::class,
+            RedisEvent.QuizResult::class,
+            RedisEvent.CurrentState::class,
         ),
         StreamType.STREAM_TYPE_MANAGER to listOf(
-            CoverRedisEvent::class,
-            IntroductionRedisEvent::class,
-            PreQuizRedisEvent::class,
-            ShowQuizRedisEvent::class,
-            StartQuizRedisEvent::class,
-            QuizAnswerListRedisEvent::class,
-            QuizResultRedisEvent::class,
-            QuizSpeedRankingRedisEvent::class,
+            RedisEvent.Cover::class,
+            RedisEvent.Introduction::class,
+            RedisEvent.PreQuiz::class,
+            RedisEvent.ShowQuiz::class,
+            RedisEvent.StartQuiz::class,
+            RedisEvent.QuizAnswerList::class,
+            RedisEvent.QuizResult::class,
+            RedisEvent.QuizSpeedRanking::class,
+            RedisEvent.CurrentState::class,
         ),
         StreamType.STREAM_TYPE_DEBUG to listOf(
-            CoverRedisEvent::class,
-            IntroductionRedisEvent::class,
-            PreQuizRedisEvent::class,
-            ShowQuizRedisEvent::class,
-            StartQuizRedisEvent::class,
-            QuizAnswerListRedisEvent::class,
-            QuizResultRedisEvent::class,
-            QuizSpeedRankingRedisEvent::class,
+            RedisEvent.Cover::class,
+            RedisEvent.Introduction::class,
+            RedisEvent.PreQuiz::class,
+            RedisEvent.ShowQuiz::class,
+            RedisEvent.StartQuiz::class,
+            RedisEvent.QuizAnswerList::class,
+            RedisEvent.QuizResult::class,
+            RedisEvent.QuizSpeedRanking::class,
+            RedisEvent.CurrentState::class,
         ),
     )
 
@@ -81,7 +85,8 @@ class StreamController(
         StreamEventResponse.newBuilder()
             .setSessionState(
                 StreamEventResponse.SessionState.newBuilder()
-                    .setSimpleSessionState(session.state.getSimpleSessionState())
+                    .setSessionState(session.state.toString())
+                    .setSimpleSessionState(session.state.toSimpleSessionState())
                     .build(),
             )
             .build()

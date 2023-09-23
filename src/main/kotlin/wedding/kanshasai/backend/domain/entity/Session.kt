@@ -20,6 +20,22 @@ class Session private constructor(
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
 ) {
+    fun clone(): Session {
+        return Session(
+            id,
+            eventId,
+            name,
+            state,
+            currentQuizId,
+            currentIntroduction,
+            currentQuizResult,
+            isCoverVisible,
+            isDeleted,
+            createdAt,
+            updatedAt,
+        )
+    }
+
     fun toDto(): SessionDto = SessionDto(
         id.toStandardIdentifier(),
         eventId.toByteArray(),
