@@ -15,6 +15,18 @@ class SessionQuiz private constructor(
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
 ) {
+    fun clone(): SessionQuiz {
+        return SessionQuiz(
+            sessionId,
+            quizId,
+            isCompleted,
+            startedAt,
+            isDeleted,
+            createdAt,
+            updatedAt,
+        )
+    }
+
     fun toDto(): SessionQuizDto = SessionQuizDto(
         SessionQuizIdentifier(sessionId.toByteArray(), quizId.toByteArray()),
         isCompleted,

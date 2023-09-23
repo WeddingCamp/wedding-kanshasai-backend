@@ -15,6 +15,19 @@ class ParticipantAnswer private constructor(
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
 ) {
+    fun clone(): ParticipantAnswer {
+        return ParticipantAnswer(
+            sessionId,
+            quizId,
+            participantId,
+            answer,
+            time,
+            isDeleted,
+            createdAt,
+            updatedAt,
+        )
+    }
+
     fun toDto(): ParticipantAnswerDto = ParticipantAnswerDto(
         sessionId = sessionId.toByteArray(),
         quizId = quizId.toByteArray(),

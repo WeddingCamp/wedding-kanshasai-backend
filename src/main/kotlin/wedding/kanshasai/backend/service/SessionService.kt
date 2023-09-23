@@ -53,8 +53,8 @@ class SessionService(
 
     fun setCoverScreen(sessionId: UlidId, isVisible: Boolean) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
-        sessionRepository.update(session.apply { isCoverVisible = isVisible }).getOrThrowService()
-        redisEventService.publish(CoverRedisEvent(isVisible), sessionId)
+        sessionRepository.update(session.clone().apply { isCoverVisible = isVisible }).getOrThrowService()
+        redisEventService.publish(RedisEvent.Cover(isVisible, sessionId.toString()))
     }
 
     fun setIntroductionScreen(sessionId: UlidId, introductionType: IntroductionType) {
@@ -64,8 +64,8 @@ class SessionService(
             throw InvalidStateException("Session state is not INTRODUCTION.")
         }
 
-        sessionRepository.update(session.apply { currentIntroduction = introductionType }).getOrThrowService()
-        redisEventService.publish(IntroductionRedisEvent(introductionType), sessionId)
+        sessionRepository.update(session.clone().apply { currentIntroduction = introductionType }).getOrThrowService()
+        redisEventService.publish(RedisEvent.Introduction(introductionType, sessionId.toString()))
     }
 
     fun finishQuiz(sessionId: UlidId) {
@@ -76,7 +76,9 @@ class SessionService(
         }
         val nextState = session.state.next(SessionState.QUIZ_RESULT).getOrThrowService()
 
-        sessionRepository.update(session.apply { state = nextState }).getOrThrowService()
+        sessionRepository.update(session.clone().apply { state = nextState }).getOrThrowService()
+
+        redisEventService.publishState(session.state, nextState, session.id)
     }
 
     fun setNextQuiz(sessionId: UlidId, quizId: UlidId) {
@@ -93,23 +95,24 @@ class SessionService(
         val choiceList = choiceRepository.listByQuiz(quiz).getOrThrowService()
 
         sessionRepository.update(
-            session.apply {
+            session.clone().apply {
                 state = nextState
                 currentQuizId = quiz.id
             },
         ).getOrThrowService()
 
         redisEventService.publish(
-            PreQuizRedisEvent(
+            RedisEvent.PreQuiz(
                 quiz.id.toString(),
                 quiz.body,
                 quiz.type.toGrpcType(),
                 choiceList.map {
                     QuizChoiceRedisEntity(it.id.toString(), it.body)
                 },
+                session.id.toString(),
             ),
-            sessionId,
         )
+        redisEventService.publishState(session.state, nextState, session.id)
     }
 
     fun showQuiz(sessionId: UlidId) {
@@ -118,22 +121,23 @@ class SessionService(
         val (quiz, choiceList) = session.getCurrentQuiz()
 
         sessionRepository.update(
-            session.apply {
+            session.clone().apply {
                 state = nextState
             },
         ).getOrThrowService()
 
         redisEventService.publish(
-            ShowQuizRedisEvent(
+            RedisEvent.ShowQuiz(
                 quiz.id.toString(),
                 quiz.body,
                 quiz.type.toGrpcType(),
                 choiceList.map {
                     QuizChoiceRedisEntity(it.id.toString(), it.body)
                 },
+                session.id.toString(),
             ),
-            sessionId,
         )
+        redisEventService.publishState(session.state, nextState, session.id)
     }
 
     fun startQuiz(sessionId: UlidId) {
@@ -142,32 +146,34 @@ class SessionService(
         val (quiz, choiceList) = session.getCurrentQuiz()
 
         sessionRepository.update(
-            session.apply {
+            session.clone().apply {
                 state = nextState
             },
         ).getOrThrowService()
 
         redisEventService.publish(
-            StartQuizRedisEvent(
+            RedisEvent.StartQuiz(
                 quiz.id.toString(),
                 quiz.body,
                 quiz.type.toGrpcType(),
                 choiceList.map {
                     QuizChoiceRedisEntity(it.id.toString(), it.body)
                 },
+                sessionId.toString(),
             ),
-            sessionId,
         )
+        redisEventService.publishState(session.state, nextState, session.id)
     }
 
     fun showQuizResult(sessionId: UlidId, quizResultType: QuizResultType) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
+        val currentState = session.state
         val nextState = session.state.next(SessionState.QUIZ_RESULT).getOrThrowService()
         val (quiz, choiceList, sessionQuiz) = session.getCurrentQuiz()
         val participantAnswerList = participantAnswerRepository.listBySessionQuiz(sessionQuiz).getOrThrowService()
 
         sessionRepository.update(
-            session.apply {
+            session.clone().apply {
                 state = nextState
                 currentQuizResult = quizResultType
             },
@@ -175,7 +181,7 @@ class SessionService(
 
         val redisEvent = when (quizResultType) {
             QuizResultType.VOTE_LIST -> {
-                QuizAnswerListRedisEvent(
+                RedisEvent.QuizAnswerList(
                     quiz.id.toString(),
                     quiz.body,
                     quiz.type.toGrpcType(),
@@ -186,11 +192,13 @@ class SessionService(
                             participantAnswerList.count { participantAnswer -> participantAnswer.answer == it.id.toString() },
                         )
                     },
+                    session.id.toString(),
                 )
             }
+
             QuizResultType.RESULT -> {
-                sessionQuizRepository.update(sessionQuiz.apply { isCompleted = true }).getOrThrowService()
-                QuizResultRedisEvent(
+                sessionQuizRepository.update(sessionQuiz.clone().apply { isCompleted = true }).getOrThrowService()
+                RedisEvent.QuizResult(
                     quiz.id.toString(),
                     quiz.body,
                     quiz.type.toGrpcType(),
@@ -202,10 +210,12 @@ class SessionService(
                             quiz.getCorrectAnswer(objectMapper).choiceIdList.contains(it.id.toString()),
                         )
                     },
+                    session.id.toString(),
                 )
             }
+
             QuizResultType.FASTEST_RANKING -> {
-                QuizSpeedRankingRedisEvent(
+                RedisEvent.QuizSpeedRanking(
                     participantAnswerList
                         .filter { quiz.getCorrectAnswer(objectMapper).choiceIdList.contains(it.answer) }
                         .sortedBy { it.time }
@@ -217,13 +227,16 @@ class SessionService(
                                 it.time,
                             )
                         },
+                    session.id.toString(),
                 )
             }
+
             else -> {
                 throw InvalidStateException("Invalid QuizResultType. (quizResultType=$quizResultType)")
             }
         }
-        redisEventService.publish(redisEvent, sessionId)
+        redisEventService.publish(redisEvent)
+        redisEventService.publishState(currentState, nextState, session.id)
     }
 
     fun cancelCurrentQuiz(sessionId: UlidId) {
@@ -237,7 +250,7 @@ class SessionService(
         val sessionQuiz = sessionQuizRepository.find(session, quiz).getOrThrowService()
 
         sessionRepository.update(
-            session.apply {
+            session.clone().apply {
                 state = nextState
                 currentQuizId = null
             },
@@ -245,6 +258,7 @@ class SessionService(
 
         participantAnswerRepository.deleteBySessionQuiz(sessionQuiz).getOrThrowService()
 
+        redisEventService.publishState(session.state, nextState, session.id)
         // TODO: クイズキャンセルイベントを送信する
         // redisEventService.publish(CancelQuizRedisEvent(), sessionId)
     }

@@ -12,6 +12,17 @@ class Choice private constructor(
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
 ) {
+    fun clone(): Choice {
+        return Choice(
+            id,
+            quizId,
+            body,
+            isDeleted,
+            createdAt,
+            updatedAt,
+        )
+    }
+
     companion object {
         fun of(choiceDto: ChoiceDto): Choice {
             return Choice(

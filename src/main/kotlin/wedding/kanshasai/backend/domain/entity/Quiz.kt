@@ -17,6 +17,19 @@ class Quiz private constructor(
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
 ) {
+    fun clone(): Quiz {
+        return Quiz(
+            id,
+            eventId,
+            body,
+            correctAnswer,
+            type,
+            isDeleted,
+            createdAt,
+            updatedAt,
+        )
+    }
+
     fun getCorrectAnswer(objectMapper: ObjectMapper): GenericAnswer {
         return Jackson2JsonRedisSerializer(objectMapper, GenericAnswer::class.java).deserialize(correctAnswer.toByteArray())
     }

@@ -12,6 +12,12 @@ class SessionState private constructor(private val value: SessionStateEnum) {
     override fun toString(): String = value.name
     fun toNumber(): Int = value.number
 
+    fun toSimpleSessionState(): SimpleSessionState {
+        if (this == INTRODUCTION) return SimpleSessionState.SIMPLE_SESSION_STATE_BEFORE_START
+        if (this == FINISHED) return SimpleSessionState.SIMPLE_SESSION_STATE_FINISHED
+        return SimpleSessionState.SIMPLE_SESSION_STATE_DURING_THE_GAME
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -72,12 +78,6 @@ class SessionState private constructor(private val value: SessionStateEnum) {
             throw InvalidStateTransitionException("Transition from '${value.name}' to '${nextState.value.name}' is invalid")
         }
         return@runCatching nextState
-    }
-
-    fun getSimpleSessionState(): SimpleSessionState {
-        if (this == INTRODUCTION) return SimpleSessionState.SIMPLE_SESSION_STATE_BEFORE_START
-        if (this == FINISHED) return SimpleSessionState.SIMPLE_SESSION_STATE_FINISHED
-        return SimpleSessionState.SIMPLE_SESSION_STATE_DURING_THE_GAME
     }
 
     companion object {
