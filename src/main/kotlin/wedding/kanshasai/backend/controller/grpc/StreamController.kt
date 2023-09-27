@@ -11,10 +11,7 @@ import wedding.kanshasai.backend.infra.redis.event.*
 import wedding.kanshasai.backend.service.ParticipantService
 import wedding.kanshasai.backend.service.RedisEventService
 import wedding.kanshasai.backend.service.SessionService
-import wedding.kanshasai.v1.StreamEventRequest
-import wedding.kanshasai.v1.StreamEventResponse
-import wedding.kanshasai.v1.StreamServiceGrpcKt
-import wedding.kanshasai.v1.StreamType
+import wedding.kanshasai.v1.*
 
 @GrpcService
 class StreamController(
@@ -83,6 +80,7 @@ class StreamController(
         }
 
         StreamEventResponse.newBuilder()
+            .setEventType(EventType.EVENT_TYPE_CURRENT_STATE)
             .setSessionState(
                 StreamEventResponse.SessionState.newBuilder()
                     .setSessionState(session.state.toString())
