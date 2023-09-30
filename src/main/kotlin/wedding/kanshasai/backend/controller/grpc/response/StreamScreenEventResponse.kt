@@ -75,7 +75,7 @@ fun Builder.setRedisEvent(event: RedisEvent): Builder = apply {
                         .setParticipantType(it.participantType)
                         .setIsConnected(it.connected)
                         .build()
-                }
+                },
             )
         }
     }
