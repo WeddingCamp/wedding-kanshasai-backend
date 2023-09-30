@@ -12,6 +12,7 @@ import wedding.kanshasai.backend.infra.mysql.repository.SessionRepository
 class ParticipantService(
     private val sessionRepository: SessionRepository,
     private val participantRepository: ParticipantRepository,
+    private val redisEventService: RedisEventService,
 ) {
     fun findById(participantId: UlidId): Participant {
         return participantRepository.findById(participantId).getOrThrowService()
@@ -24,7 +25,11 @@ class ParticipantService(
 
     fun createParticipant(sessionId: UlidId, name: String, imageId: UlidId?, type: ParticipantType): Participant {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
-        return participantRepository.createParticipant(session, name, imageId, type).getOrThrowService()
+        val participant = participantRepository.createParticipant(session, name, imageId, type).getOrThrowService()
+
+        publishParticipantList(sessionId)
+
+        return participant
     }
 
     fun setConnected(participantId: UlidId, isConnected: Boolean) {
@@ -34,5 +39,11 @@ class ParticipantService(
                 this.isConnected = isConnected
             }
         ).getOrThrowService()
+        publishParticipantList(participant.sessionId)
+    }
+
+    private fun publishParticipantList(sessionId: UlidId) {
+        val participantList = listParticipantsBySessionId(sessionId)
+        redisEventService.publishParticipantList(participantList, sessionId)
     }
 }

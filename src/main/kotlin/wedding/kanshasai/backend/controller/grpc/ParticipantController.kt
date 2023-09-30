@@ -13,7 +13,6 @@ class ParticipantController(
     private val participantService: ParticipantService,
     private val participantAnswerService: ParticipantAnswerService,
     private val grpcTool: GrpcTool,
-    private val redisEventService: RedisEventService,
 ) : ParticipantServiceCoroutineImplBase() {
     override suspend fun listParticipants(request: ListParticipantsRequest): ListParticipantsResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
@@ -50,9 +49,6 @@ class ParticipantController(
 
         val type = ParticipantType.of(request.participantType.number)
         val participant = participantService.createParticipant(sessionId, request.name, imageId, type)
-
-        val participantList = participantService.listParticipantsBySessionId(participant.sessionId)
-        redisEventService.publishParticipantList(participantList, participant.sessionId)
 
         return CreateParticipantResponse.newBuilder().let {
             it.name = participant.name

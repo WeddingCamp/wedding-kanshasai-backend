@@ -13,10 +13,7 @@ import wedding.kanshasai.backend.infra.redis.event.*
 import wedding.kanshasai.backend.service.ParticipantService
 import wedding.kanshasai.backend.service.RedisEventService
 import wedding.kanshasai.backend.service.SessionService
-import wedding.kanshasai.v1.StreamEventRequest
-import wedding.kanshasai.v1.StreamEventResponse
-import wedding.kanshasai.v1.StreamServiceGrpcKt
-import wedding.kanshasai.v1.StreamType
+import wedding.kanshasai.v1.*
 
 @GrpcService
 class StreamController(
@@ -74,13 +71,8 @@ class StreamController(
     override fun streamEvent(request: StreamEventRequest): Flow<StreamEventResponse> = callbackFlow {
         val participant = if (listOf(StreamType.STREAM_TYPE_PARTICIPANT).contains(request.type)) {
             val participantId = grpcTool.parseUlidId(request.participantId, "participantId")
-            val p = participantService.findById(participantId)
-            participantService.setConnected(p.id, true)
-
-            val participantList = participantService.listParticipantsBySessionId(p.sessionId)
-            redisEventService.publishParticipantList(participantList, p.sessionId)
-
-            participantService.findById(p.id)
+            participantService.setConnected(participantId, true)
+            participantService.findById(participantId)
         } else {
             null
         }
@@ -93,6 +85,7 @@ class StreamController(
         }
 
         StreamEventResponse.newBuilder()
+            .setEventType(EventType.EVENT_TYPE_CURRENT_STATE)
             .setSessionState(
                 StreamEventResponse.SessionState.newBuilder()
                     .setSessionState(session.state.toString())

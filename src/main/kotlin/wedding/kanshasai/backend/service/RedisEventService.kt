@@ -59,7 +59,7 @@ class RedisEventService(
                 name = it.name,
                 imageUrl = it.imageId.toString(), // TODO: 画像のURLを取得する
                 participantType = it.type.toGrpcType(),
-                isConnected = it.isConnected,
+                connected = it.isConnected,
             )
         }
         publish(RedisEvent.UpdateParticipant(list, sessionId.toString()))
