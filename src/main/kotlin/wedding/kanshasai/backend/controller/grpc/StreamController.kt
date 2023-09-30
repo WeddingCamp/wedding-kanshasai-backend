@@ -1,5 +1,6 @@
 package wedding.kanshasai.backend.controller.grpc
 
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.joinAll
@@ -7,6 +8,7 @@ import kotlinx.coroutines.launch
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.controller.grpc.response.*
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
+import wedding.kanshasai.backend.infra.redis.entity.ParticipantRedisEntity
 import wedding.kanshasai.backend.infra.redis.event.*
 import wedding.kanshasai.backend.service.ParticipantService
 import wedding.kanshasai.backend.service.RedisEventService
@@ -53,6 +55,7 @@ class StreamController(
             RedisEvent.QuizResult::class,
             RedisEvent.QuizSpeedRanking::class,
             RedisEvent.CurrentState::class,
+            RedisEvent.UpdateParticipant::class
         ),
         StreamType.STREAM_TYPE_DEBUG to listOf(
             RedisEvent.Cover::class,
@@ -64,13 +67,20 @@ class StreamController(
             RedisEvent.QuizResult::class,
             RedisEvent.QuizSpeedRanking::class,
             RedisEvent.CurrentState::class,
+            RedisEvent.UpdateParticipant::class
         ),
     )
 
     override fun streamEvent(request: StreamEventRequest): Flow<StreamEventResponse> = callbackFlow {
         val participant = if (listOf(StreamType.STREAM_TYPE_PARTICIPANT).contains(request.type)) {
             val participantId = grpcTool.parseUlidId(request.participantId, "participantId")
-            participantService.findById(participantId)
+            val p = participantService.findById(participantId)
+            participantService.setConnected(p.id, true)
+
+            val participantList = participantService.listParticipantsBySessionId(p.sessionId)
+            redisEventService.publishParticipantList(participantList, p.sessionId)
+
+            participantService.findById(p.id)
         } else {
             null
         }
@@ -94,7 +104,7 @@ class StreamController(
 
         val eventList = map[request.type] ?: throw InvalidArgumentException.requiredField("type")
 
-        val subscribers = eventList.map {
+        eventList.forEach {
             launch {
                 redisEventService.subscribe(it, session.id).collect { redisEvent ->
                     StreamEventResponse.newBuilder()
@@ -105,6 +115,11 @@ class StreamController(
                 }
             }
         }
-        subscribers.joinAll()
+
+        this.awaitClose {
+            if (participant?.id != null) {
+                participantService.setConnected(participant.id, false)
+            }
+        }
     }
 }

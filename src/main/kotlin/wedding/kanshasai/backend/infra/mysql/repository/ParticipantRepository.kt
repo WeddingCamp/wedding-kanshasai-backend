@@ -40,4 +40,8 @@ class ParticipantRepository(
 
         return findById(participantId)
     }
+
+    fun update(participant: Participant): Result<Unit> = runCatching {
+        update(participantMapper, participant.toDto())
+    }
 }

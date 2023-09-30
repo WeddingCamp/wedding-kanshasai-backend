@@ -10,6 +10,7 @@ data class ParticipantDto(
     override var name: String = "",
     override var imageId: ByteArray? = null,
     override var type: Int = 0,
+    override var isConnected: Boolean = false,
     override var isDeleted: Boolean = false,
     var createdAt: Timestamp = Timestamp(0),
     var updatedAt: Timestamp = Timestamp(0),
@@ -31,6 +32,7 @@ data class ParticipantDto(
         if (name != other.name) return false
         if (!imageId.contentEquals(other.imageId)) return false
         if (type != other.type) return false
+        if (isConnected != other.isConnected) return false
         if (isDeleted != other.isDeleted) return false
 
         return true

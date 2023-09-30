@@ -11,6 +11,7 @@ class Participant private constructor(
     var name: String,
     var imageId: UlidId?,
     var type: ParticipantType,
+    var isConnected: Boolean,
     var isDeleted: Boolean,
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
@@ -22,11 +23,25 @@ class Participant private constructor(
             name,
             imageId,
             type,
+            isConnected,
             isDeleted,
             createdAt,
             updatedAt,
         )
     }
+
+    fun toDto(): ParticipantDto = ParticipantDto(
+        participantIdentifier = id.toStandardIdentifier(),
+        sessionId = sessionId.toByteArray(),
+        name = name,
+        imageId = imageId?.toByteArray(),
+        type = type.toNumber(),
+        isConnected = isConnected,
+        isDeleted = isDeleted,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
+
     companion object {
         fun of(participantDto: ParticipantDto): Participant {
             return Participant(
@@ -35,6 +50,7 @@ class Participant private constructor(
                 participantDto.name,
                 participantDto.imageId?.let(UlidId::of),
                 ParticipantType.of(participantDto.type),
+                participantDto.isConnected,
                 participantDto.isDeleted,
                 participantDto.createdAt,
                 participantDto.updatedAt,
