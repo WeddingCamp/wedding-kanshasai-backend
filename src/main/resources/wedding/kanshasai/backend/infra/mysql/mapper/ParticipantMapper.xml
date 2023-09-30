@@ -9,6 +9,7 @@
             name,
             image_id,
             type,
+            is_connected,
             is_deleted
         )
         VALUES (
@@ -17,6 +18,7 @@
             #{entity.name},
             #{entity.imageId},
             #{entity.type},
+            #{entity.isConnected},
             #{entity.isDeleted}
         )
     </insert>
@@ -28,6 +30,7 @@
             name,
             image_id,
             type,
+            is_connected,
             is_deleted
         )
         VALUES
@@ -38,6 +41,7 @@
                 #{entity.name},
                 #{entity.imageId},
                 #{entity.type},
+                #{entity.isConnected},
                 #{entity.isDeleted}
             )
         </foreach>
@@ -73,6 +77,7 @@
             name = #{entity.name},
             image_id = #{entity.imageId},
             type = #{entity.type},
+            is_connected = #{entity.isConnected},
             is_deleted = #{entity.isDeleted}
         WHERE
             id = #{entity.identifier.id}
@@ -109,6 +114,7 @@
         <result property="name" column="name"/>
         <result property="imageId" column="image_id"/>
         <result property="type" column="type"/>
+        <result property="isConnected" column="is_connected"/>
         <result property="isDeleted" column="is_deleted"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>

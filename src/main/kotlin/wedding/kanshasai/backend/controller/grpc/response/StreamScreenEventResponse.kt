@@ -64,5 +64,19 @@ fun Builder.setRedisEvent(event: RedisEvent): Builder = apply {
                 .setSessionState(event.sessionState)
                 .build()
         }
+
+        is RedisEvent.UpdateParticipant -> {
+            this.addAllParticipants(
+                event.participantList.map {
+                    Participant.newBuilder()
+                        .setParticipantId(it.participantId)
+                        .setName(it.name)
+                        .setImageUrl(it.imageUrl)
+                        .setParticipantType(it.participantType)
+                        .setIsConnected(it.connected)
+                        .build()
+                },
+            )
+        }
     }
 }

@@ -10,8 +10,10 @@ import org.springframework.data.redis.listener.ChannelTopic
 import org.springframework.data.redis.listener.ReactiveRedisMessageListenerContainer
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
 import org.springframework.stereotype.Service
+import wedding.kanshasai.backend.domain.entity.Participant
 import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.UlidId
+import wedding.kanshasai.backend.infra.redis.entity.ParticipantRedisEntity
 import wedding.kanshasai.backend.infra.redis.event.RedisEvent
 import kotlin.reflect.KClass
 
@@ -47,5 +49,19 @@ class RedisEventService(
         logger.info { "Publish state: $currentState -> $nextState" }
         if (currentState == nextState) return
         publish(RedisEvent.CurrentState(nextState.toSimpleSessionState(), nextState.toString(), sessionId.toString()))
+    }
+
+    fun publishParticipantList(participantList: List<Participant>, sessionId: UlidId) {
+        logger.info { "Publish participant list" }
+        val list = participantList.map {
+            ParticipantRedisEntity(
+                participantId = it.id.toString(),
+                name = it.name,
+                imageUrl = it.imageId.toString(), // TODO: 画像のURLを取得する
+                participantType = it.type.toGrpcType(),
+                connected = it.isConnected,
+            )
+        }
+        publish(RedisEvent.UpdateParticipant(list, sessionId.toString()))
     }
 }
