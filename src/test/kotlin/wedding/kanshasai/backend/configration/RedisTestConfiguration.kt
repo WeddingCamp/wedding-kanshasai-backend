@@ -1,4 +1,4 @@
-package wedding.kanshasai.backend
+package wedding.kanshasai.backend.configration
 
 import jakarta.annotation.PreDestroy
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties
@@ -24,7 +24,12 @@ class RedisTestConfiguration(redisProperties: RedisProperties) {
         @Synchronized
         fun start(redisProperties: RedisProperties) {
             if (redisServer == null) {
-                redisServer = RedisServer(redisProperties.port)
+                redisServer = RedisServer.builder()
+                    .port(redisProperties.port)
+                    .setting("maxheap 128M")
+                    .setting("daemonize no")
+                    .setting("appendonly no")
+                    .build()
                 redisServer!!.start()
             }
         }
