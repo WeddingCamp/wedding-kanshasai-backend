@@ -1,5 +1,7 @@
 package wedding.kanshasai.backend.controller.grpc
 
+import com.amazonaws.services.s3.AmazonS3
+import com.amazonaws.services.s3.model.Bucket
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.controller.grpc.response.*
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
@@ -7,12 +9,15 @@ import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.service.*
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ParticipantServiceGrpcKt.ParticipantServiceCoroutineImplBase
+import java.util.*
 
 @GrpcService
 class ParticipantController(
     private val participantService: ParticipantService,
     private val participantAnswerService: ParticipantAnswerService,
     private val grpcTool: GrpcTool,
+    private val s3Client: AmazonS3,
+    private val s3Bucket: Bucket,
 ) : ParticipantServiceCoroutineImplBase() {
     override suspend fun listParticipants(request: ListParticipantsRequest): ListParticipantsResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
@@ -22,8 +27,10 @@ class ParticipantController(
         val grpcParticipantList = participantList
             .filter { participantType == null || it.type == participantType }
             .map { participant ->
+                val url = s3Client.generatePresignedUrl(s3Bucket.name, "05.jpg", Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 ListParticipantsResponse.Participant.newBuilder()
                     .setParticipant(participant)
+                    .setImageUrl(url.toString())
                     .build()
             }
 

@@ -1,5 +1,7 @@
 package wedding.kanshasai.backend.service
 
+import com.amazonaws.services.s3.AmazonS3
+import com.amazonaws.services.s3.model.Bucket
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.channels.awaitClose
@@ -15,6 +17,7 @@ import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.redis.entity.ParticipantRedisEntity
 import wedding.kanshasai.backend.infra.redis.event.RedisEvent
+import java.util.*
 import kotlin.reflect.KClass
 
 private val logger = KotlinLogging.logger {}
@@ -24,6 +27,8 @@ class RedisEventService(
     private val redisTemplate: RedisTemplate<String, RedisEvent>,
     private val redisListenerContainer: ReactiveRedisMessageListenerContainer,
     private val objectMapper: ObjectMapper,
+    private val s3Client: AmazonS3,
+    private val s3Bucket: Bucket,
 ) {
     fun <T : RedisEvent> subscribe(eventType: KClass<out T>, sessionId: UlidId): Flow<T> = callbackFlow {
         logger.debug { "Subscribe message: ${eventType.simpleName}" }
@@ -53,11 +58,12 @@ class RedisEventService(
 
     fun publishParticipantList(participantList: List<Participant>, sessionId: UlidId) {
         logger.info { "Publish participant list" }
+        val url = s3Client.generatePresignedUrl(s3Bucket.name, "05.jpg", Date(System.currentTimeMillis() + 1000 * 60 * 60))
         val list = participantList.map {
             ParticipantRedisEntity(
                 participantId = it.id.toString(),
                 name = it.name,
-                imageUrl = it.imageId.toString(), // TODO: 画像のURLを取得する
+                imageUrl = url.toString(), // TODO: 画像のURLを取得する
                 participantType = it.type.toGrpcType(),
                 connected = it.isConnected,
             )
