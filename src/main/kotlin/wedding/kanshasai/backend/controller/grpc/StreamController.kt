@@ -94,12 +94,14 @@ class StreamController(
             .build()
             .let(::trySend)
 
-        if(session.state == SessionState.INTRODUCTION) {
+        if (session.state == SessionState.INTRODUCTION) {
             StreamEventResponse.newBuilder()
                 .setEventType(EventType.EVENT_TYPE_INTRODUCTION)
-                .setIntroductionEvent(StreamEventResponse.IntroductionEvent.newBuilder()
-                    .setIntroductionType(session.currentIntroduction.toGrpcType())
-                    .build())
+                .setIntroductionEvent(
+                    StreamEventResponse.IntroductionEvent.newBuilder()
+                        .setIntroductionType(session.currentIntroduction.toGrpcType())
+                        .build(),
+                )
                 .build()
                 .let(::trySend)
         }
