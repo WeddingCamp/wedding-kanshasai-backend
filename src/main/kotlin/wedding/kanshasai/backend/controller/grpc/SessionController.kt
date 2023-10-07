@@ -75,6 +75,14 @@ class SessionController(
         return SetIntroductionResponse.newBuilder().build()
     }
 
+    override suspend fun finishIntroduction(request: FinishIntroductionRequest): FinishIntroductionResponse {
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+
+        sessionService.finishIntroduction(sessionId)
+
+        return FinishIntroductionResponse.newBuilder().build()
+    }
+
     override suspend fun setNextQuiz(request: SetNextQuizRequest): SetNextQuizResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
         val quizId = grpcTool.parseUlidId(request.quizId, "quizId")
