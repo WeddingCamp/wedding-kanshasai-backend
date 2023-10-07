@@ -9,7 +9,7 @@ interface ISession {
     var name: String
     var stateId: Int
     var currentQuizId: ByteArray?
-    var currentIntroductionId: Int?
+    var currentIntroductionId: Int
     var currentQuizResultId: Int?
     var isCoverVisible: Boolean
     var isDeleted: Boolean
