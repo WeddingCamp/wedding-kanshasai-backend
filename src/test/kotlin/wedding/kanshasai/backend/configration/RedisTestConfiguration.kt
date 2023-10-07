@@ -26,7 +26,7 @@ class RedisTestConfiguration(redisProperties: RedisProperties) {
             if (redisServer == null) {
                 redisServer = RedisServer.builder()
                     .port(redisProperties.port)
-                    .setting("maxheap 128M")
+                    .setting("maxheap 256M")
                     .setting("daemonize no")
                     .setting("appendonly no")
                     .build()
