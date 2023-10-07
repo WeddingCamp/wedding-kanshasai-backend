@@ -6,6 +6,7 @@ import org.junit.jupiter.api.TestMethodOrder
 import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
+import wedding.kanshasai.backend.configration.RedisTestConfiguration
 
 @SpringBootTest(
     "grpc.server.inProcessName=test",

@@ -68,6 +68,19 @@ class SessionService(
         redisEventService.publish(RedisEvent.Introduction(introductionType, sessionId.toString()))
     }
 
+    fun finishIntroduction(sessionId: UlidId) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+        val nextState = session.state.next(SessionState.QUIZ_WAITING).getOrThrowService()
+
+        sessionRepository.update(
+            session.clone().apply {
+                state = nextState
+            },
+        ).getOrThrowService()
+
+        redisEventService.publishState(session.state, nextState, session.id)
+    }
+
     fun finishQuiz(sessionId: UlidId) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
 

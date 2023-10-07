@@ -1,4 +1,4 @@
-package wedding.kanshasai.backend
+package wedding.kanshasai.backend.configration
 
 import jakarta.annotation.PreDestroy
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties

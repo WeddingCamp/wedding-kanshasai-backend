@@ -15,6 +15,7 @@ import wedding.kanshasai.backend.domain.entity.Event
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.state.SessionState
+import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
 import wedding.kanshasai.backend.infra.exception.DatabaseException
@@ -121,7 +122,7 @@ class SessionRepositoryTests {
         assertEquals(sessionName, createdSession.name)
         assertEquals(SessionState.INTRODUCTION, createdSession.state)
         assertEquals(null, createdSession.currentQuizId)
-        assertEquals(null, createdSession.currentIntroduction)
+        assertEquals(IntroductionType.of(3), createdSession.currentIntroduction)
         assertEquals(false, createdSession.isCoverVisible)
         assertFalse(createdSession.isDeleted)
 

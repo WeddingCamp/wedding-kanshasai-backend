@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.controller.grpc.response.*
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
+import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.infra.redis.event.*
 import wedding.kanshasai.backend.service.ParticipantService
 import wedding.kanshasai.backend.service.RedisEventService
@@ -92,6 +93,18 @@ class StreamController(
             )
             .build()
             .let(::trySend)
+
+        if (session.state == SessionState.INTRODUCTION) {
+            StreamEventResponse.newBuilder()
+                .setEventType(EventType.EVENT_TYPE_INTRODUCTION)
+                .setIntroductionEvent(
+                    StreamEventResponse.IntroductionEvent.newBuilder()
+                        .setIntroductionType(session.currentIntroduction.toGrpcType())
+                        .build(),
+                )
+                .build()
+                .let(::trySend)
+        }
 
         val eventList = map[request.type] ?: throw InvalidArgumentException.requiredField("type")
 
