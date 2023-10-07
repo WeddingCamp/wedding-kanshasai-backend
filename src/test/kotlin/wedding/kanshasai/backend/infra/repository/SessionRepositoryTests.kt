@@ -121,7 +121,7 @@ class SessionRepositoryTests {
         assertEquals(sessionName, createdSession.name)
         assertEquals(SessionState.INTRODUCTION, createdSession.state)
         assertEquals(null, createdSession.currentQuizId)
-        assertEquals(null, createdSession.currentIntroduction)
+        assertEquals(3, createdSession.currentIntroduction)
         assertEquals(false, createdSession.isCoverVisible)
         assertFalse(createdSession.isDeleted)
 
