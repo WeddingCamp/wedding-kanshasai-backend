@@ -24,12 +24,7 @@ class RedisTestConfiguration(redisProperties: RedisProperties) {
         @Synchronized
         fun start(redisProperties: RedisProperties) {
             if (redisServer == null) {
-                redisServer = RedisServer.builder()
-                    .port(redisProperties.port)
-                    .setting("maxheap 256M")
-                    .setting("daemonize no")
-                    .setting("appendonly no")
-                    .build()
+                redisServer = RedisServer(redisProperties.port)
                 redisServer!!.start()
             }
         }
