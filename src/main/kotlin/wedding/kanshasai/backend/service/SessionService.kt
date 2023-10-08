@@ -87,7 +87,7 @@ class SessionService(
         if (session.state != SessionState.QUIZ_PLAYING) {
             throw InvalidStateException("Session state is not QUIZ_PLAYING.")
         }
-        val nextState = session.state.next(SessionState.QUIZ_RESULT).getOrThrowService()
+        val nextState = session.state.next(SessionState.QUIZ_CLOSED).getOrThrowService()
 
         sessionRepository.update(session.clone().apply { state = nextState }).getOrThrowService()
 
