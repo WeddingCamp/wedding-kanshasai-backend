@@ -65,6 +65,12 @@ class SessionStateTest {
                 arguments(
                     SessionState.QUIZ_PLAYING,
                     listOf(
+                        SessionState.QUIZ_CLOSED,
+                    ),
+                ),
+                arguments(
+                    SessionState.QUIZ_CLOSED,
+                    listOf(
                         SessionState.QUIZ_RESULT,
                     ),
                 ),
