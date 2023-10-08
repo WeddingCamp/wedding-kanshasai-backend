@@ -48,6 +48,10 @@ class SessionState private constructor(private val value: SessionStateEnum) {
         },
         QUIZ_PLAYING(20) {
             override val nextStateList
+                get() = listOf(QUIZ_CLOSED)
+        },
+        QUIZ_CLOSED(30) {
+            override val nextStateList
                 get() = listOf(QUIZ_RESULT)
         },
         QUIZ_RESULT(50) {
@@ -92,6 +96,7 @@ class SessionState private constructor(private val value: SessionStateEnum) {
         val QUIZ_WAITING = SessionState(SessionStateEnum.QUIZ_WAITING)
         val QUIZ_SHOWING = SessionState(SessionStateEnum.QUIZ_SHOWING)
         val QUIZ_PLAYING = SessionState(SessionStateEnum.QUIZ_PLAYING)
+        val QUIZ_CLOSED = SessionState(SessionStateEnum.QUIZ_CLOSED)
         val QUIZ_RESULT = SessionState(SessionStateEnum.QUIZ_RESULT)
         val FINAL_RESULT_ANNOUNCEMENT = SessionState(SessionStateEnum.FINAL_RESULT_ANNOUNCEMENT)
         val FINISHED = SessionState(SessionStateEnum.FINISHED)
