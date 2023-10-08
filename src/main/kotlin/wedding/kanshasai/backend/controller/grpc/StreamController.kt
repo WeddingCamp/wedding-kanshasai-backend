@@ -1,5 +1,7 @@
 package wedding.kanshasai.backend.controller.grpc
 
+import com.amazonaws.services.s3.AmazonS3
+import com.amazonaws.services.s3.model.Bucket
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -20,6 +22,8 @@ class StreamController(
     private val participantService: ParticipantService,
     private val grpcTool: GrpcTool,
     private val redisEventService: RedisEventService,
+    private val s3Client: AmazonS3,
+    private val s3Bucket: Bucket,
 ) : StreamServiceGrpcKt.StreamServiceCoroutineImplBase() {
 
     val map = mapOf(
@@ -113,7 +117,7 @@ class StreamController(
                 redisEventService.subscribe(it, session.id).collect { redisEvent ->
                     StreamEventResponse.newBuilder()
                         .setEventType(redisEvent.eventType)
-                        .setRedisEvent(redisEvent)
+                        .setRedisEvent(redisEvent, s3Client, s3Bucket)
                         .build()
                         .let(::trySend)
                 }

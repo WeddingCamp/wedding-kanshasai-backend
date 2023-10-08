@@ -1,13 +1,16 @@
 package wedding.kanshasai.backend.controller.grpc.response
 
+import com.amazonaws.services.s3.AmazonS3
+import com.amazonaws.services.s3.model.Bucket
 import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceWithCountRedisEntity
 import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceWithResultRedisEntity
 import wedding.kanshasai.backend.infra.redis.event.*
 import wedding.kanshasai.v1.StreamEventResponse.*
 import wedding.kanshasai.v1.StreamEventResponse.Quiz.Choice
 import wedding.kanshasai.v1.StreamEventResponse.SpeedRanking.ParticipantQuizTime
+import java.util.*
 
-fun Builder.setRedisEvent(event: RedisEvent): Builder = apply {
+fun Builder.setRedisEvent(event: RedisEvent, s3Client: AmazonS3, s3Bucket: Bucket): Builder = apply {
     when (event) {
         is RedisEvent.Cover -> {
             cover = this.coverBuilder
@@ -48,9 +51,10 @@ fun Builder.setRedisEvent(event: RedisEvent): Builder = apply {
             speedRanking = this.speedRankingBuilder
                 .addAllParticipantQuizTimes(
                     event.participantQuizTimeList.map { participantQuizTime ->
+                        val url = s3Client.generatePresignedUrl(s3Bucket.name, "05.jpg", Date(System.currentTimeMillis() + 1000 * 60 * 60))
                         ParticipantQuizTime.newBuilder()
                             .setParticipantName(participantQuizTime.participantName)
-                            .setParticipantImageUrl(participantQuizTime.participantImageId) // TODO: 画像のURLを返すようにする
+                            .setParticipantImageUrl(url.toString()) // TODO: 画像のURLを返すようにする
                             .setTime(participantQuizTime.time)
                             .build()
                     },
@@ -68,10 +72,11 @@ fun Builder.setRedisEvent(event: RedisEvent): Builder = apply {
         is RedisEvent.UpdateParticipant -> {
             this.addAllParticipants(
                 event.participantList.map {
+                    val url = s3Client.generatePresignedUrl(s3Bucket.name, "05.jpg", Date(System.currentTimeMillis() + 1000 * 60 * 60))
                     Participant.newBuilder()
                         .setParticipantId(it.participantId)
                         .setName(it.name)
-                        .setImageUrl(it.imageUrl)
+                        .setImageUrl(url.toString())
                         .setParticipantType(it.participantType)
                         .setIsConnected(it.connected)
                         .build()
