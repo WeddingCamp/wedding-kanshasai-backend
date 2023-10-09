@@ -1,8 +1,6 @@
 package wedding.kanshasai.backend.controller.grpc
 
 import net.devh.boot.grpc.server.service.GrpcService
-import wedding.kanshasai.backend.controller.grpc.response.*
-import wedding.kanshasai.backend.infra.redis.event.*
 import wedding.kanshasai.backend.service.SessionService
 import wedding.kanshasai.v1.*
 import wedding.kanshasai.v1.ScreenServiceGrpcKt.ScreenServiceCoroutineImplBase
@@ -16,11 +14,11 @@ class ScreenController(
         TODO("NOT IMPLEMENTED")
     }
 
-    override suspend fun finishQuiz(request: FinishQuizRequest): FinishQuizResponse {
+    override suspend fun closeQuiz(request: CloseQuizRequest): CloseQuizResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
 
-        sessionService.finishQuiz(sessionId)
+        sessionService.closeQuiz(sessionId)
 
-        return FinishQuizResponse.newBuilder().build()
+        return CloseQuizResponse.newBuilder().build()
     }
 }

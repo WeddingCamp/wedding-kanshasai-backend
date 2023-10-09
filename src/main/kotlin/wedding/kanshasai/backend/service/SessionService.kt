@@ -81,7 +81,7 @@ class SessionService(
         redisEventService.publishState(session.state, nextState, session.id)
     }
 
-    fun finishQuiz(sessionId: UlidId) {
+    fun closeQuiz(sessionId: UlidId) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
 
         if (session.state != SessionState.QUIZ_PLAYING) {
@@ -274,6 +274,26 @@ class SessionService(
         redisEventService.publishState(session.state, nextState, session.id)
         // TODO: クイズキャンセルイベントを送信する
         // redisEventService.publish(CancelQuizRedisEvent(), sessionId)
+    }
+
+    fun finishQuiz(sessionId: UlidId) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+
+        if (session.state != SessionState.QUIZ_RESULT) {
+            throw InvalidStateException("Session state is not QUIZ_RESULT.")
+        }
+
+        val nextState = session.state.next(SessionState.QUIZ_WAITING).getOrThrowService()
+
+        sessionRepository.update(
+            session.clone().apply {
+                state = nextState
+                currentQuizId = null
+                currentQuizResult = null
+            },
+        ).getOrThrowService()
+
+        redisEventService.publishState(session.state, nextState, session.id)
     }
 
     fun Session.getCurrentQuiz(): Triple<Quiz, List<Choice>, SessionQuiz> {
