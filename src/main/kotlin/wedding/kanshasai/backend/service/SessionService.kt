@@ -254,7 +254,7 @@ class SessionService(
 
     fun cancelCurrentQuiz(sessionId: UlidId) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
-        if (!listOf(SessionState.QUIZ_SHOWING, SessionState.QUIZ_PLAYING, , SessionState.QUIZ_CLOSED).contains(session.state)) {
+        if (!listOf(SessionState.QUIZ_SHOWING, SessionState.QUIZ_PLAYING, SessionState.QUIZ_CLOSED).contains(session.state)) {
             throw InvalidStateException("Session state is not QUIZ_SHOWING or QUIZ_PLAYING or QUIZ_CLOSED.")
         }
         val nextState = SessionState.QUIZ_WAITING
