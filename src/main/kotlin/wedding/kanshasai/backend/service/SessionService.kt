@@ -81,7 +81,7 @@ class SessionService(
         redisEventService.publishState(session.state, nextState, session.id)
     }
 
-    fun finishQuiz(sessionId: UlidId) {
+    fun closeQuiz(sessionId: UlidId) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
 
         if (session.state != SessionState.QUIZ_PLAYING) {
