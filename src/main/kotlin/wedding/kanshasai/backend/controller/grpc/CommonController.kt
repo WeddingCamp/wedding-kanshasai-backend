@@ -1,7 +1,5 @@
 package wedding.kanshasai.backend.controller.grpc
 
-import com.amazonaws.services.s3.AmazonS3
-import com.amazonaws.services.s3.model.Bucket
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.service.S3Service
@@ -11,7 +9,7 @@ import java.util.*
 
 @GrpcService
 class CommonController(
-    private val s3Service: S3Service
+    private val s3Service: S3Service,
 ) : CommonServiceCoroutineImplBase() {
     override suspend fun generatePresignedUrl(request: GeneratePresignedUrlRequest): GeneratePresignedUrlResponse {
         val id = UlidId.new()

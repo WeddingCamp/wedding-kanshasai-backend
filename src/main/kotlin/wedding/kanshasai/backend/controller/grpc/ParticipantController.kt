@@ -17,7 +17,7 @@ class ParticipantController(
     private val grpcTool: GrpcTool,
 ) : ParticipantServiceCoroutineImplBase() {
     fun ListParticipantsResponse.Participant.Builder.setParticipant(participant: Participant):
-            ListParticipantsResponse.Participant.Builder = apply {
+        ListParticipantsResponse.Participant.Builder = apply {
         name = participant.name
         participantId = participant.id.toString()
         sessionId = participant.sessionId.toString()

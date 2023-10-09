@@ -1,10 +1,10 @@
 package wedding.kanshasai.backend.controller.grpc
 
 import net.devh.boot.grpc.server.service.GrpcService
-import wedding.kanshasai.backend.controller.grpc.response.setChoice
-import wedding.kanshasai.backend.controller.grpc.response.setQuiz
-import wedding.kanshasai.backend.controller.grpc.response.setSession
-import wedding.kanshasai.backend.controller.grpc.response.setSessionQuiz
+import wedding.kanshasai.backend.domain.entity.Choice
+import wedding.kanshasai.backend.domain.entity.Quiz
+import wedding.kanshasai.backend.domain.entity.Session
+import wedding.kanshasai.backend.domain.entity.SessionQuiz
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.service.SessionQuizService
 import wedding.kanshasai.backend.service.SessionService
@@ -17,6 +17,34 @@ class SessionController(
     private val grpcTool: GrpcTool,
     private val sessionQuizService: SessionQuizService,
 ) : SessionServiceCoroutineImplBase() {
+    fun ListSessionQuizzesResponse.SessionQuiz.Builder.setQuiz(quiz: Quiz): ListSessionQuizzesResponse.SessionQuiz.Builder = apply {
+        quizId = quiz.id.toString()
+        body = quiz.body
+        quizType = quiz.type.toGrpcType()
+    }
+
+    fun ListSessionQuizzesResponse.SessionQuiz.Builder.setSessionQuiz(sessionQuiz: SessionQuiz):
+        ListSessionQuizzesResponse.SessionQuiz.Builder = apply {
+        isCompleted = sessionQuiz.isCompleted
+    }
+
+    fun ListSessionQuizzesResponse.Choice.Builder.setChoice(choice: Choice): ListSessionQuizzesResponse.Choice.Builder = apply {
+        choiceId = choice.id.toString()
+        body = choice.body
+    }
+
+    fun ListSessionsResponse.Session.Builder.setSession(session: Session): ListSessionsResponse.Session.Builder = apply {
+        name = session.name
+        sessionId = session.id.toString()
+        eventId = session.eventId.toString()
+    }
+
+    fun CreateSessionResponse.Builder.setSession(session: Session): CreateSessionResponse.Builder = apply {
+        name = session.name
+        sessionId = session.id.toString()
+        eventId = session.eventId.toString()
+    }
+
     override suspend fun createSession(request: CreateSessionRequest): CreateSessionResponse {
         if (request.name.isNullOrEmpty()) throw InvalidArgumentException.requiredField("name")
         val eventId = grpcTool.parseUlidId(request.eventId, "eventId")
