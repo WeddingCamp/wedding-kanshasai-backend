@@ -1,7 +1,7 @@
 package wedding.kanshasai.backend.controller.grpc
 
 import net.devh.boot.grpc.server.service.GrpcService
-import wedding.kanshasai.backend.controller.grpc.response.*
+import wedding.kanshasai.backend.domain.entity.Participant
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.service.*
@@ -12,8 +12,18 @@ import wedding.kanshasai.v1.ParticipantServiceGrpcKt.ParticipantServiceCoroutine
 class ParticipantController(
     private val participantService: ParticipantService,
     private val participantAnswerService: ParticipantAnswerService,
+    private val s3Service: S3Service,
     private val grpcTool: GrpcTool,
 ) : ParticipantServiceCoroutineImplBase() {
+    fun ListParticipantsResponse.Participant.Builder.setParticipant(participant: Participant):
+        ListParticipantsResponse.Participant.Builder = apply {
+        name = participant.name
+        participantId = participant.id.toString()
+        sessionId = participant.sessionId.toString()
+        imageUrl = s3Service.generatePresignedUrl(participant.imageId)
+        participantType = participant.type.toGrpcType()
+    }
+
     override suspend fun listParticipants(request: ListParticipantsRequest): ListParticipantsResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
         val participantType = if (request.hasParticipantType()) ParticipantType.of(request.participantType.number) else null
@@ -54,7 +64,7 @@ class ParticipantController(
             it.name = participant.name
             it.participantId = participant.id.toString()
             it.sessionId = participant.sessionId.toString()
-            if (participant.imageId != null) it.imageUrl = participant.imageId.toString() // TODO: 画像のURLを返す
+            it.imageUrl = s3Service.generatePresignedUrl(participant.imageId)
             it.build()
         }
     }

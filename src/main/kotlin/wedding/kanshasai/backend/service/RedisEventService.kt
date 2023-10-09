@@ -24,6 +24,7 @@ class RedisEventService(
     private val redisTemplate: RedisTemplate<String, RedisEvent>,
     private val redisListenerContainer: ReactiveRedisMessageListenerContainer,
     private val objectMapper: ObjectMapper,
+    private val s3Service: S3Service,
 ) {
     fun <T : RedisEvent> subscribe(eventType: KClass<out T>, sessionId: UlidId): Flow<T> = callbackFlow {
         logger.debug { "Subscribe message: ${eventType.simpleName}" }
@@ -57,7 +58,7 @@ class RedisEventService(
             ParticipantRedisEntity(
                 participantId = it.id.toString(),
                 name = it.name,
-                imageUrl = it.imageId.toString(), // TODO: 画像のURLを取得する
+                imageUrl = s3Service.generatePresignedUrl(it.imageId),
                 participantType = it.type.toGrpcType(),
                 connected = it.isConnected,
             )
