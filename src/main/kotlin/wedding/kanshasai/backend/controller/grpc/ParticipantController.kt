@@ -65,7 +65,7 @@ class ParticipantController(
             it.name = participant.name
             it.participantId = participant.id.toString()
             it.sessionId = participant.sessionId.toString()
-            if (participant.imageId != null) it.imageUrl = participant.imageId.toString() // TODO: 画像のURLを返す
+            it.imageUrl = s3Service.generatePresignedUrl(participant.imageId)
             it.build()
         }
     }

@@ -11,6 +11,15 @@ class S3Service(
     private val s3Client: AmazonS3,
     private val s3Bucket: Bucket,
 ) {
+    fun generatePresignedUrl(id: String): String {
+        val fileId = try {
+            UlidId.of(id)
+        } catch (e: Exception) {
+            null
+        }
+        return generatePresignedUrl(fileId)
+    }
+
     fun generatePresignedUrl(id: UlidId?): String {
         val fileId = id?.toString() ?: "PLACEHOLDER"
         val expiration = Date(System.currentTimeMillis() + 1000 * 60 * 60)
