@@ -77,7 +77,7 @@ class ParticipantController(
         val participantId = grpcTool.parseUlidId(request.participantId, "participantId")
         val quizId = grpcTool.parseUlidId(request.quizId, "quizId")
 
-        if (request.answer.isEmpty()) throw InvalidArgumentException.requiredField("choiceId")
+        if (request.answer.isEmpty()) throw InvalidArgumentException.requiredField("answer")
         if (request.time <= 0) throw InvalidArgumentException("time must be positive number.")
 
         participantAnswerService.setAnswer(participantId, quizId, request.answer, request.time)

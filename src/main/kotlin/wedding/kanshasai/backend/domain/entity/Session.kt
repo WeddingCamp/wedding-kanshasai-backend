@@ -1,7 +1,6 @@
 package wedding.kanshasai.backend.domain.entity
 
 import wedding.kanshasai.backend.domain.state.SessionState
-import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.QuizResultType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.dto.SessionDto
@@ -13,7 +12,7 @@ class Session private constructor(
     var name: String,
     var state: SessionState,
     var currentQuizId: UlidId?,
-    var currentIntroduction: IntroductionType,
+    var currentIntroductionId: Int,
     var currentQuizResult: QuizResultType? = null,
     var isCoverVisible: Boolean,
     var isDeleted: Boolean,
@@ -27,7 +26,7 @@ class Session private constructor(
             name,
             state,
             currentQuizId,
-            currentIntroduction,
+            currentIntroductionId,
             currentQuizResult,
             isCoverVisible,
             isDeleted,
@@ -42,7 +41,7 @@ class Session private constructor(
         name,
         state.toNumber(),
         currentQuizId?.toByteArray(),
-        currentIntroduction.toNumber(),
+        currentIntroductionId,
         currentQuizResult?.toNumber(),
         isCoverVisible,
         isDeleted,
@@ -58,7 +57,7 @@ class Session private constructor(
                 sessionDto.name,
                 SessionState.of(sessionDto.stateId),
                 sessionDto.currentQuizId?.let(UlidId::of),
-                IntroductionType.of(sessionDto.currentIntroductionId),
+                sessionDto.currentIntroductionId,
                 sessionDto.currentQuizResultId?.let(QuizResultType::of),
                 sessionDto.isCoverVisible,
                 sessionDto.isDeleted,

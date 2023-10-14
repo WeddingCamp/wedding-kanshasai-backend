@@ -35,7 +35,7 @@ class StreamController(
 
             is RedisEvent.Introduction -> {
                 introductionEvent = this.introductionEventBuilder
-                    .setIntroductionType(event.introductionType.toGrpcType())
+                    .setIntroductionId(event.introductionId)
                     .build()
             }
 
@@ -130,18 +130,6 @@ class StreamController(
             RedisEvent.CurrentState::class,
             RedisEvent.UpdateParticipant::class,
         ),
-        StreamType.STREAM_TYPE_DEBUG to listOf(
-            RedisEvent.Cover::class,
-            RedisEvent.Introduction::class,
-            RedisEvent.PreQuiz::class,
-            RedisEvent.ShowQuiz::class,
-            RedisEvent.StartQuiz::class,
-            RedisEvent.QuizAnswerList::class,
-            RedisEvent.QuizResult::class,
-            RedisEvent.QuizSpeedRanking::class,
-            RedisEvent.CurrentState::class,
-            RedisEvent.UpdateParticipant::class,
-        ),
     )
 
     override fun streamEvent(request: StreamEventRequest): Flow<StreamEventResponse> = callbackFlow {
@@ -176,7 +164,7 @@ class StreamController(
                 .setEventType(EventType.EVENT_TYPE_INTRODUCTION)
                 .setIntroductionEvent(
                     StreamEventResponse.IntroductionEvent.newBuilder()
-                        .setIntroductionType(session.currentIntroduction.toGrpcType())
+                        .setIntroductionId(session.currentIntroductionId)
                         .build(),
                 )
                 .build()

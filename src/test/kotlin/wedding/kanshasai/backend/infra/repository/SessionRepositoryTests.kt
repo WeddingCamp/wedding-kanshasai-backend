@@ -15,7 +15,6 @@ import wedding.kanshasai.backend.domain.entity.Event
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.state.SessionState
-import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.MapperTestTool
 import wedding.kanshasai.backend.infra.exception.DatabaseException
@@ -77,7 +76,7 @@ class SessionRepositoryTests {
         assertEquals(expect.name, session.name)
         assertEquals(expect.state, session.state)
         assertEquals(expect.currentQuizId, session.currentQuizId)
-        assertEquals(expect.currentIntroduction, session.currentIntroduction)
+        assertEquals(expect.currentIntroductionId, session.currentIntroductionId)
         assertEquals(expect.isCoverVisible, session.isCoverVisible)
         assertEquals(expect.isDeleted, session.isDeleted)
     }
@@ -122,7 +121,7 @@ class SessionRepositoryTests {
         assertEquals(sessionName, createdSession.name)
         assertEquals(SessionState.INTRODUCTION, createdSession.state)
         assertEquals(null, createdSession.currentQuizId)
-        assertEquals(IntroductionType.of(3), createdSession.currentIntroduction)
+        assertEquals(3, createdSession.currentIntroductionId)
         assertEquals(false, createdSession.isCoverVisible)
         assertFalse(createdSession.isDeleted)
 
@@ -131,7 +130,7 @@ class SessionRepositoryTests {
         assertEquals(createdSession.name, foundSession.name)
         assertEquals(createdSession.state, foundSession.state)
         assertEquals(createdSession.currentQuizId, foundSession.currentQuizId)
-        assertEquals(createdSession.currentIntroduction, foundSession.currentIntroduction)
+        assertEquals(createdSession.currentIntroductionId, foundSession.currentIntroductionId)
         assertEquals(createdSession.isCoverVisible, foundSession.isCoverVisible)
         assertEquals(createdSession.isDeleted, foundSession.isDeleted)
     }

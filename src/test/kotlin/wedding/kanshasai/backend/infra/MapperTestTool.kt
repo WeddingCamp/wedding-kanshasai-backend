@@ -3,7 +3,6 @@ package wedding.kanshasai.backend.infra
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import wedding.kanshasai.backend.domain.state.SessionState
-import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.domain.value.QuizResultType
 import wedding.kanshasai.backend.domain.value.UlidId
@@ -71,7 +70,7 @@ class MapperTestTool {
             "Session_$sessionId",
             SessionState.values.random().toNumber(),
             maybeNull(UlidId.new().toByteArray()),
-            IntroductionType.values.random().toNumber(),
+            listOf(0, 1, 2).random(),
             QuizResultType.values.random().toNumber(),
             trueOrFalse,
         )
