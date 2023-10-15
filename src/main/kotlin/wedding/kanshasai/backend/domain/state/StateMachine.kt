@@ -27,7 +27,6 @@ interface StateMachineInterface<T : StateMachineEnumInterface> {
 
 interface StateMachineEnumInterface {
     val name: String
-    val ordinal: Int
     val number: Int
     val nextStateList: List<StateMachineEnumInterface>
 }

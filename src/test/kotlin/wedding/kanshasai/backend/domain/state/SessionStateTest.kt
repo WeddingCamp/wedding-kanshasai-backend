@@ -23,13 +23,13 @@ class SessionStateTest {
                 assertEquals(it.toString(), sessionState.toString())
             }
 
-            if (validTransitionDestinationList.contains(it)) {
+            if (validTransitionDestinationList.any { dest -> dest.value == it.value }) {
                 assertDoesNotThrow {
                     sessionState.next(it).getOrThrow()
                 }
             } else {
-                println(sessionState)
-                println(it)
+                println("sessionState: " + sessionState)
+                println("it          : " + it)
                 assertThrows<InvalidStateTransitionException> {
                     sessionState.next(it).getOrThrow()
                 }
