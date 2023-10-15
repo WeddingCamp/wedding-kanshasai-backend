@@ -24,6 +24,10 @@ class ParticipantController(
         participantType = participant.type.toGrpcType()
     }
 
+    override suspend fun getParticipant(request: GetParticipantRequest): GetParticipantResponse {
+        TODO("NOT IMPLEMENTED")
+    }
+
     override suspend fun listParticipants(request: ListParticipantsRequest): ListParticipantsResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
         val participantType = if (request.hasParticipantType()) ParticipantType.of(request.participantType.number) else null
