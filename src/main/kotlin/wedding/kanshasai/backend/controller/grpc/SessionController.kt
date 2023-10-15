@@ -96,9 +96,9 @@ class SessionController(
 
     override suspend fun setIntroduction(request: SetIntroductionRequest): SetIntroductionResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
-        val introductionType = grpcTool.parseIntroductionType(request.introductionType)
+        val introductionId = request.introductionId
 
-        sessionService.setIntroductionScreen(sessionId, introductionType)
+        sessionService.setIntroductionScreen(sessionId, introductionId)
 
         return SetIntroductionResponse.newBuilder().build()
     }
@@ -165,7 +165,27 @@ class SessionController(
         TODO("NOT IMPLEMENTED")
     }
 
-    override suspend fun showSessionResult(request: ShowSessionResultRequest): ShowSessionResultResponse {
+    override suspend fun setQuizAnswer(request: SetQuizAnswerRequest): SetQuizAnswerResponse {
+        TODO("NOT IMPLEMENTED")
+    }
+
+    override suspend fun showBackSessionResultRanking(request: ShowBackSessionResultRankingRequest): ShowBackSessionResultRankingResponse {
+        TODO("NOT IMPLEMENTED")
+    }
+
+    override suspend fun showNextSessionResultRanking(request: ShowNextSessionResultRankingRequest): ShowNextSessionResultRankingResponse {
+        TODO("NOT IMPLEMENTED")
+    }
+
+    override suspend fun showSessionResultRanking(request: ShowSessionResultRankingRequest): ShowSessionResultRankingResponse {
+        TODO("NOT IMPLEMENTED")
+    }
+
+    override suspend fun showSessionResultTitle(request: ShowSessionResultTitleRequest): ShowSessionResultTitleResponse {
+        TODO("NOT IMPLEMENTED")
+    }
+
+    override suspend fun startSessionResult(request: StartSessionResultRequest): StartSessionResultResponse {
         TODO("NOT IMPLEMENTED")
     }
 

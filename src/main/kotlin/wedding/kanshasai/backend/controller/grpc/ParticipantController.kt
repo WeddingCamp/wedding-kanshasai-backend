@@ -24,6 +24,10 @@ class ParticipantController(
         participantType = participant.type.toGrpcType()
     }
 
+    override suspend fun getParticipant(request: GetParticipantRequest): GetParticipantResponse {
+        TODO("NOT IMPLEMENTED")
+    }
+
     override suspend fun listParticipants(request: ListParticipantsRequest): ListParticipantsResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
         val participantType = if (request.hasParticipantType()) ParticipantType.of(request.participantType.number) else null
@@ -77,7 +81,7 @@ class ParticipantController(
         val participantId = grpcTool.parseUlidId(request.participantId, "participantId")
         val quizId = grpcTool.parseUlidId(request.quizId, "quizId")
 
-        if (request.answer.isEmpty()) throw InvalidArgumentException.requiredField("choiceId")
+        if (request.answer.isEmpty()) throw InvalidArgumentException.requiredField("answer")
         if (request.time <= 0) throw InvalidArgumentException("time must be positive number.")
 
         participantAnswerService.setAnswer(participantId, quizId, request.answer, request.time)

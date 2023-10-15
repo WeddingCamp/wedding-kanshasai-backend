@@ -9,7 +9,6 @@ import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.entity.SessionQuiz
 import wedding.kanshasai.backend.domain.exception.InvalidStateException
 import wedding.kanshasai.backend.domain.state.SessionState
-import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.domain.value.QuizResultType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.repository.*
@@ -57,15 +56,15 @@ class SessionService(
         redisEventService.publish(RedisEvent.Cover(isVisible, sessionId.toString()))
     }
 
-    fun setIntroductionScreen(sessionId: UlidId, introductionType: IntroductionType) {
+    fun setIntroductionScreen(sessionId: UlidId, introductionId: Int) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
 
         if (session.state != SessionState.INTRODUCTION) {
             throw InvalidStateException("Session state is not INTRODUCTION.")
         }
 
-        sessionRepository.update(session.clone().apply { currentIntroduction = introductionType }).getOrThrowService()
-        redisEventService.publish(RedisEvent.Introduction(introductionType, sessionId.toString()))
+        sessionRepository.update(session.clone().apply { currentIntroductionId = introductionId }).getOrThrowService()
+        redisEventService.publish(RedisEvent.Introduction(introductionId, sessionId.toString()))
     }
 
     fun finishIntroduction(sessionId: UlidId) {

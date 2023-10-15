@@ -1,7 +1,6 @@
 package wedding.kanshasai.backend.infra.redis.event
 
 import wedding.kanshasai.backend.annotation.NoArg
-import wedding.kanshasai.backend.domain.value.IntroductionType
 import wedding.kanshasai.backend.infra.redis.entity.*
 import wedding.kanshasai.v1.EventType
 import wedding.kanshasai.v1.QuizType
@@ -32,7 +31,7 @@ interface RedisEvent {
 
     @NoArg
     data class Introduction(
-        var introductionType: IntroductionType,
+        var introductionId: Int,
         override val sessionId: String,
     ) : RedisEvent {
         override val eventType: EventType = EventType.EVENT_TYPE_INTRODUCTION
