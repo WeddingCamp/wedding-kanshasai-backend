@@ -174,19 +174,20 @@ class SessionController(
     }
 
     override suspend fun showNextSessionResultRanking(request: ShowNextSessionResultRankingRequest): ShowNextSessionResultRankingResponse {
-
-        TODO("NOT IMPLEMENTED")    }
+        TODO("NOT IMPLEMENTED")
+    }
 
     override suspend fun showSessionResultRanking(request: ShowSessionResultRankingRequest): ShowSessionResultRankingResponse {
-
-        TODO("NOT IMPLEMENTED")    }
+        TODO("NOT IMPLEMENTED")
+    }
 
     override suspend fun showSessionResultTitle(request: ShowSessionResultTitleRequest): ShowSessionResultTitleResponse {
-
-        TODO("NOT IMPLEMENTED")    }
+        TODO("NOT IMPLEMENTED")
+    }
 
     override suspend fun startSessionResult(request: StartSessionResultRequest): StartSessionResultResponse {
-        TODO("NOT IMPLEMENTED")    }
+        TODO("NOT IMPLEMENTED")
+    }
 
     override suspend fun setCover(request: SetCoverRequest): SetCoverResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
