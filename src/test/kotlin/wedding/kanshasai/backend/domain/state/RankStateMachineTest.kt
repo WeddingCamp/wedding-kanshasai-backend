@@ -102,7 +102,7 @@ class RankStateMachineTest {
                 Arguments.arguments(5, 4),
                 Arguments.arguments(4, 3),
                 Arguments.arguments(3, 2),
-                Arguments.arguments(2, 1)
+                Arguments.arguments(2, 1),
             )
         }
     }

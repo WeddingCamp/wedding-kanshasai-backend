@@ -13,7 +13,7 @@ class RankStateMachine private constructor(val value: Int) {
                 // 12位以上
                 val rankText = value.toString().toCharArray()
 
-                if(rankText.last() == '1') {
+                if (rankText.last() == '1') {
                     // 下1桁が1の場合は10下げる
                     RankStateMachine(value - 10)
                 } else if (rankText.last() == '0') {
