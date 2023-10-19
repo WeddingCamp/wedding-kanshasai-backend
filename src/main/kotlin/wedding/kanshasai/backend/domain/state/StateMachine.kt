@@ -5,12 +5,12 @@ import wedding.kanshasai.backend.domain.exception.InvalidStateTransitionExceptio
 
 private val logger = KotlinLogging.logger {}
 
-abstract class StateMachine<S : StateMachineInterface<E>, E : StateMachineEnumInterface>
+abstract class StateMachine<S : StateMachineInterface<E>, E : StateInterface>
     (override val value: E) : StateMachineInterface<E> {
         override fun toString(): String = value.name
         fun toNumber(): Int = value.number
 
-        fun next(nextState: S) = runCatching {
+        open fun next(nextState: S) = runCatching {
             if (this == nextState) {
                 logger.warn { "Recursive state transition from '${value.name}' to '${nextState.value.name}' has occurred" }
             }
@@ -21,12 +21,12 @@ abstract class StateMachine<S : StateMachineInterface<E>, E : StateMachineEnumIn
         }
     }
 
-interface StateMachineInterface<T : StateMachineEnumInterface> {
+interface StateMachineInterface<T : StateInterface> {
     val value: T
 }
 
-interface StateMachineEnumInterface {
+interface StateInterface {
     val name: String
     val number: Int
-    val nextStateList: List<StateMachineEnumInterface>
+    val nextStateList: List<StateInterface>
 }

@@ -13,7 +13,7 @@ class SessionState private constructor(override val value: SessionStateEnum) :
 
         enum class SessionStateEnum(
             override val number: Int,
-        ) : StateMachineEnumInterface {
+        ) : StateInterface {
             INTRODUCTION(1) {
                 override val nextStateList
                     get() = listOf(INTRODUCTION, QUIZ_WAITING)

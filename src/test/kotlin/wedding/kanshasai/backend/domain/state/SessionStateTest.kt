@@ -28,8 +28,6 @@ class SessionStateTest {
                     sessionState.next(it).getOrThrow()
                 }
             } else {
-                println("sessionState: " + sessionState)
-                println("it          : " + it)
                 assertThrows<InvalidStateTransitionException> {
                     sessionState.next(it).getOrThrow()
                 }
