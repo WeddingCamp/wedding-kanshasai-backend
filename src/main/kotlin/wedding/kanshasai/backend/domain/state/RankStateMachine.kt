@@ -27,6 +27,12 @@ class RankStateMachine private constructor(val value: Int) {
         }
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (other !is RankStateMachine) return false
+        if (value != other.value) return false
+        return true
+    }
+
     companion object {
         private const val MIN_VALUE = 1
 

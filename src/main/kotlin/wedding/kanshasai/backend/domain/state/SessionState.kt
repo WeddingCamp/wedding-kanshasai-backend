@@ -52,6 +52,12 @@ class SessionState private constructor(override val value: SessionStateEnum) :
             },
         }
 
+        override fun equals(other: Any?): Boolean {
+            if (other !is SessionState) return false
+            if (value != other.value) return false
+            return true
+        }
+
         companion object {
             fun of(value: Int): SessionState {
                 SessionStateEnum.values().forEach {
