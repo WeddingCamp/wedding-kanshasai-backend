@@ -3,7 +3,6 @@ package wedding.kanshasai.backend.domain.state
 import wedding.kanshasai.backend.domain.exception.InvalidStateException
 import wedding.kanshasai.backend.domain.exception.InvalidStateTransitionException
 import wedding.kanshasai.backend.domain.value.ResultRankState
-import java.util.Arrays
 
 /**
  * ResultRankStateを管理するステートマシン

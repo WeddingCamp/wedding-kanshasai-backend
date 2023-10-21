@@ -53,7 +53,10 @@ class ResultStateManager private constructor(
     }
 
     override fun toString(): String {
-        return "ResultStateManager(resultStateMachine=$resultStateMachine, rankStateMachine=$rankStateMachine, resultRankStateMachine=$resultRankStateMachine)"
+        return "ResultStateManager(" +
+            "resultStateMachine=$resultStateMachine, " +
+            "rankStateMachine=$rankStateMachine, " +
+            "resultRankStateMachine=$resultRankStateMachine)"
     }
 
     companion object {
@@ -86,7 +89,12 @@ class ResultStateManager private constructor(
             // これでResultStateとResultRankStateの整合性が取れる
             if (!resultStateMachine.value.rankStateList.contains(resultRankStateMachine.value)) {
                 val target = resultStateMachine.value.rankStateList.first()
-                logger.warn { "rankState(${resultRankStateMachine.value}) must be in resultStateMachine.rankStateList(${resultStateMachine.value.rankStateList.joinTo(StringBuffer(), ",")}). rankState has been corrected to $target." }
+                logger.warn {
+                    "rankState(${resultRankStateMachine.value}) must be in rankStateList(${resultStateMachine.value.rankStateList.joinTo(
+                        StringBuffer(),
+                        ",",
+                    )}). rankState has been corrected to $target."
+                }
                 newResultRankStateMachine = ResultRankStateMachine.of(target, resultStateMachine.value.rankStateList)
             }
 

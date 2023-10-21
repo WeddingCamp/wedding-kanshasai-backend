@@ -40,7 +40,7 @@ class ResultStateMachine private constructor(override val value: ResultState) :
             return value.name
         }
 
-    companion object {
+        companion object {
             fun of(value: Int): ResultStateMachine {
                 ResultState.values().forEach {
                     if (it.number == value) return ResultStateMachine(it)
