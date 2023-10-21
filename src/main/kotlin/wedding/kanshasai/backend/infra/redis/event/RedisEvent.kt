@@ -91,6 +91,13 @@ interface RedisEvent {
     }
 
     @NoArg
+    data class CancelQuiz(
+        override val sessionId: String,
+    ) : RedisEvent {
+        override val eventType: EventType = EventType.EVENT_TYPE_CANCEL_QUIZ
+    }
+
+    @NoArg
     data class Cover(
         var isVisible: Boolean,
         override val sessionId: String,
@@ -104,6 +111,14 @@ interface RedisEvent {
         override val sessionId: String,
     ) : RedisEvent {
         override val eventType: EventType = EventType.EVENT_TYPE_UPDATE_PARTICIPANT
+    }
+
+    @NoArg
+    data class StartSessionResult(
+        var resultType: Int,
+        override val sessionId: String,
+    ) : RedisEvent {
+        override val eventType: EventType = EventType.EVENT_TYPE_RESULT_TITLE
     }
 
     @NoArg

@@ -8,9 +8,12 @@ import wedding.kanshasai.backend.domain.entity.Quiz
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.entity.SessionQuiz
 import wedding.kanshasai.backend.domain.exception.InvalidStateException
+import wedding.kanshasai.backend.domain.manager.ResultStateManager
+import wedding.kanshasai.backend.domain.state.RankStateMachine
+import wedding.kanshasai.backend.domain.state.ResultRankStateMachine
+import wedding.kanshasai.backend.domain.state.ResultStateMachine
 import wedding.kanshasai.backend.domain.state.SessionState
-import wedding.kanshasai.backend.domain.value.QuizResultType
-import wedding.kanshasai.backend.domain.value.UlidId
+import wedding.kanshasai.backend.domain.value.*
 import wedding.kanshasai.backend.infra.mysql.repository.*
 import wedding.kanshasai.backend.infra.redis.entity.ParticipantQuizTimeRedisEntity
 import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceRedisEntity
@@ -270,9 +273,32 @@ class SessionService(
 
         participantAnswerRepository.deleteBySessionQuiz(sessionQuiz).getOrThrowService()
 
+        redisEventService.publish(RedisEvent.CancelQuiz(sessionId.toString()))
         redisEventService.publishState(session.state, nextState, session.id)
-        // TODO: クイズキャンセルイベントを送信する
-        // redisEventService.publish(CancelQuizRedisEvent(), sessionId)
+    }
+
+    fun startSessionResult(sessionId: UlidId, resultType: ResultType) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+        val nextState = session.state.next(resultType.sessionState).getOrThrowService()
+
+        val participantList = participantRepository.listBySession(session).getOrThrowService() // TODO: 回答がない人は除外する
+
+        val resultStateMachine = ResultStateMachine.of(ResultState.RANKING_NORMAL)
+        val resultStateManager = ResultStateManager.of(
+            resultStateMachine,
+            ResultRankStateMachine.of(ResultRankState.RANK, resultStateMachine.value.rankStateList),
+            RankStateMachine.of(participantList.size + 1),
+        )
+
+        sessionRepository.update(
+            session.clone().apply {
+                state = nextState
+                resultState = resultStateManager
+            },
+        ).getOrThrowService()
+
+        redisEventService.publish(RedisEvent.StartSessionResult(resultType.value.number, sessionId.toString()))
+        redisEventService.publishState(session.state, nextState, session.id)
     }
 
     fun finishQuiz(sessionId: UlidId) {

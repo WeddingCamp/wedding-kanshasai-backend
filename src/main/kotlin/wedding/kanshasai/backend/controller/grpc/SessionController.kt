@@ -186,7 +186,12 @@ class SessionController(
     }
 
     override suspend fun startSessionResult(request: StartSessionResultRequest): StartSessionResultResponse {
-        TODO("NOT IMPLEMENTED")
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+        val resultType = grpcTool.parseQuizResultType(request.resultType)
+
+        sessionService.startSessionResult(sessionId, resultType)
+
+        return StartSessionResultResponse.newBuilder().build()
     }
 
     override suspend fun setCover(request: SetCoverRequest): SetCoverResponse {
