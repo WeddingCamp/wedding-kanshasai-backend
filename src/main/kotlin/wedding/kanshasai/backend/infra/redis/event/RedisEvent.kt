@@ -64,7 +64,7 @@ interface RedisEvent {
         override var quizType: QuizType,
         override var choiceList: List<QuizChoiceRedisEntity>,
         override val sessionId: String,
-    ): AbstractQuizRedisEvent<QuizChoiceRedisEntity>(quizId, quizBody, quizType, choiceList) {
+    ) : AbstractQuizRedisEvent<QuizChoiceRedisEntity>(quizId, quizBody, quizType, choiceList) {
         override val eventType: EventType = EventType.EVENT_TYPE_QUIZ_TIME_UP
     }
 
