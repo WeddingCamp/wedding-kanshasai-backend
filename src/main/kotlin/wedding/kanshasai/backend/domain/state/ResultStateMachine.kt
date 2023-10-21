@@ -5,8 +5,6 @@ import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.InvalidStateTransitionException
 import wedding.kanshasai.backend.domain.value.ResultState
 
-private val logger = KotlinLogging.logger {}
-
 /**
  * ResultStateを管理するステートマシン
  */
@@ -35,7 +33,11 @@ class ResultStateMachine private constructor(override val value: ResultState) :
             return true
         }
 
-        companion object {
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
+
+    companion object {
             fun of(value: Int): ResultStateMachine {
                 ResultState.values().forEach {
                     if (it.number == value) return ResultStateMachine(it)
