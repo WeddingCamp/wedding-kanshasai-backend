@@ -41,6 +41,10 @@ class RankStateMachine private constructor(val value: Int) {
         return value
     }
 
+    override fun toString(): String {
+        return value.toString()
+    }
+
     companion object {
         private const val MIN_VALUE = 1
 

@@ -36,7 +36,11 @@ class ResultStateMachine private constructor(override val value: ResultState) :
             return value.hashCode()
         }
 
-        companion object {
+        override fun toString(): String {
+            return value.name
+        }
+
+    companion object {
             fun of(value: Int): ResultStateMachine {
                 ResultState.values().forEach {
                     if (it.number == value) return ResultStateMachine(it)

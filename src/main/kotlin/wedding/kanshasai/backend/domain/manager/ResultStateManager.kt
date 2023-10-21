@@ -24,36 +24,19 @@ class ResultStateManager private constructor(
             // RankStateが8以下になったら、ResultStateを進める
             if (newRankStateMachine.value <= 8) {
                 newResultStateMachine = resultStateMachine.next().getOrThrow()
-                newResultRankStateMachine = ResultRankStateMachine.of(resultStateMachine.value.rankStateList)
+                newResultRankStateMachine = ResultRankStateMachine.of(newResultStateMachine.value.rankStateList)
             }
             // 以後RankStateは意識しない
             return@runCatching ResultStateManager(newResultStateMachine, newRankStateMachine, newResultRankStateMachine)
         }
 
         // ResultRankStateを進める
-        resultRankStateMachine.next().getOrElse {
+        newResultRankStateMachine = resultRankStateMachine.next().getOrElse {
             // ResultRankStateが最後だったら、ResultStateを進める
             newResultStateMachine = resultStateMachine.next().getOrThrow()
+            ResultRankStateMachine.of(newResultStateMachine.value.rankStateList)
         }
 
-        // ResultStateがNORMALの時は、RankStateを進める
-        // NORMALの時はExceptionが発生しないはずなのでキャッチはしない
-        if (resultStateMachine.value == ResultState.RANKING_NORMAL) {
-            newRankStateMachine = rankStateMachine.next().getOrThrow()
-            // RankStateが8以下になったら、ResultStateを進める
-            if (newRankStateMachine.value <= 8) {
-                newResultStateMachine = resultStateMachine.next().getOrThrow()
-            }
-        } else {
-            // ResultRankStateを進める
-            resultRankStateMachine.next().getOrElse {
-                // ResultRankStateが最後だったら、ResultStateを進める
-                newResultStateMachine = resultStateMachine.next().getOrThrow()
-            }
-        }
-        val resultStateMachine = resultStateMachine.next()
-        val resultRankStateMachine = resultRankStateMachine.next().getOrThrow()
-        val rankStateMachine = rankStateMachine.next().getOrThrow()
         ResultStateManager(newResultStateMachine, newRankStateMachine, newResultRankStateMachine)
     }
 
@@ -69,11 +52,8 @@ class ResultStateManager private constructor(
         return true
     }
 
-    override fun hashCode(): Int {
-        var result = resultStateMachine.hashCode()
-        result = 31 * result + rankStateMachine.hashCode()
-        result = 31 * result + resultRankStateMachine.hashCode()
-        return result
+    override fun toString(): String {
+        return "ResultStateManager(resultStateMachine=$resultStateMachine, rankStateMachine=$rankStateMachine, resultRankStateMachine=$resultRankStateMachine)"
     }
 
     companion object {
@@ -92,21 +72,21 @@ class ResultStateManager private constructor(
                 newResultStateMachine = when (rankStateMachine.value) {
                     8 -> ResultStateMachine.of(ResultState.RANKING_TOP_8)
                     7 -> ResultStateMachine.of(ResultState.RANKING_TOP_7)
-                    6 -> ResultStateMachine.of(ResultState.RANKING_TOP_4_6)
-                    5 -> ResultStateMachine.of(ResultState.RANKING_TOP_4_6)
-                    4 -> ResultStateMachine.of(ResultState.RANKING_TOP_4_6)
+                    6 -> ResultStateMachine.of(ResultState.RANKING_TOP_6)
+                    5 -> ResultStateMachine.of(ResultState.RANKING_TOP_5)
+                    4 -> ResultStateMachine.of(ResultState.RANKING_TOP_4)
                     3 -> ResultStateMachine.of(ResultState.RANKING_BOOBY)
-                    2 -> ResultStateMachine.of(ResultState.RANKING_TOP_1_3)
-                    1 -> ResultStateMachine.of(ResultState.RANKING_TOP_1_3)
+                    2 -> ResultStateMachine.of(ResultState.RANKING_TOP_2)
+                    1 -> ResultStateMachine.of(ResultState.RANKING_TOP_1)
                     else -> throw IllegalArgumentException("RankState must be greater than or equal to 1.")
                 }
             }
 
             // ResultRankStateがResultStateが定義しているRankStateListに含まれていない場合は、ResultRankStateを初期化する
             // これでResultStateとResultRankStateの整合性が取れる
-            if (resultStateMachine.value.rankStateList.contains(resultRankStateMachine.value)) {
+            if (!resultStateMachine.value.rankStateList.contains(resultRankStateMachine.value)) {
                 val target = resultStateMachine.value.rankStateList.first()
-                logger.warn { "rankState must be in resultStateMachine.rankStateList. rankState has been corrected to $target." }
+                logger.warn { "rankState(${resultRankStateMachine.value}) must be in resultStateMachine.rankStateList(${resultStateMachine.value.rankStateList.joinTo(StringBuffer(), ",")}). rankState has been corrected to $target." }
                 newResultRankStateMachine = ResultRankStateMachine.of(target, resultStateMachine.value.rankStateList)
             }
 
