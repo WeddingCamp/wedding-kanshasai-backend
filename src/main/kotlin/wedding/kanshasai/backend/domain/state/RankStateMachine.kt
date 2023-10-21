@@ -31,6 +31,14 @@ class RankStateMachine private constructor(val value: Int) {
         }
     }
 
+    fun back() = runCatching {
+        when {
+            value <= 7 -> RankStateMachine(value + 1)
+            value <= 10 -> RankStateMachine(11)
+            else -> RankStateMachine(value + 10)
+        }
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other !is RankStateMachine) return false
         if (value != other.value) return false

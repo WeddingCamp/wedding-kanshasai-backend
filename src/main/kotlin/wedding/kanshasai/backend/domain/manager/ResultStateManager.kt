@@ -41,7 +41,33 @@ class ResultStateManager private constructor(
     }
 
     fun back() = runCatching {
-        TODO("Not yet implemented")
+        var newResultStateMachine = resultStateMachine
+        var newRankStateMachine = rankStateMachine
+        var newResultRankStateMachine = resultRankStateMachine
+
+        // ResultStateがTOP_8の時は、Rankを11に戻す
+        if (resultStateMachine.value == ResultState.RANKING_TOP_8) {
+            newRankStateMachine = RankStateMachine.of(11)
+            newResultStateMachine = resultStateMachine.back().getOrThrow()
+            return@runCatching ResultStateManager(newResultStateMachine, newRankStateMachine, newResultRankStateMachine)
+        }
+
+        // ResultStateがNORMALの時は、Rankを10巻き戻す
+        if (resultStateMachine.value == ResultState.RANKING_NORMAL) {
+            newRankStateMachine = rankStateMachine.back().getOrThrow()
+            return@runCatching ResultStateManager(newResultStateMachine, newRankStateMachine, newResultRankStateMachine)
+        }
+
+        // ResultRankStateが最初じゃない時は、ResultRankStateを最初に戻す
+        if (resultRankStateMachine.value != resultStateMachine.value.rankStateList.first()) {
+            newResultRankStateMachine = ResultRankStateMachine.of(newResultStateMachine.value.rankStateList)
+            return@runCatching ResultStateManager(newResultStateMachine, newRankStateMachine, newResultRankStateMachine)
+        }
+
+        newResultStateMachine = resultStateMachine.back().getOrThrow()
+        newResultRankStateMachine = ResultRankStateMachine.of(newResultStateMachine.value.rankStateList)
+
+        ResultStateManager(newResultStateMachine, newRankStateMachine, newResultRankStateMachine)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -57,6 +83,13 @@ class ResultStateManager private constructor(
             "resultStateMachine=$resultStateMachine, " +
             "rankStateMachine=$rankStateMachine, " +
             "resultRankStateMachine=$resultRankStateMachine)"
+    }
+
+    override fun hashCode(): Int {
+        var result = resultStateMachine.hashCode()
+        result = 31 * result + rankStateMachine.hashCode()
+        result = 31 * result + resultRankStateMachine.hashCode()
+        return result
     }
 
     companion object {
