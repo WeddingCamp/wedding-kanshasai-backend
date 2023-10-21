@@ -20,7 +20,7 @@ class SessionState private constructor(override val value: SessionStateEnum) :
             },
             QUIZ_WAITING(10) {
                 override val nextStateList
-                    get() = listOf(QUIZ_WAITING, QUIZ_SHOWING, INTERIM_ANNOUNCEMENT)
+                    get() = listOf(QUIZ_WAITING, QUIZ_SHOWING, INTERIM_ANNOUNCEMENT, FINAL_RESULT_ANNOUNCEMENT)
             },
             QUIZ_SHOWING(15) {
                 override val nextStateList
@@ -36,7 +36,7 @@ class SessionState private constructor(override val value: SessionStateEnum) :
             },
             QUIZ_RESULT(50) {
                 override val nextStateList
-                    get() = listOf(QUIZ_RESULT, FINAL_RESULT_ANNOUNCEMENT, QUIZ_WAITING)
+                    get() = listOf(QUIZ_RESULT, QUIZ_WAITING)
             },
             FINAL_RESULT_ANNOUNCEMENT(60) {
                 override val nextStateList

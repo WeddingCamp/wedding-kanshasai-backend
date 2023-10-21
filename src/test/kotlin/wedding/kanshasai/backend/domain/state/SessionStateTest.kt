@@ -52,6 +52,7 @@ class SessionStateTest {
                         SessionState.QUIZ_WAITING,
                         SessionState.QUIZ_SHOWING,
                         SessionState.INTERIM_ANNOUNCEMENT,
+                        SessionState.FINAL_RESULT_ANNOUNCEMENT,
                     ),
                 ),
                 arguments(
@@ -76,7 +77,6 @@ class SessionStateTest {
                     SessionState.QUIZ_RESULT,
                     listOf(
                         SessionState.QUIZ_RESULT,
-                        SessionState.FINAL_RESULT_ANNOUNCEMENT,
                         SessionState.QUIZ_WAITING,
                     ),
                 ),
