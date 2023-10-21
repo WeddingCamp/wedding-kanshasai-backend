@@ -296,7 +296,7 @@ class SessionService(
             },
         ).getOrThrowService()
 
-        redisEventService.publish(RedisEvent.ShowResultTitle(resultType.value.number, sessionId.toString()))
+        redisEventService.publish(RedisEvent.ShowResultTitle(resultType.value.grpcValue, sessionId.toString()))
         redisEventService.publishState(session.state, nextState, session.id)
     }
 
@@ -386,7 +386,7 @@ class SessionService(
                             },
                             preDisplayCount,
                             displayCount,
-                            ResultRankingType.RESULT_RANKING_TYPE_RANK_VALUE,
+                            ResultRankingType.RESULT_RANKING_TYPE_RANK,
                             !(
                                 newResultState.resultStateMachine.value == ResultState.RANKING_TOP_1 &&
                                     newResultState.resultRankStateMachine.value == ResultRankState.PRESENT
@@ -396,9 +396,9 @@ class SessionService(
                     }
                     ResultRankState.PRESENT -> {
                         val resultRankingType = when (newResultState.resultStateMachine.value) {
-                            ResultState.RANKING_BOOBY -> ResultRankingType.RESULT_RANKING_TYPE_BOOBY_VALUE
-                            ResultState.RANKING_JUST -> ResultRankingType.RESULT_RANKING_TYPE_JUST_VALUE
-                            else -> ResultRankingType.RESULT_RANKING_TYPE_RANK_VALUE
+                            ResultState.RANKING_BOOBY -> ResultRankingType.RESULT_RANKING_TYPE_BOOBY
+                            ResultState.RANKING_JUST -> ResultRankingType.RESULT_RANKING_TYPE_JUST
+                            else -> ResultRankingType.RESULT_RANKING_TYPE_RANK
                         }
                         RedisEvent.ShowResultPresent(
                             newResultState.rankStateMachine.value,
@@ -408,9 +408,9 @@ class SessionService(
                     }
                     ResultRankState.TITLE, ResultRankState.DUMMY_TITLE, ResultRankState.DUMMY_TITLE_MESSAGE -> {
                         val resultRankingType = when (newResultState.resultRankStateMachine.value) {
-                            ResultRankState.TITLE -> ResultTitleType.RESULT_TITLE_TYPE_RANK_VALUE
-                            ResultRankState.DUMMY_TITLE -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_1_VALUE
-                            ResultRankState.DUMMY_TITLE_MESSAGE -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_2_VALUE
+                            ResultRankState.TITLE -> ResultTitleType.RESULT_TITLE_TYPE_RANK
+                            ResultRankState.DUMMY_TITLE -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_1
+                            ResultRankState.DUMMY_TITLE_MESSAGE -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_2
                             else -> throw InvalidStateException("Invalid ResultRankState.")
                         }
 
