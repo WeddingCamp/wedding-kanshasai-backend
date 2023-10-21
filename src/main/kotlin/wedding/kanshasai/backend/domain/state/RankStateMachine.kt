@@ -3,6 +3,10 @@ package wedding.kanshasai.backend.domain.state
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.InvalidStateTransitionException
 
+/**
+ * Rankを管理するステートマシン
+ * 機能的には一通り実装されているが、実際に使用するのは8位までを想定
+ */
 class RankStateMachine private constructor(val value: Int) {
     fun next() = runCatching {
         when {
@@ -27,10 +31,26 @@ class RankStateMachine private constructor(val value: Int) {
         }
     }
 
+    fun back() = runCatching {
+        when {
+            value <= 7 -> RankStateMachine(value + 1)
+            value <= 10 -> RankStateMachine(11)
+            else -> RankStateMachine(value + 10)
+        }
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other !is RankStateMachine) return false
         if (value != other.value) return false
         return true
+    }
+
+    override fun hashCode(): Int {
+        return value
+    }
+
+    override fun toString(): String {
+        return value.toString()
     }
 
     companion object {

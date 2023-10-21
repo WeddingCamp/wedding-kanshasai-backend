@@ -27,11 +27,21 @@ class ResultRankStateMachine private constructor(
         ResultRankStateMachine(rankStateList[pos - 1], rankStateList)
     }
 
+    override fun toString(): String {
+        return "${value.name}(${rankStateList.joinTo(StringBuilder(), ",")})"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other !is ResultRankStateMachine) return false
         if (value != other.value) return false
-        if (!rankStateList.toTypedArray().contentEquals(other.rankStateList.toTypedArray())) return false
+        if (rankStateList != other.rankStateList) return false
         return true
+    }
+
+    override fun hashCode(): Int {
+        var result = value.hashCode()
+        result = 31 * result + rankStateList.hashCode()
+        return result
     }
 
     companion object {
@@ -55,6 +65,13 @@ class ResultRankStateMachine private constructor(
                 throw InvalidStateException("Invalid ResultRankState value. (value=$value)")
             }
             return ResultRankStateMachine(value, rankStateList)
+        }
+
+        fun of(rankStateList: List<ResultRankState>): ResultRankStateMachine {
+            if (rankStateList.isEmpty()) {
+                throw InvalidStateException("rankStateList is empty.")
+            }
+            return ResultRankStateMachine(rankStateList.first(), rankStateList)
         }
     }
 }

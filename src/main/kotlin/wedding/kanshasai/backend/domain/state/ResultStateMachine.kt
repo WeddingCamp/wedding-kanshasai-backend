@@ -1,11 +1,8 @@
 package wedding.kanshasai.backend.domain.state
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.InvalidStateTransitionException
 import wedding.kanshasai.backend.domain.value.ResultState
-
-private val logger = KotlinLogging.logger {}
 
 /**
  * ResultStateを管理するステートマシン
@@ -33,6 +30,14 @@ class ResultStateMachine private constructor(override val value: ResultState) :
             if (other !is ResultStateMachine) return false
             if (value != other.value) return false
             return true
+        }
+
+        override fun hashCode(): Int {
+            return value.hashCode()
+        }
+
+        override fun toString(): String {
+            return value.name
         }
 
         companion object {
