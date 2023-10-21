@@ -58,11 +58,11 @@ class SessionState private constructor(override val value: SessionStateEnum) :
             return true
         }
 
-    override fun hashCode(): Int {
-        return value.hashCode()
-    }
+        override fun hashCode(): Int {
+            return value.hashCode()
+        }
 
-    companion object {
+        companion object {
             fun of(value: Int): SessionState {
                 SessionStateEnum.values().forEach {
                     if (it.number == value) return SessionState(it)

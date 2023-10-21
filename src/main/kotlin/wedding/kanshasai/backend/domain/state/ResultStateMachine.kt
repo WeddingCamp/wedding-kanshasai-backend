@@ -1,6 +1,5 @@
 package wedding.kanshasai.backend.domain.state
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.InvalidStateTransitionException
 import wedding.kanshasai.backend.domain.value.ResultState
@@ -33,11 +32,11 @@ class ResultStateMachine private constructor(override val value: ResultState) :
             return true
         }
 
-    override fun hashCode(): Int {
-        return value.hashCode()
-    }
+        override fun hashCode(): Int {
+            return value.hashCode()
+        }
 
-    companion object {
+        companion object {
             fun of(value: Int): ResultStateMachine {
                 ResultState.values().forEach {
                     if (it.number == value) return ResultStateMachine(it)

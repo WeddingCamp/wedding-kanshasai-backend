@@ -56,5 +56,12 @@ class ResultRankStateMachine private constructor(
             }
             return ResultRankStateMachine(value, rankStateList)
         }
+
+        fun of(rankStateList: List<ResultRankState>): ResultRankStateMachine {
+            if (rankStateList.isEmpty()) {
+                throw InvalidStateException("rankStateList is empty.")
+            }
+            return ResultRankStateMachine(rankStateList.first(), rankStateList)
+        }
     }
 }

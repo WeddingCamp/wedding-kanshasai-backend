@@ -12,19 +12,19 @@ class ResultStateManager private constructor(
     val resultStateMachine: ResultStateMachine,
     val rankStateMachine: RankStateMachine,
     val resultRankStateMachine: ResultRankStateMachine,
-)  {
+) {
     fun next() = runCatching {
         var newResultStateMachine = resultStateMachine
         var newRankStateMachine = rankStateMachine
         var newResultRankStateMachine = resultRankStateMachine
 
         // ResultStateがNORMALの時は、RankStateで制御する
-        if(resultStateMachine.value == ResultState.RANKING_NORMAL) {
+        if (resultStateMachine.value == ResultState.RANKING_NORMAL) {
             newRankStateMachine = rankStateMachine.next().getOrThrow()
             // RankStateが8以下になったら、ResultStateを進める
-            if(newRankStateMachine.value <= 8) {
+            if (newRankStateMachine.value <= 8) {
                 newResultStateMachine = resultStateMachine.next().getOrThrow()
-                newResultRankStateMachine = ResultRankStateMachine.of(resultStateMachine.value.rankStateList.first(), resultStateMachine.value.rankStateList)
+                newResultRankStateMachine = ResultRankStateMachine.of(resultStateMachine.value.rankStateList)
             }
             // 以後RankStateは意識しない
             return@runCatching ResultStateManager(newResultStateMachine, newRankStateMachine, newResultRankStateMachine)
@@ -38,10 +38,10 @@ class ResultStateManager private constructor(
 
         // ResultStateがNORMALの時は、RankStateを進める
         // NORMALの時はExceptionが発生しないはずなのでキャッチはしない
-        if(resultStateMachine.value == ResultState.RANKING_NORMAL) {
+        if (resultStateMachine.value == ResultState.RANKING_NORMAL) {
             newRankStateMachine = rankStateMachine.next().getOrThrow()
             // RankStateが8以下になったら、ResultStateを進める
-            if(newRankStateMachine.value <= 8) {
+            if (newRankStateMachine.value <= 8) {
                 newResultStateMachine = resultStateMachine.next().getOrThrow()
             }
         } else {
@@ -80,16 +80,16 @@ class ResultStateManager private constructor(
         fun of(
             resultStateMachine: ResultStateMachine,
             resultRankStateMachine: ResultRankStateMachine,
-            rankStateMachine: RankStateMachine
+            rankStateMachine: RankStateMachine,
         ): ResultStateManager {
             var newResultStateMachine = resultStateMachine
             var newResultRankStateMachine = resultRankStateMachine
 
             // ResultStateがNORMALでRankが8以下の場合は、ResultStateを補正する
             // これでResultStateとRankStateの整合性が取れる
-            if(resultStateMachine.value == ResultState.RANKING_NORMAL && rankStateMachine.value <= 8) {
+            if (resultStateMachine.value == ResultState.RANKING_NORMAL && rankStateMachine.value <= 8) {
                 logger.warn { "ResultState has been corrected to the appropriate ResultState based on RankState." }
-                newResultStateMachine = when(rankStateMachine.value) {
+                newResultStateMachine = when (rankStateMachine.value) {
                     8 -> ResultStateMachine.of(ResultState.RANKING_TOP_8)
                     7 -> ResultStateMachine.of(ResultState.RANKING_TOP_7)
                     6 -> ResultStateMachine.of(ResultState.RANKING_TOP_4_6)
@@ -104,9 +104,9 @@ class ResultStateManager private constructor(
 
             // ResultRankStateがResultStateが定義しているRankStateListに含まれていない場合は、ResultRankStateを初期化する
             // これでResultStateとResultRankStateの整合性が取れる
-            if(resultStateMachine.value.rankStateList.contains(resultRankStateMachine.value)) {
+            if (resultStateMachine.value.rankStateList.contains(resultRankStateMachine.value)) {
                 val target = resultStateMachine.value.rankStateList.first()
-                logger.warn { "rankState must be in resultStateMachine.rankStateList. rankState has been corrected to ${target}." }
+                logger.warn { "rankState must be in resultStateMachine.rankStateList. rankState has been corrected to $target." }
                 newResultRankStateMachine = ResultRankStateMachine.of(target, resultStateMachine.value.rankStateList)
             }
 
