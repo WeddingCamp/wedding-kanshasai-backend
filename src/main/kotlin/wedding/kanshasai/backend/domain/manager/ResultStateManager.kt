@@ -57,11 +57,8 @@ class ResultStateManager private constructor(
         ResultStateManager(newResultStateMachine, newRankStateMachine, newResultRankStateMachine)
     }
 
-    fun backResultState() = runCatching {
-        val resultStateMachine = resultStateMachine.back().getOrThrow()
-        val resultRankStateMachine = resultRankStateMachine.back().getOrThrow()
-        val rankStateMachine = rankStateMachine.back().getOrThrow()
-        ResultStateManager(resultStateMachine, resultRankStateMachine, rankStateMachine)
+    fun back() = runCatching {
+        TODO("Not yet implemented")
     }
 
     override fun equals(other: Any?): Boolean {
