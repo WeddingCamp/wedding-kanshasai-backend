@@ -1,5 +1,9 @@
 package wedding.kanshasai.backend.domain.entity
 
+import wedding.kanshasai.backend.domain.manager.ResultStateManager
+import wedding.kanshasai.backend.domain.state.RankStateMachine
+import wedding.kanshasai.backend.domain.state.ResultRankStateMachine
+import wedding.kanshasai.backend.domain.state.ResultStateMachine
 import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.QuizResultType
 import wedding.kanshasai.backend.domain.value.UlidId
@@ -14,6 +18,7 @@ class Session private constructor(
     var currentQuizId: UlidId?,
     var currentIntroductionId: Int,
     var currentQuizResult: QuizResultType? = null,
+    var resultState: ResultStateManager,
     var isCoverVisible: Boolean,
     var isDeleted: Boolean,
     val createdAt: Timestamp,
@@ -28,6 +33,7 @@ class Session private constructor(
             currentQuizId,
             currentIntroductionId,
             currentQuizResult,
+            resultState,
             isCoverVisible,
             isDeleted,
             createdAt,
@@ -43,6 +49,9 @@ class Session private constructor(
         currentQuizId?.toByteArray(),
         currentIntroductionId,
         currentQuizResult?.toNumber(),
+        resultState.resultStateMachine.toNumber(),
+        resultState.resultRankStateMachine.toNumber(),
+        resultState.rankStateMachine.value,
         isCoverVisible,
         isDeleted,
         createdAt,
@@ -51,6 +60,7 @@ class Session private constructor(
 
     companion object {
         fun of(sessionDto: SessionDto): Session {
+            val resultStateMachine = ResultStateMachine.of(sessionDto.resultStateId)
             return Session(
                 UlidId.of(sessionDto.sessionIdentifier.id),
                 UlidId.of(sessionDto.eventId),
@@ -59,6 +69,11 @@ class Session private constructor(
                 sessionDto.currentQuizId?.let(UlidId::of),
                 sessionDto.currentIntroductionId,
                 sessionDto.currentQuizResultId?.let(QuizResultType::of),
+                ResultStateManager.of(
+                    resultStateMachine,
+                    ResultRankStateMachine.of(sessionDto.resultRankStateId, resultStateMachine.value.rankStateList),
+                    RankStateMachine.of(sessionDto.resultRank),
+                ),
                 sessionDto.isCoverVisible,
                 sessionDto.isDeleted,
                 sessionDto.createdAt,

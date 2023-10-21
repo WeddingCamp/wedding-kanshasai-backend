@@ -11,6 +11,9 @@ interface ISession {
     var currentQuizId: ByteArray?
     var currentIntroductionId: Int
     var currentQuizResultId: Int?
+    var resultStateId: Int
+    var resultRankStateId: Int
+    var resultRank: Int
     var isCoverVisible: Boolean
     var isDeleted: Boolean
     var createdAt: Timestamp
