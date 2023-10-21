@@ -4,8 +4,10 @@ import org.springframework.stereotype.Component
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.exception.InvalidValueException
 import wedding.kanshasai.backend.domain.value.QuizResultType
+import wedding.kanshasai.backend.domain.value.ResultType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.v1.QuizResultType as QuizResultTypeGrpc
+import wedding.kanshasai.v1.ResultType as ResultTypeGrpc
 
 @Component
 class GrpcTool {
@@ -24,6 +26,17 @@ class GrpcTool {
             )
         } catch (e: IllegalArgumentException) {
             throw InvalidArgumentException("Invalid quiz result type (name='${quizResultType.name}')", e)
+        }
+    }
+
+    fun parseQuizResultType(resultType: ResultTypeGrpc): ResultType {
+        return try { ResultType.of(resultType.number) } catch (e: InvalidValueException) {
+            throw InvalidArgumentException(
+                "Invalid result type (name='${resultType.name}', number='${resultType.number}')",
+                e,
+            )
+        } catch (e: IllegalArgumentException) {
+            throw InvalidArgumentException("Invalid result type (name='${resultType.name}')", e)
         }
     }
 }
