@@ -2,6 +2,7 @@ package wedding.kanshasai.backend.infra.mysql.mapper
 
 import org.apache.ibatis.annotations.*
 import wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto
+import wedding.kanshasai.backend.infra.mysql.dto.ParticipantWithResultDto
 import wedding.kanshasai.backend.infra.mysql.dto.identifier.StandardIdentifier
 
 @Mapper
@@ -10,4 +11,9 @@ interface ParticipantMapper : MapperCRUDBase<StandardIdentifier, ParticipantDto>
         @Param("id") id: ByteArray,
         @Param("includeDeleted") includeDeleted: Boolean = false,
     ): List<ParticipantDto>
+
+    fun listBySessionIdWithResult(
+        @Param("id") id: ByteArray,
+        @Param("includeDeleted") includeDeleted: Boolean = false,
+    ): List<ParticipantWithResultDto>
 }

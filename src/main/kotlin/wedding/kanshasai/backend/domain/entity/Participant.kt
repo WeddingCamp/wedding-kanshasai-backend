@@ -3,6 +3,7 @@ package wedding.kanshasai.backend.domain.entity
 import wedding.kanshasai.backend.domain.value.ParticipantType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto
+import wedding.kanshasai.backend.infra.mysql.dto.interfaces.IParticipant
 import java.sql.Timestamp
 
 class Participant private constructor(
@@ -43,7 +44,7 @@ class Participant private constructor(
     )
 
     companion object {
-        fun of(participantDto: ParticipantDto): Participant {
+        fun of(participantDto: IParticipant): Participant {
             return Participant(
                 UlidId.of(participantDto.participantIdentifier.id),
                 UlidId.of(participantDto.sessionId),

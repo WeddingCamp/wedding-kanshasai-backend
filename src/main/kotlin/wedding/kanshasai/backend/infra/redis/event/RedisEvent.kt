@@ -114,11 +114,41 @@ interface RedisEvent {
     }
 
     @NoArg
-    data class StartSessionResult(
+    data class ShowResultTitle(
         var resultType: Int,
         override val sessionId: String,
     ) : RedisEvent {
         override val eventType: EventType = EventType.EVENT_TYPE_RESULT_TITLE
+    }
+
+    @NoArg
+    data class ShowResultRankingTitle(
+        var rank: Int,
+        var resultTitleType: Int,
+        override val sessionId: String,
+    ) : RedisEvent {
+        override val eventType: EventType = EventType.EVENT_TYPE_RESULT_RANKING_TITLE
+    }
+
+    @NoArg
+    data class ShowResultRanking(
+        var participantSessionScoreList: List<ParticipantSessionScoreRedisEntity>,
+        var preDisplayCount: Int,
+        var displayCount: Int,
+        var resultRankingType: Int,
+        var hasNextPage: Boolean,
+        override val sessionId: String,
+    ) : RedisEvent {
+        override val eventType: EventType = EventType.EVENT_TYPE_RESULT_RANKING
+    }
+
+    @NoArg
+    data class ShowResultPresent(
+        var rank: Int,
+        var resultRankingType: Int,
+        override val sessionId: String,
+    ) : RedisEvent {
+        override val eventType: EventType = EventType.EVENT_TYPE_RESULT_PRESENT
     }
 
     @NoArg
