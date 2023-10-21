@@ -17,6 +17,11 @@ CREATE TABLE IF NOT EXISTS
     current_quiz_id BINARY(16) NULL,
     current_introduction_id INTEGER NOT NULL DEFAULT 3,
     current_quiz_result_id INTEGER NULL,
+
+    result_state_id INTEGER NOT NULL DEFAULT 1,
+    result_rank_state_id INTEGER NOT NULL DEFAULT 1,
+    result_rank INTEGER NOT NULL DEFAULT 100,
+
     is_cover_visible BOOLEAN NOT NULL DEFAULT false,
     is_deleted BOOLEAN NOT NULL DEFAUlT false,
     created_at DATETIME NOT NULL DEFAUlT CURRENT_TIMESTAMP,

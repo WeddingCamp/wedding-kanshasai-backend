@@ -11,6 +11,9 @@
             current_quiz_id,
             current_introduction_id,
             current_quiz_result_id,
+            result_state_id,
+            result_rank_state_id,
+            result_rank,
             is_cover_visible,
             is_deleted
         )
@@ -22,6 +25,9 @@
             #{entity.currentQuizId},
             #{entity.currentIntroductionId},
             #{entity.currentQuizResultId},
+            #{entity.resultStateId},
+            #{entity.resultRankStateId},
+            #{entity.resultRank},
             #{entity.isCoverVisible},
             #{entity.isDeleted}
         )
@@ -36,6 +42,9 @@
             current_quiz_id,
             current_introduction_id,
             current_quiz_result_id,
+            result_state_id,
+            result_rank_state_id,
+            result_rank,
             is_cover_visible,
             is_deleted
         )
@@ -49,6 +58,9 @@
                 #{entity.currentQuizId},
                 #{entity.currentIntroductionId},
                 #{entity.currentQuizResultId},
+                #{entity.resultStateId},
+                #{entity.resultRankStateId},
+                #{entity.resultRank},
                 #{entity.isCoverVisible},
                 #{entity.isDeleted}
             )
@@ -87,6 +99,9 @@
             current_quiz_id = #{entity.currentQuizId},
             current_introduction_id = #{entity.currentIntroductionId},
             current_quiz_result_id = #{entity.currentQuizResultId},
+            result_state_id = #{entity.resultStateId},
+            result_rank_state_id = #{entity.resultRankStateId},
+            result_rank = #{entity.resultRank},
             is_cover_visible = #{entity.isCoverVisible},
             is_deleted = #{entity.isDeleted}
         WHERE
@@ -126,6 +141,9 @@
         <result property="currentQuizId" column="current_quiz_id"/>
         <result property="currentIntroductionId" column="current_introduction_id"/>
         <result property="currentQuizResultId" column="current_quiz_result_id"/>
+        <result property="resultStateId" column="result_state_id"/>
+        <result property="resultRankStateId" column="result_rank_state_id"/>
+        <result property="resultRank" column="result_rank"/>
         <result property="isCoverVisible" column="is_cover_visible"/>
         <result property="isDeleted" column="is_deleted"/>
         <result property="createdAt" column="created_at"/>

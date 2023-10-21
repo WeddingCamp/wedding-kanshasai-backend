@@ -72,6 +72,9 @@ class MapperTestTool {
             maybeNull(UlidId.new().toByteArray()),
             listOf(0, 1, 2).random(),
             QuizResultType.values.random().toNumber(),
+            1, // TODO: ResultState関連のテストを書く
+            1,
+            100,
             trueOrFalse,
         )
     }
