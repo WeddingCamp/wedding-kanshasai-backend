@@ -2,9 +2,7 @@ package wedding.kanshasai.backend.infra.redis.event
 
 import wedding.kanshasai.backend.annotation.NoArg
 import wedding.kanshasai.backend.infra.redis.entity.*
-import wedding.kanshasai.v1.EventType
-import wedding.kanshasai.v1.QuizType
-import wedding.kanshasai.v1.SimpleSessionState
+import wedding.kanshasai.v1.*
 
 interface RedisEvent {
     val eventType: EventType
@@ -57,6 +55,17 @@ interface RedisEvent {
         override val sessionId: String,
     ) : AbstractQuizRedisEvent<QuizChoiceWithCountRedisEntity>(quizId, quizBody, quizType, choiceList) {
         override val eventType: EventType = EventType.EVENT_TYPE_QUIZ_ANSWER_LIST
+    }
+
+    @NoArg
+    data class QuizTimeUp(
+        override var quizId: String,
+        override var quizBody: String,
+        override var quizType: QuizType,
+        override var choiceList: List<QuizChoiceRedisEntity>,
+        override val sessionId: String,
+    ) : AbstractQuizRedisEvent<QuizChoiceRedisEntity>(quizId, quizBody, quizType, choiceList) {
+        override val eventType: EventType = EventType.EVENT_TYPE_QUIZ_TIME_UP
     }
 
     @NoArg
@@ -114,11 +123,41 @@ interface RedisEvent {
     }
 
     @NoArg
-    data class StartSessionResult(
-        var resultType: Int,
+    data class ShowResultTitle(
+        var resultType: ResultType,
         override val sessionId: String,
     ) : RedisEvent {
         override val eventType: EventType = EventType.EVENT_TYPE_RESULT_TITLE
+    }
+
+    @NoArg
+    data class ShowResultRankingTitle(
+        var rank: Int,
+        var resultTitleType: ResultTitleType,
+        override val sessionId: String,
+    ) : RedisEvent {
+        override val eventType: EventType = EventType.EVENT_TYPE_RESULT_RANKING_TITLE
+    }
+
+    @NoArg
+    data class ShowResultRanking(
+        var participantSessionScoreList: List<ParticipantSessionScoreRedisEntity>,
+        var preDisplayCount: Int,
+        var displayCount: Int,
+        var resultRankingType: ResultRankingType,
+        var hasNextPage: Boolean,
+        override val sessionId: String,
+    ) : RedisEvent {
+        override val eventType: EventType = EventType.EVENT_TYPE_RESULT_RANKING
+    }
+
+    @NoArg
+    data class ShowResultPresent(
+        var rank: Int,
+        var resultRankingType: ResultRankingType,
+        override val sessionId: String,
+    ) : RedisEvent {
+        override val eventType: EventType = EventType.EVENT_TYPE_RESULT_PRESENT
     }
 
     @NoArg

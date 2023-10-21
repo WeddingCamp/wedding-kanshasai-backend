@@ -15,11 +15,10 @@ import wedding.kanshasai.backend.domain.state.ResultStateMachine
 import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.*
 import wedding.kanshasai.backend.infra.mysql.repository.*
-import wedding.kanshasai.backend.infra.redis.entity.ParticipantQuizTimeRedisEntity
-import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceRedisEntity
-import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceWithCountRedisEntity
-import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceWithResultRedisEntity
+import wedding.kanshasai.backend.infra.redis.entity.*
 import wedding.kanshasai.backend.infra.redis.event.*
+import wedding.kanshasai.v1.ResultRankingType
+import wedding.kanshasai.v1.ResultTitleType
 
 private val logger = KotlinLogging.logger {}
 
@@ -297,8 +296,139 @@ class SessionService(
             },
         ).getOrThrowService()
 
-        redisEventService.publish(RedisEvent.StartSessionResult(resultType.value.number, sessionId.toString()))
+        redisEventService.publish(RedisEvent.ShowResultTitle(resultType.value.grpcValue, sessionId.toString()))
         redisEventService.publishState(session.state, nextState, session.id)
+    }
+
+    fun nextSessionResult(sessionId: UlidId) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+
+        val redisEvent = when (session.state) {
+            SessionState.INTERIM_ANNOUNCEMENT -> {
+                // TODO: ランキング遷移を実装する
+                val nextState = SessionState.QUIZ_WAITING
+                sessionRepository.update(
+                    session.clone().apply {
+                        state = nextState
+                    },
+                ).getOrThrowService()
+                redisEventService.publishState(session.state, nextState, session.id)
+                return // TODO: 一時的なreturn
+            }
+            SessionState.FINAL_RESULT_ANNOUNCEMENT -> {
+                val newResultState = session.resultState.next().getOrElse {
+                    // 結果発表終了
+                    val nextState = SessionState.FINISHED
+                    sessionRepository.update(
+                        session.clone().apply {
+                            state = nextState
+                        },
+                    ).getOrThrowService()
+                    redisEventService.publishState(session.state, nextState, session.id)
+                    return
+                }
+
+                sessionRepository.update(
+                    session.clone().apply {
+                        resultState = newResultState
+                    },
+                ).getOrThrowService()
+
+                when (newResultState.resultRankStateMachine.value) {
+                    ResultRankState.RANK, ResultRankState.PRE_RANK -> {
+                        // スコア一覧を取得し、表示したい10件を取得する
+                        val scoreList = when (newResultState.resultStateMachine.value) {
+                            ResultState.RANKING_NORMAL ->
+                                participantRepository
+                                    .listBySessionWithResult(session)
+                                    .getOrThrowService()
+                                    .subList(newResultState.rankStateMachine.value, newResultState.rankStateMachine.value + 10)
+                            else ->
+                                participantRepository
+                                    .listBySessionWithResult(session)
+                                    .getOrThrowService()
+                                    .subList(0, 10)
+                        }
+
+                        val preDisplayCount = when (newResultState.resultStateMachine.value) {
+                            ResultState.RANKING_NORMAL -> 0
+                            ResultState.RANKING_TOP_8 -> 0
+                            ResultState.RANKING_TOP_7 -> 3
+                            ResultState.RANKING_TOP_6 -> 4
+                            ResultState.RANKING_TOP_5 -> 5
+                            ResultState.RANKING_TOP_4 -> 6
+                            ResultState.RANKING_TOP_3 -> 7
+                            ResultState.RANKING_TOP_2 -> 8
+                            ResultState.RANKING_TOP_1 -> 9
+                            ResultState.RANKING_BOOBY -> 0
+                            ResultState.RANKING_JUST -> 0
+                            else -> throw InvalidStateException("Invalid ResultState.")
+                        }
+
+                        val displayCount = if (newResultState.resultRankStateMachine.value == ResultRankState.PRE_RANK) {
+                            preDisplayCount
+                        } else {
+                            when (newResultState.resultStateMachine.value) {
+                                ResultState.RANKING_NORMAL -> 10
+                                else -> preDisplayCount + 1
+                            }
+                        }
+
+                        RedisEvent.ShowResultRanking(
+                            scoreList.mapIndexed { rank, it ->
+                                ParticipantSessionScoreRedisEntity(
+                                    it.first.name,
+                                    it.second.score,
+                                    false, // TODO: is emphasis
+                                    it.second.rank,
+                                    it.second.time,
+                                )
+                            },
+                            preDisplayCount,
+                            displayCount,
+                            ResultRankingType.RESULT_RANKING_TYPE_RANK,
+                            !(
+                                newResultState.resultStateMachine.value == ResultState.RANKING_TOP_1 &&
+                                    newResultState.resultRankStateMachine.value == ResultRankState.PRESENT
+                                ),
+                            sessionId.toString(),
+                        )
+                    }
+                    ResultRankState.PRESENT -> {
+                        val resultRankingType = when (newResultState.resultStateMachine.value) {
+                            ResultState.RANKING_BOOBY -> ResultRankingType.RESULT_RANKING_TYPE_BOOBY
+                            ResultState.RANKING_JUST -> ResultRankingType.RESULT_RANKING_TYPE_JUST
+                            else -> ResultRankingType.RESULT_RANKING_TYPE_RANK
+                        }
+                        RedisEvent.ShowResultPresent(
+                            newResultState.rankStateMachine.value,
+                            resultRankingType,
+                            sessionId.toString(),
+                        )
+                    }
+                    ResultRankState.TITLE, ResultRankState.DUMMY_TITLE, ResultRankState.DUMMY_TITLE_MESSAGE -> {
+                        val resultRankingType = when (newResultState.resultRankStateMachine.value) {
+                            ResultRankState.TITLE -> ResultTitleType.RESULT_TITLE_TYPE_RANK
+                            ResultRankState.DUMMY_TITLE -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_1
+                            ResultRankState.DUMMY_TITLE_MESSAGE -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_2
+                            else -> throw InvalidStateException("Invalid ResultRankState.")
+                        }
+
+                        RedisEvent.ShowResultRankingTitle(
+                            newResultState.rankStateMachine.value,
+                            resultRankingType,
+                            sessionId.toString(),
+                        )
+                    }
+                    // TODO: 「本気の」フラグに対応する
+                }
+            }
+            else -> {
+                throw InvalidStateException("Session state is not INTERIM_ANNOUNCEMENT or FINAL_RESULT_ANNOUNCEMENT.")
+            }
+        }
+
+        redisEventService.publish(redisEvent)
     }
 
     fun finishQuiz(sessionId: UlidId) {

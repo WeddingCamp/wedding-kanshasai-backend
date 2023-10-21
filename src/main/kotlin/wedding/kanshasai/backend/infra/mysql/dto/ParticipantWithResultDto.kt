@@ -4,7 +4,7 @@ import wedding.kanshasai.backend.infra.mysql.dto.identifier.StandardIdentifier
 import wedding.kanshasai.backend.infra.mysql.dto.interfaces.IParticipant
 import java.sql.Timestamp
 
-data class ParticipantDto(
+data class ParticipantWithResultDto(
     override var participantIdentifier: StandardIdentifier = StandardIdentifier(byteArrayOf()),
     override var sessionId: ByteArray = byteArrayOf(),
     override var name: String = "",
@@ -12,6 +12,9 @@ data class ParticipantDto(
     override var type: Int = 0,
     override var isConnected: Boolean = false,
     override var isDeleted: Boolean = false,
+    var score: Int = 0,
+    var time: Float = 0f,
+    var rank: Int = 0,
     override var createdAt: Timestamp = Timestamp(0),
     override var updatedAt: Timestamp = Timestamp(0),
 ) : IParticipant, IdentifiableDto<StandardIdentifier>(isDeleted) {
@@ -25,7 +28,7 @@ data class ParticipantDto(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as ParticipantDto
+        other as ParticipantWithResultDto
 
         if (participantIdentifier != other.participantIdentifier) return false
         if (!sessionId.contentEquals(other.sessionId)) return false
@@ -34,6 +37,9 @@ data class ParticipantDto(
         if (type != other.type) return false
         if (isConnected != other.isConnected) return false
         if (isDeleted != other.isDeleted) return false
+        if (score != other.score) return false
+        if (time != other.time) return false
+        if (rank != other.rank) return false
 
         return true
     }

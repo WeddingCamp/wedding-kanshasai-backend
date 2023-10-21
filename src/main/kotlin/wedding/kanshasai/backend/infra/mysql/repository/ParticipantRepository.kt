@@ -6,6 +6,7 @@ import wedding.kanshasai.backend.domain.entity.Participant
 import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.value.ParticipantType
+import wedding.kanshasai.backend.domain.value.SessionResult
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto
 import wedding.kanshasai.backend.infra.mysql.mapper.ParticipantMapper
@@ -23,6 +24,14 @@ class ParticipantRepository(
 
     fun listBySession(session: Session): Result<List<Participant>> = runCatching {
         participantMapper.listBySessionId(session.id.toByteArray()).map(Participant::of)
+    }
+
+    fun listBySessionWithResult(session: Session): Result<List<Pair<Participant, SessionResult>>> = runCatching {
+        participantMapper.listBySessionIdWithResult(session.id.toByteArray()).map {
+            val participant = Participant.of(it)
+            val result = SessionResult(it.score, it.time, it.rank)
+            participant to result
+        }
     }
 
     fun createParticipant(session: Session, name: String, imageId: UlidId?, type: ParticipantType): Result<Participant> = runCatching {

@@ -174,7 +174,11 @@ class SessionController(
     }
 
     override suspend fun showNextSessionResultRanking(request: ShowNextSessionResultRankingRequest): ShowNextSessionResultRankingResponse {
-        TODO("NOT IMPLEMENTED")
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+
+        sessionService.nextSessionResult(sessionId)
+
+        return ShowNextSessionResultRankingResponse.newBuilder().build()
     }
 
     override suspend fun showSessionResultRanking(request: ShowSessionResultRankingRequest): ShowSessionResultRankingResponse {

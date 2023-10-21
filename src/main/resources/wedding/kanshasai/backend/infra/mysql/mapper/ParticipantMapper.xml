@@ -103,10 +103,70 @@
             participants
         WHERE
             session_id = #{id}
-            AND
+          AND
             (is_deleted = false OR is_deleted = #{includeDeleted})
         ORDER BY
             id
+    </select>
+
+    <select id="listBySessionIdWithResult" resultMap="participantWithResult">
+        SELECT
+            result.id,
+            result.session_id,
+            result.name,
+            result.image_id,
+            result.type,
+            result.is_connected,
+            result.is_deleted,
+            result.score,
+            result.time,
+            ROW_NUMBER() OVER (ORDER BY score desc, time) as user_rank
+        from
+            (
+                SELECT
+                    p.id,
+                    p.session_id,
+                    p.name,
+                    p.image_id,
+                    p.type,
+                    p.is_connected,
+                    p.is_deleted,
+                    count(pa.is_correct) as score,
+                    sum(pa.time) as time
+                FROM
+                    participants as p
+                LEFT JOIN (
+                    SELECT
+                        pa.participant_id,
+                        pa.time,
+                        pa.answer MEMBER OF(JSON_EXTRACT(q.correct_answer, '$.choiceIdList')) as is_correct
+                    FROM
+                        participant_answers as pa
+                    LEFT JOIN
+                        quizzes q
+                        ON
+                            pa.quiz_id = q.id
+                        AND
+                            q.is_deleted = false OR q.is_deleted = #{includeDeleted}
+                    WHERE
+                        pa.session_id = #{id}
+                    AND
+                        (pa.is_deleted = false OR pa.is_deleted = #{includeDeleted})
+                    HAVING
+                        is_correct = 1
+                ) pa
+                ON
+                    p.id = pa.participant_id
+                WHERE
+                    session_id = #{id}
+                AND
+                    (is_deleted = false OR is_deleted = #{includeDeleted})
+                GROUP BY
+                    p.id
+            ) as result
+        ORDER BY
+            score desc,
+            time
     </select>
 
     <resultMap id="participant" type="wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto">
@@ -116,6 +176,20 @@
         <result property="type" column="type"/>
         <result property="isConnected" column="is_connected"/>
         <result property="isDeleted" column="is_deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="identifier" resultMap="participantIdentifier"/>
+    </resultMap>
+
+    <resultMap id="participantWithResult" type="wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto">
+        <result property="sessionId" column="session_id"/>
+        <result property="name" column="name"/>
+        <result property="imageId" column="image_id"/>
+        <result property="type" column="type"/>
+        <result property="isConnected" column="is_connected"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="score" column="score"/>
+        <result property="time" column="time"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
         <association property="identifier" resultMap="participantIdentifier"/>

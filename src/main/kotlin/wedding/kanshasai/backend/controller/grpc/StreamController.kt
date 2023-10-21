@@ -96,6 +96,46 @@ class StreamController(
                     },
                 )
             }
+
+            is RedisEvent.ShowResultTitle -> {
+                resultTitle = this.resultTitleBuilder
+                    .setResultType(event.resultType)
+                    .build()
+            }
+
+            is RedisEvent.ShowResultRankingTitle -> {
+                resultRankingTitle = this.resultRankingTitleBuilder
+                    .setRank(event.rank)
+                    .setResultTitleType(event.resultTitleType)
+                    .build()
+            }
+
+            is RedisEvent.ShowResultRanking -> {
+                resultRanking = this.resultRankingBuilder
+                    .addAllParticipantSessionScores(
+                        event.participantSessionScoreList.map { participantSessionScore ->
+                            StreamEventResponse.ResultRanking.ParticipantSessionScore.newBuilder()
+                                .setParticipantName(participantSessionScore.participantName)
+                                .setScore(participantSessionScore.score)
+                                .setIsEmphasis(participantSessionScore.isEmphasis)
+                                .setRank(participantSessionScore.rank)
+                                .setTime(participantSessionScore.time)
+                                .build()
+                        },
+                    )
+                    .setPreDisplayCount(event.preDisplayCount)
+                    .setDisplayCount(event.displayCount)
+                    .setResultRankingType(event.resultRankingType)
+                    .setHasNextPage(event.hasNextPage)
+                    .build()
+            }
+
+            is RedisEvent.ShowResultPresent -> {
+                resultPresent = this.resultPresentBuilder
+                    .setRank(event.rank)
+                    .setResultRankingType(event.resultRankingType)
+                    .build()
+            }
         }
     }
 
@@ -110,12 +150,17 @@ class StreamController(
             RedisEvent.QuizResult::class,
             RedisEvent.QuizSpeedRanking::class,
             RedisEvent.CurrentState::class,
+            RedisEvent.ShowResultTitle::class,
+            RedisEvent.ShowResultRankingTitle::class,
+            RedisEvent.ShowResultRanking::class,
+            RedisEvent.ShowResultPresent::class,
         ),
         StreamType.STREAM_TYPE_PARTICIPANT to listOf(
             RedisEvent.PreQuiz::class,
             RedisEvent.ShowQuiz::class,
             RedisEvent.StartQuiz::class,
             RedisEvent.QuizResult::class,
+            RedisEvent.QuizTimeUp::class,
             RedisEvent.CurrentState::class,
         ),
         StreamType.STREAM_TYPE_MANAGER to listOf(
@@ -127,8 +172,13 @@ class StreamController(
             RedisEvent.QuizAnswerList::class,
             RedisEvent.QuizResult::class,
             RedisEvent.QuizSpeedRanking::class,
+            RedisEvent.QuizTimeUp::class,
             RedisEvent.CurrentState::class,
             RedisEvent.UpdateParticipant::class,
+            RedisEvent.ShowResultTitle::class,
+            RedisEvent.ShowResultRankingTitle::class,
+            RedisEvent.ShowResultRanking::class,
+            RedisEvent.ShowResultPresent::class,
         ),
     )
 
