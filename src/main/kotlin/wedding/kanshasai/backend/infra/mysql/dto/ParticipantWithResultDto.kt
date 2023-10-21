@@ -14,6 +14,7 @@ data class ParticipantWithResultDto(
     override var isDeleted: Boolean = false,
     var score: Int = 0,
     var time: Float = 0f,
+    var rank: Int = 0,
     override var createdAt: Timestamp = Timestamp(0),
     override var updatedAt: Timestamp = Timestamp(0),
 ) : IParticipant, IdentifiableDto<StandardIdentifier>(isDeleted) {
@@ -36,6 +37,9 @@ data class ParticipantWithResultDto(
         if (type != other.type) return false
         if (isConnected != other.isConnected) return false
         if (isDeleted != other.isDeleted) return false
+        if (score != other.score) return false
+        if (time != other.time) return false
+        if (rank != other.rank) return false
 
         return true
     }

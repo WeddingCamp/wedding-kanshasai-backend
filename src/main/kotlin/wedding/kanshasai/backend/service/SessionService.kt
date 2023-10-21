@@ -380,7 +380,7 @@ class SessionService(
                                     it.first.name,
                                     it.second.score,
                                     false, // TODO: is emphasis
-                                    rank,
+                                    it.second.rank,
                                     it.second.time,
                                 )
                             },

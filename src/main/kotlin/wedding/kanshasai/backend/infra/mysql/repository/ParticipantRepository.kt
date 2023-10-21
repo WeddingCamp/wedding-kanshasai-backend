@@ -29,7 +29,7 @@ class ParticipantRepository(
     fun listBySessionWithResult(session: Session): Result<List<Pair<Participant, SessionResult>>> = runCatching {
         participantMapper.listBySessionIdWithResult(session.id.toByteArray()).map {
             val participant = Participant.of(it)
-            val result = SessionResult(it.score, it.time)
+            val result = SessionResult(it.score, it.time, it.rank)
             participant to result
         }
     }
