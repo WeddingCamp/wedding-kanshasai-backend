@@ -181,7 +181,7 @@
         <association property="identifier" resultMap="participantIdentifier"/>
     </resultMap>
 
-    <resultMap id="participantWithResult" type="wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto">
+    <resultMap id="participantWithResult" type="wedding.kanshasai.backend.infra.mysql.dto.ParticipantWithResultDto">
         <result property="sessionId" column="session_id"/>
         <result property="name" column="name"/>
         <result property="imageId" column="image_id"/>
