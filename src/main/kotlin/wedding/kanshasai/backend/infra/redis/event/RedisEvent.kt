@@ -154,7 +154,7 @@ interface RedisEvent {
     @NoArg
     data class ShowResultPresent(
         var rank: Int,
-        var resultRankingType: ResultRankingType,
+        var resultRankingType: ResultPresentType,
         override val sessionId: String,
     ) : RedisEvent {
         override val eventType: EventType = EventType.EVENT_TYPE_RESULT_PRESENT

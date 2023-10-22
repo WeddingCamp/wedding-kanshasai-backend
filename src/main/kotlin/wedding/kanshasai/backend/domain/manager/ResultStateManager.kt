@@ -70,6 +70,18 @@ class ResultStateManager private constructor(
         ResultStateManager(newResultStateMachine, newRankStateMachine, newResultRankStateMachine)
     }
 
+    val rank get() = when(resultStateMachine.value) {
+        ResultState.RANKING_TOP_1 -> 1
+        ResultState.RANKING_TOP_2 -> 2
+        ResultState.RANKING_TOP_3 -> 3
+        ResultState.RANKING_TOP_4 -> 4
+        ResultState.RANKING_TOP_5 -> 5
+        ResultState.RANKING_TOP_6 -> 6
+        ResultState.RANKING_TOP_7 -> 7
+        ResultState.RANKING_TOP_8 -> 8
+        else -> rankStateMachine.value
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other !is ResultStateManager) return false
         if (resultStateMachine != other.resultStateMachine) return false

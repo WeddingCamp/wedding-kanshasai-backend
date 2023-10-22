@@ -17,6 +17,7 @@ import wedding.kanshasai.backend.domain.value.*
 import wedding.kanshasai.backend.infra.mysql.repository.*
 import wedding.kanshasai.backend.infra.redis.entity.*
 import wedding.kanshasai.backend.infra.redis.event.*
+import wedding.kanshasai.v1.ResultPresentType
 import wedding.kanshasai.v1.ResultRankingType
 import wedding.kanshasai.v1.ResultTitleType
 
@@ -337,17 +338,23 @@ class SessionService(
                 when (newResultState.resultRankStateMachine.value) {
                     ResultRankState.RANK, ResultRankState.PRE_RANK -> {
                         // スコア一覧を取得し、表示したい10件を取得する
+                        val resultList = participantRepository
+                            .listBySessionWithResult(session)
+                            .getOrThrowService()
+                            .sortedBy { it.second.rank }
+
                         val scoreList = when (newResultState.resultStateMachine.value) {
-                            ResultState.RANKING_NORMAL ->
-                                participantRepository
-                                    .listBySessionWithResult(session)
-                                    .getOrThrowService()
-                                    .subList(newResultState.rankStateMachine.value, newResultState.rankStateMachine.value + 10)
-                            else ->
-                                participantRepository
-                                    .listBySessionWithResult(session)
-                                    .getOrThrowService()
-                                    .subList(0, 10)
+                            ResultState.RANKING_NORMAL -> {
+                                // インデックスが0から始まるので、-1する
+                                resultList.subList(
+                                    newResultState.rankStateMachine.value - 1,
+                                    (newResultState.rankStateMachine.value + 10 - 1).coerceAtMost(resultList.size))
+
+                                // TODO: ブービー賞やピタリ賞を伏せる
+                            }
+                            ResultState.RANKING_BOOBY -> listOf(resultList.dropLast(1).last())
+                            ResultState.RANKING_JUST -> listOf(resultList[48.coerceAtMost(resultList.size)])
+                            else -> resultList.subList(0, 10)
                         }
 
                         val preDisplayCount = when (newResultState.resultStateMachine.value) {
@@ -369,13 +376,20 @@ class SessionService(
                             preDisplayCount
                         } else {
                             when (newResultState.resultStateMachine.value) {
-                                ResultState.RANKING_NORMAL -> 10
+                                ResultState.RANKING_NORMAL -> 10.coerceAtMost(scoreList.size)
+                                ResultState.RANKING_TOP_8 -> 3
                                 else -> preDisplayCount + 1
                             }
                         }
 
+                        val resultRankingType = when(newResultState.resultStateMachine.value) {
+                            ResultState.RANKING_BOOBY -> ResultRankingType.RESULT_RANKING_TYPE_BOOBY
+                            ResultState.RANKING_JUST -> ResultRankingType.RESULT_RANKING_TYPE_JUST
+                            else -> ResultRankingType.RESULT_RANKING_TYPE_RANK
+                        }
+
                         RedisEvent.ShowResultRanking(
-                            scoreList.mapIndexed { rank, it ->
+                            scoreList.map {
                                 ParticipantSessionScoreRedisEntity(
                                     it.first.name,
                                     it.second.score,
@@ -386,7 +400,7 @@ class SessionService(
                             },
                             preDisplayCount,
                             displayCount,
-                            ResultRankingType.RESULT_RANKING_TYPE_RANK,
+                            resultRankingType,
                             !(
                                 newResultState.resultStateMachine.value == ResultState.RANKING_TOP_1 &&
                                     newResultState.resultRankStateMachine.value == ResultRankState.PRESENT
@@ -395,19 +409,20 @@ class SessionService(
                         )
                     }
                     ResultRankState.PRESENT -> {
-                        val resultRankingType = when (newResultState.resultStateMachine.value) {
-                            ResultState.RANKING_BOOBY -> ResultRankingType.RESULT_RANKING_TYPE_BOOBY
-                            ResultState.RANKING_JUST -> ResultRankingType.RESULT_RANKING_TYPE_JUST
-                            else -> ResultRankingType.RESULT_RANKING_TYPE_RANK
+                        val resultPresentType = when (newResultState.resultStateMachine.value) {
+                            ResultState.RANKING_BOOBY -> ResultPresentType.RESULT_PRESENT_TYPE_BOOBY
+                            ResultState.RANKING_JUST -> ResultPresentType.RESULT_PRESENT_TYPE_JUST
+                            ResultState.RANKING_TOP_4_7_PRESENT -> ResultPresentType.RESULT_PRESENT_TYPE_4_7
+                            else -> ResultPresentType.RESULT_PRESENT_TYPE_RANK
                         }
                         RedisEvent.ShowResultPresent(
-                            newResultState.rankStateMachine.value,
-                            resultRankingType,
+                            newResultState.rank,
+                            resultPresentType,
                             sessionId.toString(),
                         )
                     }
                     ResultRankState.TITLE, ResultRankState.DUMMY_TITLE, ResultRankState.DUMMY_TITLE_MESSAGE -> {
-                        val resultRankingType = when (newResultState.resultRankStateMachine.value) {
+                        val resultTitleType = when (newResultState.resultRankStateMachine.value) {
                             ResultRankState.TITLE -> ResultTitleType.RESULT_TITLE_TYPE_RANK
                             ResultRankState.DUMMY_TITLE -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_1
                             ResultRankState.DUMMY_TITLE_MESSAGE -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_2
@@ -415,8 +430,8 @@ class SessionService(
                         }
 
                         RedisEvent.ShowResultRankingTitle(
-                            newResultState.rankStateMachine.value,
-                            resultRankingType,
+                            newResultState.rank,
+                            resultTitleType,
                             sessionId.toString(),
                         )
                     }

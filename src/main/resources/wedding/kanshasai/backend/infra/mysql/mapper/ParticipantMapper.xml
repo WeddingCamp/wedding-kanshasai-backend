@@ -190,6 +190,7 @@
         <result property="isDeleted" column="is_deleted"/>
         <result property="score" column="score"/>
         <result property="time" column="time"/>
+        <result property="rank" column="user_rank"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
         <association property="identifier" resultMap="participantIdentifier"/>
