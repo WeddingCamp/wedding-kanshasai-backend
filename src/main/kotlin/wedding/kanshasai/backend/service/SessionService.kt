@@ -452,7 +452,6 @@ class SessionService(
                             sessionId.toString(),
                         )
                     }
-                    // TODO: 「本気の」フラグに対応する
                 }
             }
             else -> {
