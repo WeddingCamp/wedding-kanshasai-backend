@@ -348,13 +348,13 @@ class SessionService(
                                 // インデックスが0から始まるので、-1する
                                 resultList.subList(
                                     newResultState.rankStateMachine.value - 1,
-                                    (newResultState.rankStateMachine.value + 10 - 1).coerceAtMost(resultList.size),
+                                    (newResultState.rankStateMachine.value + 10 - 1).coerceAtMost(resultList.size - 1),
                                 )
 
                                 // TODO: ブービー賞やピタリ賞を伏せる
                             }
                             ResultState.RANKING_BOOBY -> listOf(resultList.dropLast(1).last())
-                            ResultState.RANKING_JUST -> listOf(resultList[48.coerceAtMost(resultList.size)])
+                            ResultState.RANKING_JUST -> listOf(resultList[48.coerceAtMost(resultList.size - 1)])
                             else -> resultList.subList(0, 10)
                         }
 
@@ -377,7 +377,7 @@ class SessionService(
                             preDisplayCount
                         } else {
                             when (newResultState.resultStateMachine.value) {
-                                ResultState.RANKING_NORMAL -> 10.coerceAtMost(scoreList.size)
+                                ResultState.RANKING_NORMAL -> 10.coerceAtMost(scoreList.size - 1)
                                 ResultState.RANKING_TOP_8 -> 3
                                 else -> preDisplayCount + 1
                             }
