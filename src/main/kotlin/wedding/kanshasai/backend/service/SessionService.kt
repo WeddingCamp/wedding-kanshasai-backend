@@ -348,7 +348,8 @@ class SessionService(
                                 // インデックスが0から始まるので、-1する
                                 resultList.subList(
                                     newResultState.rankStateMachine.value - 1,
-                                    (newResultState.rankStateMachine.value + 10 - 1).coerceAtMost(resultList.size))
+                                    (newResultState.rankStateMachine.value + 10 - 1).coerceAtMost(resultList.size),
+                                )
 
                                 // TODO: ブービー賞やピタリ賞を伏せる
                             }
@@ -382,7 +383,7 @@ class SessionService(
                             }
                         }
 
-                        val resultRankingType = when(newResultState.resultStateMachine.value) {
+                        val resultRankingType = when (newResultState.resultStateMachine.value) {
                             ResultState.RANKING_BOOBY -> ResultRankingType.RESULT_RANKING_TYPE_BOOBY
                             ResultState.RANKING_JUST -> ResultRankingType.RESULT_RANKING_TYPE_JUST
                             else -> ResultRankingType.RESULT_RANKING_TYPE_RANK
@@ -428,14 +429,14 @@ class SessionService(
                                 ResultTitleType.RESULT_TITLE_TYPE_RANK
                             }
                             ResultRankState.DUMMY_TITLE_MESSAGE -> {
-                                when(newResultState.resultStateMachine.value) {
+                                when (newResultState.resultStateMachine.value) {
                                     ResultState.RANKING_BOOBY -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_1
                                     ResultState.RANKING_JUST -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_2
                                     else -> ResultTitleType.RESULT_TITLE_TYPE_RANK
                                 }
                             }
                             ResultRankState.TITLE -> {
-                                when(newResultState.resultStateMachine.value) {
+                                when (newResultState.resultStateMachine.value) {
                                     ResultState.RANKING_BOOBY -> ResultTitleType.RESULT_TITLE_TYPE_BOOBY
                                     ResultState.RANKING_JUST -> ResultTitleType.RESULT_TITLE_TYPE_JUST
                                     ResultState.RANKING_TOP_3 -> ResultTitleType.RESULT_TITLE_TYPE_RANK_ACTUAL

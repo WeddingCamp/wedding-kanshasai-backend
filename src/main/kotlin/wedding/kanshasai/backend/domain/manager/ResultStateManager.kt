@@ -70,7 +70,7 @@ class ResultStateManager private constructor(
         ResultStateManager(newResultStateMachine, newRankStateMachine, newResultRankStateMachine)
     }
 
-    val rank get() = when(resultStateMachine.value) {
+    val rank get() = when (resultStateMachine.value) {
         ResultState.RANKING_TOP_1 -> 1
         ResultState.RANKING_TOP_2 -> 2
         ResultState.RANKING_TOP_3 -> 3
