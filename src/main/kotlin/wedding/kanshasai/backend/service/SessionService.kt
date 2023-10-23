@@ -423,9 +423,25 @@ class SessionService(
                     }
                     ResultRankState.TITLE, ResultRankState.DUMMY_TITLE, ResultRankState.DUMMY_TITLE_MESSAGE -> {
                         val resultTitleType = when (newResultState.resultRankStateMachine.value) {
-                            ResultRankState.TITLE -> ResultTitleType.RESULT_TITLE_TYPE_RANK
-                            ResultRankState.DUMMY_TITLE -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_1
-                            ResultRankState.DUMMY_TITLE_MESSAGE -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_2
+                            ResultRankState.DUMMY_TITLE -> {
+                                // ダミータイトルは常にRANK
+                                ResultTitleType.RESULT_TITLE_TYPE_RANK
+                            }
+                            ResultRankState.DUMMY_TITLE_MESSAGE -> {
+                                when(newResultState.resultStateMachine.value) {
+                                    ResultState.RANKING_BOOBY -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_1
+                                    ResultState.RANKING_JUST -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_2
+                                    else -> ResultTitleType.RESULT_TITLE_TYPE_RANK
+                                }
+                            }
+                            ResultRankState.TITLE -> {
+                                when(newResultState.resultStateMachine.value) {
+                                    ResultState.RANKING_BOOBY -> ResultTitleType.RESULT_TITLE_TYPE_BOOBY
+                                    ResultState.RANKING_JUST -> ResultTitleType.RESULT_TITLE_TYPE_JUST
+                                    ResultState.RANKING_TOP_3 -> ResultTitleType.RESULT_TITLE_TYPE_RANK_ACTUAL
+                                    else -> ResultTitleType.RESULT_TITLE_TYPE_RANK
+                                }
+                            }
                             else -> throw InvalidStateException("Invalid ResultRankState.")
                         }
 

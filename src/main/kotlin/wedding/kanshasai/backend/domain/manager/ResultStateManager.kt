@@ -79,6 +79,8 @@ class ResultStateManager private constructor(
         ResultState.RANKING_TOP_6 -> 6
         ResultState.RANKING_TOP_7 -> 7
         ResultState.RANKING_TOP_8 -> 8
+        ResultState.RANKING_BOOBY -> 3
+        ResultState.RANKING_JUST -> 3
         else -> rankStateMachine.value
     }
 
