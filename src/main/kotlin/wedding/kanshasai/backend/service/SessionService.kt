@@ -347,13 +347,13 @@ class SessionService(
                             .sortedBy { it.second.rank }
                             .map {
                                 Triple(
-                                        it.first,
-                                        it.second,
-                                        when(it.second.rank) {
-                                            resultList.size - 1 - 1 -> RankType.BOOBY
-                                            justRank -> RankType.JUST
-                                            else -> RankType.NORMAL
-                                        }
+                                    it.first,
+                                    it.second,
+                                    when (it.second.rank) {
+                                        resultList.size - 1 - 1 -> RankType.BOOBY
+                                        justRank -> RankType.JUST
+                                        else -> RankType.NORMAL
+                                    },
                                 )
                             }
 
@@ -364,8 +364,9 @@ class SessionService(
                                     newResultState.rankStateMachine.value - 1,
                                     (newResultState.rankStateMachine.value + 10 - 1).coerceAtMost(resultList.size - 1),
                                 ).map {
-                                    if(it.third == RankType.BOOBY || it.third == RankType.JUST)
+                                    if (it.third == RankType.BOOBY || it.third == RankType.JUST) {
                                         it.first.name = "??????"
+                                    }
                                     it
                                 }
                             }
