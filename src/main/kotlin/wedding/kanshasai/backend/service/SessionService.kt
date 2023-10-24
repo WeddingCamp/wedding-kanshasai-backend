@@ -3,10 +3,7 @@ package wedding.kanshasai.backend.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
-import wedding.kanshasai.backend.domain.entity.Choice
-import wedding.kanshasai.backend.domain.entity.Quiz
-import wedding.kanshasai.backend.domain.entity.Session
-import wedding.kanshasai.backend.domain.entity.SessionQuiz
+import wedding.kanshasai.backend.domain.entity.*
 import wedding.kanshasai.backend.domain.exception.InvalidStateException
 import wedding.kanshasai.backend.domain.manager.ResultStateManager
 import wedding.kanshasai.backend.domain.state.RankStateMachine
@@ -301,6 +298,8 @@ class SessionService(
         redisEventService.publishState(session.state, nextState, session.id)
     }
 
+    enum class RankType { NORMAL, BOOBY, JUST }
+
     fun nextSessionResult(sessionId: UlidId) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
 
@@ -341,21 +340,38 @@ class SessionService(
                         val resultList = participantRepository
                             .listBySessionWithResult(session)
                             .getOrThrowService()
+
+                        val justRank = if (resultList.size > 50) 48 else resultList.size - 10
+
+                        val filteredResultList = resultList
                             .sortedBy { it.second.rank }
+                            .map {
+                                Triple(
+                                        it.first,
+                                        it.second,
+                                        when(it.second.rank) {
+                                            resultList.size - 1 - 1 -> RankType.BOOBY
+                                            justRank -> RankType.JUST
+                                            else -> RankType.NORMAL
+                                        }
+                                )
+                            }
 
                         val scoreList = when (newResultState.resultStateMachine.value) {
                             ResultState.RANKING_NORMAL -> {
                                 // インデックスが0から始まるので、-1する
-                                resultList.subList(
+                                filteredResultList.subList(
                                     newResultState.rankStateMachine.value - 1,
                                     (newResultState.rankStateMachine.value + 10 - 1).coerceAtMost(resultList.size - 1),
-                                )
-
-                                // TODO: ブービー賞やピタリ賞を伏せる
+                                ).map {
+                                    if(it.third == RankType.BOOBY || it.third == RankType.JUST)
+                                        it.first.name = "??????"
+                                    it
+                                }
                             }
-                            ResultState.RANKING_BOOBY -> listOf(resultList.dropLast(1).last())
-                            ResultState.RANKING_JUST -> listOf(resultList[48.coerceAtMost(resultList.size - 1)])
-                            else -> resultList.subList(0, 10)
+                            ResultState.RANKING_BOOBY -> filteredResultList.filter { it.third == RankType.BOOBY }
+                            ResultState.RANKING_JUST -> filteredResultList.filter { it.third == RankType.JUST }
+                            else -> filteredResultList.subList(0, 10)
                         }
 
                         val preDisplayCount = when (newResultState.resultStateMachine.value) {
