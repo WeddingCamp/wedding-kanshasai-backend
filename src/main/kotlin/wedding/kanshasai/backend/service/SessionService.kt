@@ -406,12 +406,27 @@ class SessionService(
                             else -> ResultRankingType.RESULT_RANKING_TYPE_RANK
                         }
 
+                        val resultState = newResultState.resultStateMachine.value
                         RedisEvent.ShowResultRanking(
                             scoreList.map {
+                                val isEmphasis = when {
+                                    resultState == ResultState.RANKING_TOP_1 && it.second.rank == 1 -> true
+                                    resultState == ResultState.RANKING_TOP_2 && it.second.rank == 2 -> true
+                                    resultState == ResultState.RANKING_TOP_3 && it.second.rank == 3 -> true
+                                    resultState == ResultState.RANKING_TOP_4 && it.second.rank == 4 -> true
+                                    resultState == ResultState.RANKING_TOP_5 && it.second.rank == 5 -> true
+                                    resultState == ResultState.RANKING_TOP_6 && it.second.rank == 6 -> true
+                                    resultState == ResultState.RANKING_TOP_7 && it.second.rank == 7 -> true
+                                    // 8位は7位のPRE_RANKという側面があるので7位と同等に扱う
+                                    resultState == ResultState.RANKING_TOP_8 && it.second.rank == 7 -> true
+                                    resultState == ResultState.RANKING_BOOBY -> true
+                                    resultState == ResultState.RANKING_JUST -> true
+                                    else -> false
+                                }
                                 ParticipantSessionScoreRedisEntity(
                                     it.first.name,
                                     it.second.score,
-                                    false, // TODO: is emphasis
+                                    isEmphasis,
                                     it.second.rank,
                                     it.second.time,
                                 )
