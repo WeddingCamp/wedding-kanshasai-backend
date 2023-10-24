@@ -133,7 +133,7 @@ class StreamController(
             is RedisEvent.ShowResultPresent -> {
                 resultPresent = this.resultPresentBuilder
                     .setRank(event.rank)
-                    .setResultRankingType(event.resultRankingType)
+                    .setResultPresentType(event.resultRankingType)
                     .build()
             }
         }
