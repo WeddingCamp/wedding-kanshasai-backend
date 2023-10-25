@@ -419,8 +419,6 @@ class SessionService(
                                     resultState == ResultState.RANKING_TOP_7 && it.second.rank == 7 -> true
                                     // 8位は7位のPRE_RANKという側面があるので7位と同等に扱う
                                     resultState == ResultState.RANKING_TOP_8 && it.second.rank == 7 -> true
-                                    resultState == ResultState.RANKING_BOOBY -> true
-                                    resultState == ResultState.RANKING_JUST -> true
                                     else -> false
                                 }
                                 ParticipantSessionScoreRedisEntity(
