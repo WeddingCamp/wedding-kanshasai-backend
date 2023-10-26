@@ -85,7 +85,7 @@ class StreamController(
             sessionService.findById(sessionId)
         }
 
-        if(participant != null) {
+        if (participant != null) {
             StreamEventResponse.newBuilder()
                 .setEventType(EventType.EVENT_TYPE_CURRENT_STATE)
                 .setSessionState(
@@ -114,7 +114,7 @@ class StreamController(
                                         choiceBuilder.body = choice.body
                                         choiceBuilder.isSelectedChoice = participantAnswerService.getAnswer(
                                             participant.id,
-                                            currentQuiz.first.id
+                                            currentQuiz.first.id,
                                         ).getOrNull()?.answer == choice.id.toString()
 
                                         if (session.state == SessionState.QUIZ_RESULT) {
@@ -137,7 +137,7 @@ class StreamController(
                 }
                 .build()
                 .let(::trySend)
-            }
+        }
 
         if (session.state == SessionState.INTRODUCTION) {
             StreamEventResponse.newBuilder()
