@@ -10,7 +10,7 @@ data class SessionDto(
     override var name: String = "",
     override var stateId: Int = 1,
     override var currentQuizId: ByteArray? = null,
-    override var currentIntroductionId: Int = 3,
+    override var currentIntroductionId: Int = 1,
     override var currentQuizResultId: Int? = null,
     override var resultStateId: Int = 1,
     override var resultRankStateId: Int = 1,
