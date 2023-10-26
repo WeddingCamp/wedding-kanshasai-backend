@@ -268,7 +268,6 @@ class SessionService(
 
         val redisEvent = when (quizResultType) {
             QuizResultType.VOTE_LIST -> {
-
                 val quizNumber = sessionQuizRepository.listBySession(session).getOrThrowService()
                     .count { it.second.isCompleted } + 1
 
