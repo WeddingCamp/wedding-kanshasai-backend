@@ -162,7 +162,9 @@ class StreamController(
                                             redisEvent.participantQuizTimeList.map { participantQuizTime ->
                                                 StreamEventResponse.SpeedRanking.ParticipantQuizTime.newBuilder()
                                                     .setParticipantName(participantQuizTime.participantName)
-                                                    .setParticipantImageUrl(s3Service.generatePresignedUrl(participantQuizTime.participantImageId))
+                                                    .setParticipantImageUrl(
+                                                        s3Service.generatePresignedUrl(participantQuizTime.participantImageId),
+                                                    )
                                                     .setTime(participantQuizTime.time)
                                                     .build()
                                             },
