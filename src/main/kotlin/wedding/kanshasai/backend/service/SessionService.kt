@@ -293,6 +293,7 @@ class SessionService(
                 val quizNumber = sessionQuizRepository.listBySession(session).getOrThrowService()
                     .count { it.second.isCompleted }
 
+                redisEventService.publishState(currentState, nextState, session.id)
                 RedisEvent.QuizResult(
                     quiz.id.toString(),
                     quiz.body,
@@ -320,6 +321,7 @@ class SessionService(
 
                 sessionQuizRepository.update(sessionQuiz.clone().apply { isCompleted = true }).getOrThrowService()
 
+                redisEventService.publishState(currentState, nextState, session.id)
                 RedisEvent.QuizSpeedRanking(
                     participantAnswerList
                         .filter { quiz.getCorrectAnswer(objectMapper).choiceIdList.contains(it.answer) }
@@ -341,7 +343,6 @@ class SessionService(
             }
         }
         redisEventService.publish(redisEvent)
-        redisEventService.publishState(currentState, nextState, session.id)
     }
 
     fun cancelCurrentQuiz(sessionId: UlidId) {
