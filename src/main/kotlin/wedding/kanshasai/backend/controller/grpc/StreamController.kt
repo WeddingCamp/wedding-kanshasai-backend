@@ -124,6 +124,8 @@ class StreamController(
                                 is RedisEvent.Introduction -> {
                                     introductionEvent = this.introductionEventBuilder
                                         .setIntroductionId(redisEvent.introductionId)
+                                        .setIsFirst(redisEvent.isFirst)
+                                        .setIsLast(redisEvent.isLast)
                                         .build()
                                 }
 

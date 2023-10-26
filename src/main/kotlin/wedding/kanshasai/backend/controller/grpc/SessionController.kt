@@ -94,14 +94,21 @@ class SessionController(
             .build()
     }
 
-//    override suspend fun setIntroduction(request: SetIntroductionRequest): SetIntroductionResponse {
-//        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
-//        val introductionId = request.introductionId
-//
-//        sessionService.setIntroductionScreen(sessionId, introductionId)
-//
-//        return SetIntroductionResponse.newBuilder().build()
-//    }
+    override suspend fun nextIntroduction(request: NextIntroductionRequest): NextIntroductionResponse {
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+
+        sessionService.nextIntroduction(sessionId)
+
+        return NextIntroductionResponse.newBuilder().build()
+    }
+
+    override suspend fun backIntroduction(request: BackIntroductionRequest): BackIntroductionResponse {
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+
+        sessionService.backIntroduction(sessionId)
+
+        return BackIntroductionResponse.newBuilder().build()
+    }
 
     override suspend fun finishIntroduction(request: FinishIntroductionRequest): FinishIntroductionResponse {
         val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")

@@ -32,6 +32,9 @@ class SessionService(
     private val participantAnswerRepository: ParticipantAnswerRepository,
     private val objectMapper: ObjectMapper,
 ) {
+    companion object {
+        const val MAX_INTRODUCTION_ID = 11
+    }
     fun createSession(eventId: UlidId, name: String): Session {
         // TODO: Transaction切る
         val event = eventRepository.findById(eventId).getOrThrowService()
@@ -61,15 +64,48 @@ class SessionService(
         return sessionRepository.findById(session.id).getOrThrowService().state
     }
 
-    fun setIntroductionScreen(sessionId: UlidId, introductionId: Int) {
+    fun nextIntroduction(sessionId: UlidId) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
 
         if (session.state != SessionState.INTRODUCTION) {
             throw InvalidStateException("Session state is not INTRODUCTION.")
         }
 
+        val introductionId = session.currentIntroductionId + 1
+
+        if (introductionId > MAX_INTRODUCTION_ID) {
+            throw InvalidStateException("Introduction is already last.")
+        }
+
         sessionRepository.update(session.clone().apply { currentIntroductionId = introductionId }).getOrThrowService()
-        redisEventService.publish(RedisEvent.Introduction(introductionId, sessionId.toString()))
+        redisEventService.publish(RedisEvent.Introduction(
+            introductionId,
+            introductionId <= 1,
+            introductionId >= MAX_INTRODUCTION_ID,
+            sessionId.toString()
+        ))
+    }
+
+    fun backIntroduction(sessionId: UlidId) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+
+        if (session.state != SessionState.INTRODUCTION) {
+            throw InvalidStateException("Session state is not INTRODUCTION.")
+        }
+
+        val introductionId = session.currentIntroductionId - 1
+
+        if (introductionId < 1) {
+            throw InvalidStateException("Introduction is already first.")
+        }
+
+        sessionRepository.update(session.clone().apply { currentIntroductionId = introductionId }).getOrThrowService()
+        redisEventService.publish(RedisEvent.Introduction(
+            introductionId,
+            introductionId <= 1,
+            introductionId >= MAX_INTRODUCTION_ID,
+            sessionId.toString()
+        ))
     }
 
     fun finishIntroduction(sessionId: UlidId) {

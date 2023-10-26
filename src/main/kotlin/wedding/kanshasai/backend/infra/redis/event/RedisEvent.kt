@@ -30,6 +30,8 @@ interface RedisEvent {
     @NoArg
     data class Introduction(
         var introductionId: Int,
+        var isFirst: Boolean,
+        var isLast: Boolean,
         override val sessionId: String,
     ) : RedisEvent {
         override val eventType: EventType = EventType.EVENT_TYPE_INTRODUCTION
