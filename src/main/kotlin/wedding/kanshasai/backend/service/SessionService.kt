@@ -372,7 +372,7 @@ class SessionService(
                             }
                             ResultState.RANKING_BOOBY -> filteredResultList.filter { it.third == RankType.BOOBY }
                             ResultState.RANKING_JUST -> filteredResultList.filter { it.third == RankType.JUST }
-                            else -> filteredResultList.subList(0, 10)
+                            else -> filteredResultList.subList(0, 10.coerceAtMost(resultList.size - 1))
                         }
 
                         val preDisplayCount = when (newResultState.resultStateMachine.value) {
