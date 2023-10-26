@@ -56,6 +56,11 @@ class SessionService(
         redisEventService.publish(RedisEvent.Cover(isVisible, sessionId.toString()))
     }
 
+    fun getSessionState(sessionId: UlidId): SessionState {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+        return sessionRepository.findById(session.id).getOrThrowService().state
+    }
+
     fun setIntroductionScreen(sessionId: UlidId, introductionId: Int) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
 
