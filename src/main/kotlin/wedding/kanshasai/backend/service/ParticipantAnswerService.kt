@@ -14,6 +14,13 @@ class ParticipantAnswerService(
     private val participantRepository: ParticipantRepository,
     private val participantAnswerRepository: ParticipantAnswerRepository,
 ) {
+    fun getAnswer(participantId: UlidId, quizId: UlidId) = runCatching {
+        val participant = participantRepository.findById(participantId).getOrThrowService()
+        val quiz = quizRepository.findById(quizId).getOrThrowService()
+        val session = sessionRepository.findById(participant.sessionId).getOrThrowService()
+
+        participantAnswerRepository.find(session, quiz, participant).getOrThrowService()
+    }
     fun setAnswer(participantId: UlidId, quizId: UlidId, answer: String, time: Float) {
         val participant = participantRepository.findById(participantId).getOrThrowService()
         val quiz = quizRepository.findById(quizId).getOrThrowService()
