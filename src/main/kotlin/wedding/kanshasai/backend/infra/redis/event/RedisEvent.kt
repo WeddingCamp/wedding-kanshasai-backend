@@ -22,8 +22,9 @@ interface RedisEvent {
         override var quizBody: String,
         override var quizType: QuizType,
         override var choiceList: List<QuizChoiceRedisEntity>,
+        override var quizNumber: Int,
         override val sessionId: String,
-    ) : AbstractQuizRedisEvent<QuizChoiceRedisEntity>(quizId, quizBody, quizType, choiceList) {
+    ) : AbstractQuizRedisEvent<QuizChoiceRedisEntity>(quizId, quizBody, quizType, choiceList, quizNumber) {
         override val eventType: EventType = EventType.EVENT_TYPE_SHOW_QUIZ
     }
 
@@ -43,8 +44,9 @@ interface RedisEvent {
         override var quizBody: String,
         override var quizType: QuizType,
         override var choiceList: List<QuizChoiceRedisEntity>,
+        override var quizNumber: Int,
         override val sessionId: String,
-    ) : AbstractQuizRedisEvent<QuizChoiceRedisEntity>(quizId, quizBody, quizType, choiceList) {
+    ) : AbstractQuizRedisEvent<QuizChoiceRedisEntity>(quizId, quizBody, quizType, choiceList, quizNumber) {
         override val eventType: EventType = EventType.EVENT_TYPE_START_QUIZ
     }
 
@@ -54,8 +56,9 @@ interface RedisEvent {
         override var quizBody: String,
         override var quizType: QuizType,
         override var choiceList: List<QuizChoiceWithCountRedisEntity>,
+        override var quizNumber: Int,
         override val sessionId: String,
-    ) : AbstractQuizRedisEvent<QuizChoiceWithCountRedisEntity>(quizId, quizBody, quizType, choiceList) {
+    ) : AbstractQuizRedisEvent<QuizChoiceWithCountRedisEntity>(quizId, quizBody, quizType, choiceList, quizNumber) {
         override val eventType: EventType = EventType.EVENT_TYPE_QUIZ_ANSWER_LIST
     }
 
@@ -65,8 +68,9 @@ interface RedisEvent {
         override var quizBody: String,
         override var quizType: QuizType,
         override var choiceList: List<QuizChoiceRedisEntity>,
+        override var quizNumber: Int,
         override val sessionId: String,
-    ) : AbstractQuizRedisEvent<QuizChoiceRedisEntity>(quizId, quizBody, quizType, choiceList) {
+    ) : AbstractQuizRedisEvent<QuizChoiceRedisEntity>(quizId, quizBody, quizType, choiceList, quizNumber) {
         override val eventType: EventType = EventType.EVENT_TYPE_QUIZ_TIME_UP
     }
 
@@ -85,8 +89,9 @@ interface RedisEvent {
         override var quizBody: String,
         override var quizType: QuizType,
         override var choiceList: List<QuizChoiceRedisEntity>,
+        override var quizNumber: Int,
         override val sessionId: String,
-    ) : AbstractQuizRedisEvent<QuizChoiceRedisEntity>(quizId, quizBody, quizType, choiceList) {
+    ) : AbstractQuizRedisEvent<QuizChoiceRedisEntity>(quizId, quizBody, quizType, choiceList, quizNumber) {
         override val eventType: EventType = EventType.EVENT_TYPE_PRE_QUIZ
     }
 
@@ -96,8 +101,9 @@ interface RedisEvent {
         override var quizBody: String,
         override var quizType: QuizType,
         override var choiceList: List<QuizChoiceWithResultRedisEntity>,
+        override var quizNumber: Int,
         override val sessionId: String,
-    ) : AbstractQuizRedisEvent<QuizChoiceWithResultRedisEntity>(quizId, quizBody, quizType, choiceList) {
+    ) : AbstractQuizRedisEvent<QuizChoiceWithResultRedisEntity>(quizId, quizBody, quizType, choiceList, quizNumber) {
         override val eventType: EventType = EventType.EVENT_TYPE_QUIZ_RESULT
     }
 
@@ -168,5 +174,6 @@ interface RedisEvent {
         open var quizBody: String,
         open var quizType: QuizType,
         open var choiceList: List<CHOICE>,
+        open var quizNumber: Int,
     ) : RedisEvent
 }

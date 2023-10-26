@@ -137,6 +137,7 @@ class StreamController(
                                         .setQuizId(redisEvent.quizId)
                                         .setBody(redisEvent.quizBody)
                                         .setQuizType(redisEvent.quizType)
+                                        .setQuizNumber(redisEvent.quizNumber)
                                         .addAllChoices(
                                             redisEvent.choiceList.map { choice ->
                                                 StreamEventResponse.Quiz.Choice.newBuilder().let { choiceBuilder ->
