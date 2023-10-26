@@ -138,6 +138,9 @@ class SessionService(
 
         sessionRepository.update(session.clone().apply { state = nextState }).getOrThrowService()
 
+        val quizNumber = sessionQuizRepository.listBySession(session).getOrThrowService()
+            .count { it.second.isCompleted } + 1
+
         redisEventService.publish(
             RedisEvent.QuizTimeUp(
                 quiz.id.toString(),
@@ -146,6 +149,7 @@ class SessionService(
                 choiceList.map {
                     QuizChoiceRedisEntity(it.id.toString(), it.body)
                 },
+                quizNumber,
                 session.id.toString(),
             ),
         )
@@ -172,6 +176,9 @@ class SessionService(
             },
         ).getOrThrowService()
 
+        val quizNumber = sessionQuizRepository.listBySession(session).getOrThrowService()
+            .count { it.second.isCompleted } + 1
+
         redisEventService.publish(
             RedisEvent.PreQuiz(
                 quiz.id.toString(),
@@ -180,6 +187,7 @@ class SessionService(
                 choiceList.map {
                     QuizChoiceRedisEntity(it.id.toString(), it.body)
                 },
+                quizNumber,
                 session.id.toString(),
             ),
         )
@@ -197,6 +205,9 @@ class SessionService(
             },
         ).getOrThrowService()
 
+        val quizNumber = sessionQuizRepository.listBySession(session).getOrThrowService()
+            .count { it.second.isCompleted } + 1
+
         redisEventService.publish(
             RedisEvent.ShowQuiz(
                 quiz.id.toString(),
@@ -205,6 +216,7 @@ class SessionService(
                 choiceList.map {
                     QuizChoiceRedisEntity(it.id.toString(), it.body)
                 },
+                quizNumber,
                 session.id.toString(),
             ),
         )
@@ -222,6 +234,9 @@ class SessionService(
             },
         ).getOrThrowService()
 
+        val quizNumber = sessionQuizRepository.listBySession(session).getOrThrowService()
+            .count { it.second.isCompleted } + 1
+
         redisEventService.publish(
             RedisEvent.StartQuiz(
                 quiz.id.toString(),
@@ -230,6 +245,7 @@ class SessionService(
                 choiceList.map {
                     QuizChoiceRedisEntity(it.id.toString(), it.body)
                 },
+                quizNumber,
                 sessionId.toString(),
             ),
         )
@@ -252,6 +268,10 @@ class SessionService(
 
         val redisEvent = when (quizResultType) {
             QuizResultType.VOTE_LIST -> {
+
+                val quizNumber = sessionQuizRepository.listBySession(session).getOrThrowService()
+                    .count { it.second.isCompleted } + 1
+
                 RedisEvent.QuizAnswerList(
                     quiz.id.toString(),
                     quiz.body,
@@ -263,12 +283,17 @@ class SessionService(
                             participantAnswerList.count { participantAnswer -> participantAnswer.answer == it.id.toString() },
                         )
                     },
+                    quizNumber,
                     session.id.toString(),
                 )
             }
 
             QuizResultType.RESULT -> {
                 sessionQuizRepository.update(sessionQuiz.clone().apply { isCompleted = true }).getOrThrowService()
+
+                val quizNumber = sessionQuizRepository.listBySession(session).getOrThrowService()
+                    .count { it.second.isCompleted }
+
                 RedisEvent.QuizResult(
                     quiz.id.toString(),
                     quiz.body,
@@ -281,11 +306,14 @@ class SessionService(
                             quiz.getCorrectAnswer(objectMapper).choiceIdList.contains(it.id.toString()),
                         )
                     },
+                    quizNumber,
                     session.id.toString(),
                 )
             }
 
             QuizResultType.FASTEST_RANKING -> {
+                sessionQuizRepository.update(sessionQuiz.clone().apply { isCompleted = true }).getOrThrowService()
+
                 RedisEvent.QuizSpeedRanking(
                     participantAnswerList
                         .filter { quiz.getCorrectAnswer(objectMapper).choiceIdList.contains(it.answer) }
