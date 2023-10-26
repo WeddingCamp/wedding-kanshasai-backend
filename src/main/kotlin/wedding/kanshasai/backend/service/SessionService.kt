@@ -78,12 +78,14 @@ class SessionService(
         }
 
         sessionRepository.update(session.clone().apply { currentIntroductionId = introductionId }).getOrThrowService()
-        redisEventService.publish(RedisEvent.Introduction(
-            introductionId,
-            introductionId <= 1,
-            introductionId >= MAX_INTRODUCTION_ID,
-            sessionId.toString()
-        ))
+        redisEventService.publish(
+            RedisEvent.Introduction(
+                introductionId,
+                introductionId <= 1,
+                introductionId >= MAX_INTRODUCTION_ID,
+                sessionId.toString(),
+            ),
+        )
     }
 
     fun backIntroduction(sessionId: UlidId) {
@@ -100,12 +102,14 @@ class SessionService(
         }
 
         sessionRepository.update(session.clone().apply { currentIntroductionId = introductionId }).getOrThrowService()
-        redisEventService.publish(RedisEvent.Introduction(
-            introductionId,
-            introductionId <= 1,
-            introductionId >= MAX_INTRODUCTION_ID,
-            sessionId.toString()
-        ))
+        redisEventService.publish(
+            RedisEvent.Introduction(
+                introductionId,
+                introductionId <= 1,
+                introductionId >= MAX_INTRODUCTION_ID,
+                sessionId.toString(),
+            ),
+        )
     }
 
     fun finishIntroduction(sessionId: UlidId) {
