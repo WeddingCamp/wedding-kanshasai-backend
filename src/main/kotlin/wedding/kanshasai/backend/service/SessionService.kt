@@ -259,13 +259,6 @@ class SessionService(
         val (quiz, choiceList, sessionQuiz) = session.getCurrentQuiz()
         val participantAnswerList = participantAnswerRepository.listBySessionQuiz(sessionQuiz).getOrThrowService()
 
-        sessionRepository.update(
-            session.clone().apply {
-                state = nextState
-                currentQuizResult = quizResultType
-            },
-        ).getOrThrowService()
-
         val redisEvent = when (quizResultType) {
             QuizResultType.VOTE_LIST -> {
                 val quizNumber = sessionQuizRepository.listBySession(session).getOrThrowService()
@@ -288,6 +281,13 @@ class SessionService(
             }
 
             QuizResultType.RESULT -> {
+                sessionRepository.update(
+                    session.clone().apply {
+                        state = nextState
+                        currentQuizResult = quizResultType
+                    },
+                ).getOrThrowService()
+
                 sessionQuizRepository.update(sessionQuiz.clone().apply { isCompleted = true }).getOrThrowService()
 
                 val quizNumber = sessionQuizRepository.listBySession(session).getOrThrowService()
@@ -311,6 +311,13 @@ class SessionService(
             }
 
             QuizResultType.FASTEST_RANKING -> {
+                sessionRepository.update(
+                    session.clone().apply {
+                        state = nextState
+                        currentQuizResult = quizResultType
+                    },
+                ).getOrThrowService()
+
                 sessionQuizRepository.update(sessionQuiz.clone().apply { isCompleted = true }).getOrThrowService()
 
                 RedisEvent.QuizSpeedRanking(
