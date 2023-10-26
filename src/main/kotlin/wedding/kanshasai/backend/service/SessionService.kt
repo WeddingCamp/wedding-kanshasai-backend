@@ -598,6 +598,11 @@ class SessionService(
         redisEventService.publishState(session.state, nextState, session.id)
     }
 
+    fun getCurrentQuiz(sessionId: UlidId): Triple<Quiz, List<Choice>, SessionQuiz> {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+        return session.getCurrentQuiz()
+    }
+
     fun Session.getCurrentQuiz(): Triple<Quiz, List<Choice>, SessionQuiz> {
         val quizId = this.currentQuizId
         if (quizId == null) {

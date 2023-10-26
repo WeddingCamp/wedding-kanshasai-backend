@@ -1,5 +1,6 @@
 package wedding.kanshasai.backend.controller.grpc
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -22,6 +23,7 @@ class StreamController(
     private val s3Service: S3Service,
     private val grpcTool: GrpcTool,
     private val redisEventService: RedisEventService,
+    private val objectMapper: ObjectMapper,
 ) : StreamServiceGrpcKt.StreamServiceCoroutineImplBase() {
 
     val map = mapOf(
@@ -83,16 +85,59 @@ class StreamController(
             sessionService.findById(sessionId)
         }
 
-        StreamEventResponse.newBuilder()
-            .setEventType(EventType.EVENT_TYPE_CURRENT_STATE)
-            .setSessionState(
-                StreamEventResponse.SessionState.newBuilder()
-                    .setSessionState(session.state.toString())
-                    .setSimpleSessionState(session.state.toSimpleSessionState())
-                    .build(),
-            )
-            .build()
-            .let(::trySend)
+        if(participant != null) {
+            StreamEventResponse.newBuilder()
+                .setEventType(EventType.EVENT_TYPE_CURRENT_STATE)
+                .setSessionState(
+                    StreamEventResponse.SessionState.newBuilder()
+                        .setSessionState(session.state.toString())
+                        .setSimpleSessionState(session.state.toSimpleSessionState())
+                        .build(),
+                )
+                .apply {
+                    if (
+                        session.state == SessionState.QUIZ_WAITING ||
+                        session.state == SessionState.QUIZ_SHOWING ||
+                        session.state == SessionState.QUIZ_PLAYING ||
+                        session.state == SessionState.QUIZ_CLOSED ||
+                        session.state == SessionState.QUIZ_RESULT
+                    ) {
+                        val currentQuiz = sessionService.getCurrentQuiz(session.id)
+                        quiz = this.quizBuilder
+                            .setQuizId(currentQuiz.first.id.toString())
+                            .setBody(currentQuiz.first.body)
+                            .setQuizType(currentQuiz.first.type.toGrpcType())
+                            .addAllChoices(
+                                currentQuiz.second.map { choice ->
+                                    StreamEventResponse.Quiz.Choice.newBuilder().let { choiceBuilder ->
+                                        choiceBuilder.choiceId = choice.id.toString()
+                                        choiceBuilder.body = choice.body
+                                        choiceBuilder.isSelectedChoice = participantAnswerService.getAnswer(
+                                            participant.id,
+                                            currentQuiz.first.id
+                                        ).getOrNull()?.answer == choice.id.toString()
+
+                                        if (session.state == SessionState.QUIZ_RESULT) {
+                                            choiceBuilder.isCorrectChoice = currentQuiz.first
+                                                .getCorrectAnswer(objectMapper)
+                                                .choiceIdList
+                                                .contains(choice.id.toString())
+                                        }
+                                        choiceBuilder.build()
+                                    }
+                                },
+                            )
+                            .apply {
+                                if (session.state == SessionState.QUIZ_PLAYING) {
+                                    elapsedTime = 0f // TODO: DBに開始時刻を記録して、計算する
+                                }
+                            }
+                            .build()
+                    }
+                }
+                .build()
+                .let(::trySend)
+            }
 
         if (session.state == SessionState.INTRODUCTION) {
             StreamEventResponse.newBuilder()
