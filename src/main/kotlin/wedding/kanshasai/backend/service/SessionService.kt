@@ -86,10 +86,24 @@ class SessionService(
         if (session.state != SessionState.QUIZ_PLAYING) {
             throw InvalidStateException("Session state is not QUIZ_PLAYING.")
         }
+        val quizId = session.currentQuizId ?: throw InvalidStateException("Current quiz is not set.")
         val nextState = session.state.next(SessionState.QUIZ_CLOSED).getOrThrowService()
+        val quiz = quizRepository.findById(quizId).getOrThrowService()
+        val choiceList = choiceRepository.listByQuiz(quiz).getOrThrowService()
 
         sessionRepository.update(session.clone().apply { state = nextState }).getOrThrowService()
 
+        redisEventService.publish(
+            RedisEvent.QuizTimeUp(
+                quiz.id.toString(),
+                quiz.body,
+                quiz.type.toGrpcType(),
+                choiceList.map {
+                    QuizChoiceRedisEntity(it.id.toString(), it.body)
+                },
+                session.id.toString(),
+            ),
+        )
         redisEventService.publishState(session.state, nextState, session.id)
     }
 
