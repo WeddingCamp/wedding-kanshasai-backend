@@ -6,10 +6,7 @@ import org.springframework.stereotype.Service
 import wedding.kanshasai.backend.domain.entity.*
 import wedding.kanshasai.backend.domain.exception.InvalidStateException
 import wedding.kanshasai.backend.domain.manager.ResultStateManager
-import wedding.kanshasai.backend.domain.state.RankStateMachine
-import wedding.kanshasai.backend.domain.state.ResultRankStateMachine
-import wedding.kanshasai.backend.domain.state.ResultStateMachine
-import wedding.kanshasai.backend.domain.state.SessionState
+import wedding.kanshasai.backend.domain.state.*
 import wedding.kanshasai.backend.domain.value.*
 import wedding.kanshasai.backend.infra.mysql.repository.*
 import wedding.kanshasai.backend.infra.redis.entity.*
@@ -399,15 +396,57 @@ class SessionService(
 
         val redisEvent = when (session.state) {
             SessionState.INTERIM_ANNOUNCEMENT -> {
-                // TODO: ランキング遷移を実装する
-                val nextState = SessionState.QUIZ_WAITING
+                val newRankState = InterimRankStateMachine.of(session.resultState.rankStateMachine.value).next()
+                    .getOrElse {
+                        // 結果発表終了
+                        val nextState = SessionState.QUIZ_WAITING
+                        sessionRepository.update(
+                            session.clone().apply {
+                                state = nextState
+                            },
+                        ).getOrThrowService()
+                        redisEventService.publishState(session.state, nextState, session.id)
+                        return
+                    }
+
                 sessionRepository.update(
                     session.clone().apply {
-                        state = nextState
+                        resultState = ResultStateManager.of(
+                            session.resultState.resultStateMachine,
+                            session.resultState.resultRankStateMachine,
+                            newRankState,
+                        )
                     },
                 ).getOrThrowService()
-                redisEventService.publishState(session.state, nextState, session.id)
-                return // TODO: 一時的なreturn
+
+                // スコア一覧を取得し、表示したい10件を取得する
+                val resultList = participantRepository
+                    .listBySessionWithResult(session)
+                    .getOrThrowService()
+
+                val filteredResultList = resultList
+                    .sortedBy { it.second.rank }
+                    .subList(
+                        newRankState.value - 1,
+                        (newRankState.value + 10 - 1).coerceAtMost(resultList.size - 1),
+                    )
+
+                RedisEvent.ShowResultRanking(
+                    filteredResultList.map {
+                        ParticipantSessionScoreRedisEntity(
+                            it.first.name,
+                            it.second.score,
+                            false,
+                            it.second.rank,
+                            it.second.time,
+                        )
+                    },
+                    0,
+                    10,
+                    ResultRankingType.RESULT_RANKING_TYPE_RANK,
+                    newRankState.value != 1,
+                    sessionId.toString(),
+                )
             }
             SessionState.FINAL_RESULT_ANNOUNCEMENT -> {
                 val newResultState = session.resultState.next().getOrElse {
