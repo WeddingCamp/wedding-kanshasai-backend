@@ -459,7 +459,7 @@ class SessionService(
                                     (newResultState.rankStateMachine.value + 10 - 1).coerceAtMost(resultList.size - 1),
                                 ).map {
                                     if (it.third == RankType.BOOBY || it.third == RankType.JUST) {
-                                        it.first.name = "??????"
+                                        it.first.name = "？？？"
                                     }
                                     it
                                 }
