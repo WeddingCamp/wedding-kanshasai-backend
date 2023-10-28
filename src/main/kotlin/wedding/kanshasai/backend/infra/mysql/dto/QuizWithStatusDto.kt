@@ -14,6 +14,7 @@ data class QuizWithStatusDto(
     override var correctAnswer: String = "",
     override var type: Int = 0,
     override var isCompleted: Boolean = false,
+    override var sessionQuizCorrectAnswer: String? = null,
     override var startedAt: Timestamp? = null,
     override var isDeleted: Boolean = false,
     override var createdAt: Timestamp = Timestamp(0),
@@ -37,6 +38,7 @@ data class QuizWithStatusDto(
         if (type != other.type) return false
         if (isCompleted != other.isCompleted) return false
         if (startedAt != other.startedAt) return false
+        if (sessionQuizCorrectAnswer != other.sessionQuizCorrectAnswer) return false
         if (isDeleted != other.isDeleted) return false
 
         return true

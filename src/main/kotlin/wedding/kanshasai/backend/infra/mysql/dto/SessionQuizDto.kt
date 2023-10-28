@@ -8,6 +8,7 @@ data class SessionQuizDto(
     override var sessionQuizIdentifier: SessionQuizIdentifier = SessionQuizIdentifier(),
     override var isCompleted: Boolean = false,
     override var startedAt: Timestamp? = null,
+    override var sessionQuizCorrectAnswer: String? = null,
     override var isDeleted: Boolean = false,
     override var createdAt: Timestamp = Timestamp(0),
     override var updatedAt: Timestamp = Timestamp(0),
@@ -31,6 +32,7 @@ data class SessionQuizDto(
         if (sessionQuizIdentifier != other.sessionQuizIdentifier) return false
         if (isCompleted != other.isCompleted) return false
         if (startedAt != other.startedAt) return false
+        if (sessionQuizCorrectAnswer != other.sessionQuizCorrectAnswer) return false
         if (isDeleted != other.isDeleted) return false
 
         return true

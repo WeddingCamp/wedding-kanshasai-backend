@@ -1,6 +1,5 @@
 package wedding.kanshasai.backend.controller.grpc
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -23,7 +22,6 @@ class StreamController(
     private val s3Service: S3Service,
     private val grpcTool: GrpcTool,
     private val redisEventService: RedisEventService,
-    private val objectMapper: ObjectMapper,
 ) : StreamServiceGrpcKt.StreamServiceCoroutineImplBase() {
 
     val map = mapOf(
@@ -125,9 +123,7 @@ class StreamController(
 
                                             if (session.state == SessionState.QUIZ_RESULT) {
                                                 choiceBuilder.isCorrectChoice = currentQuiz.first
-                                                    .getCorrectAnswer(objectMapper)
-                                                    .choiceIdList
-                                                    .contains(choice.id.toString())
+                                                    .isCorrectAnswer(currentQuiz.third, choice.id.toString())
                                             }
                                             choiceBuilder.build()
                                         }

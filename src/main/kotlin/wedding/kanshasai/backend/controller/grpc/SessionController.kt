@@ -173,7 +173,13 @@ class SessionController(
     }
 
     override suspend fun setQuizAnswer(request: SetQuizAnswerRequest): SetQuizAnswerResponse {
-        TODO("NOT IMPLEMENTED")
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+        val quizId = grpcTool.parseUlidId(request.quizId, "quizId")
+        if (request.correctAnswer.isNullOrEmpty()) throw InvalidArgumentException.requiredField("correctAnswer")
+
+        sessionService.setQuizAnswer(sessionId, quizId, request.correctAnswer)
+
+        return SetQuizAnswerResponse.newBuilder().build()
     }
 
     override suspend fun showBackSessionResultRanking(request: ShowBackSessionResultRankingRequest): ShowBackSessionResultRankingResponse {

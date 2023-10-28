@@ -24,13 +24,12 @@ private val logger = KotlinLogging.logger {}
 class RedisEventService(
     private val redisTemplate: RedisTemplate<String, RedisEvent>,
     private val redisListenerContainer: ReactiveRedisMessageListenerContainer,
-    private val objectMapper: ObjectMapper,
     private val s3Service: S3Service,
 ) {
     fun <T : RedisEvent> subscribe(eventType: KClass<out T>, sessionId: UlidId): Flow<T> = callbackFlow {
         logger.debug { "Subscribe message: ${eventType.simpleName}" }
         val subscription = redisListenerContainer.receive(ChannelTopic("$sessionId-${eventType.simpleName}")).subscribe { event ->
-            Jackson2JsonRedisSerializer(objectMapper, eventType.java).deserialize(event.message.toByteArray())?.let {
+            Jackson2JsonRedisSerializer(ObjectMapper(), eventType.java).deserialize(event.message.toByteArray())?.let {
                 logger.debug { "Received message(${event.channel}): $it" }
                 trySend(it)
             }

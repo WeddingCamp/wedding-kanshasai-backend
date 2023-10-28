@@ -8,6 +8,7 @@
             quiz_id,
             is_completed,
             started_at,
+            correct_answer,
             is_deleted
         )
         VALUES (
@@ -15,6 +16,7 @@
             #{entity.identifier.quizId},
             #{entity.isCompleted},
             #{entity.startedAt},
+            #{entity.sessionQuizCorrectAnswer},
             #{entity.isDeleted}
         )
     </insert>
@@ -25,6 +27,7 @@
             quiz_id,
             is_completed,
             started_at,
+            correct_answer,
             is_deleted
         )
         VALUES
@@ -34,6 +37,7 @@
                 #{entity.identifier.quizId},
                 #{entity.isCompleted},
                 #{entity.startedAt},
+                #{entity.sessionQuizCorrectAnswer},
                 #{entity.isDeleted}
             )
         </foreach>
@@ -69,6 +73,7 @@
         SET
             is_completed = #{entity.isCompleted},
             started_at = #{entity.startedAt},
+            correct_answer = #{entity.sessionQuizCorrectAnswer},
             is_deleted = #{entity.isDeleted}
         WHERE
             session_id = #{entity.identifier.sessionId}
@@ -100,6 +105,7 @@
             q.type,
             sq.session_id,
             sq.is_completed,
+            sq.correct_answer as sq_correct_answer,
             sq.started_at
         FROM
             quizzes q
@@ -120,6 +126,7 @@
         <id property="quizId" column="quiz_id"/>
         <result property="isCompleted" column="is_completed"/>
         <result property="startedAt" column="started_at"/>
+        <result property="sessionQuizCorrectAnswer" column="correct_answer"/>
         <result property="isDeleted" column="is_deleted"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
@@ -135,6 +142,7 @@
         <result property="type" column="type"/>
         <result property="isCompleted" column="is_completed"/>
         <result property="startedAt" column="started_at"/>
+        <result property="sessionQuizCorrectAnswer" column="sq_correct_answer"/>
         <result property="isDeleted" column="is_deleted"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
