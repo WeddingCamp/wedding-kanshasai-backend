@@ -428,7 +428,7 @@ class SessionService(
                     .sortedBy { it.second.rank }
                     .subList(
                         newRankState.value - 1,
-                        (newRankState.value + 10 - 1).coerceAtMost(resultList.size - 1),
+                        (newRankState.value + 10 - 1).coerceAtMost(resultList.size),
                     )
 
                 RedisEvent.ShowResultRanking(
@@ -483,7 +483,7 @@ class SessionService(
                                     it.first,
                                     it.second,
                                     when (it.second.rank) {
-                                        resultList.size - 1 - 1 -> RankType.BOOBY
+                                        resultList.size - 1 -> RankType.BOOBY
                                         justRank -> RankType.JUST
                                         else -> RankType.NORMAL
                                     },
@@ -495,7 +495,7 @@ class SessionService(
                                 // インデックスが0から始まるので、-1する
                                 filteredResultList.subList(
                                     newResultState.rankStateMachine.value - 1,
-                                    (newResultState.rankStateMachine.value + 10 - 1).coerceAtMost(resultList.size - 1),
+                                    (newResultState.rankStateMachine.value + 10 - 1).coerceAtMost(resultList.size),
                                 ).map {
                                     if (it.third == RankType.BOOBY || it.third == RankType.JUST) {
                                         it.first.name = "？？？"
