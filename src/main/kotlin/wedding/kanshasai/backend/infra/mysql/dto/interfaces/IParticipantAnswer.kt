@@ -8,6 +8,7 @@ interface IParticipantAnswer {
     var answer: String
     var time: Float
     var isDeleted: Boolean
+    var isCorrect: Boolean
     var createdAt: Timestamp
     var updatedAt: Timestamp
 }

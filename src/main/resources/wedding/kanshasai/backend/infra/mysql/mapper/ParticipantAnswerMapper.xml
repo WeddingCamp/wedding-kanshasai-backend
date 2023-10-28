@@ -9,6 +9,7 @@
             quiz_id,
             answer,
             time,
+            is_correct,
             is_deleted
         )
         VALUES (
@@ -17,6 +18,7 @@
             #{entity.identifier.sessionQuizIdentifier.quizId},
             #{entity.answer},
             #{entity.time},
+            #{entity.isCorrect}
             #{entity.isDeleted}
         )
     </insert>
@@ -28,6 +30,7 @@
             quiz_id,
             answer,
             time,
+            is_correct,
             is_deleted
         )
         VALUES
@@ -38,6 +41,7 @@
                 #{entity.identifier.sessionQuizIdentifier.quizId},
                 #{entity.answer},
                 #{entity.time},
+                #{entity.isCorrect}
                 #{entity.isDeleted}
             )
         </foreach>
@@ -75,6 +79,7 @@
         SET
             answer = #{entity.answer},
             time = #{entity.time},
+            is_correct = #{entity.isCorrect},
             is_deleted = #{entity.isDeleted}
         WHERE
             participant_id = #{entity.identifier.participantId}
@@ -132,6 +137,7 @@
         <result property="answer" column="answer"/>
         <result property="time" column="time"/>
         <result property="isDeleted" column="is_deleted"/>
+        <result property="isCorrect" column="is_correct"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
         <association property="identifier" resultMap="participantAnswerIdentifier"/>
