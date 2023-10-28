@@ -134,7 +134,7 @@ class StreamController(
                                 .apply {
                                     if (session.state == SessionState.QUIZ_PLAYING) {
                                         val startAt = currentQuiz.third.startedAt?.time
-                                        elapsedTime = if(startAt == null) {
+                                        elapsedTime = if (startAt == null) {
                                             0f
                                         } else {
                                             val diffMillis = Timestamp.from(Date().toInstant()).time - startAt
