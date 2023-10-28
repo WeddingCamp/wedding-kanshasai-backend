@@ -207,6 +207,7 @@ class StreamController(
                                                         choiceBuilder.count = choice.count
                                                     }
                                                     if (choice is QuizChoiceWithResultRedisEntity) {
+                                                        choiceBuilder.count = choice.count
                                                         choiceBuilder.isCorrectChoice = choice.correctChoice
                                                     }
                                                     choiceBuilder.build()
