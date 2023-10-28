@@ -646,9 +646,9 @@ class SessionService(
         redisEventService.publishState(session.state, nextState, session.id)
     }
 
-    fun getCurrentQuiz(sessionId: UlidId): Triple<Quiz, List<Choice>, SessionQuiz> {
+    fun getCurrentQuiz(sessionId: UlidId): Result<Triple<Quiz, List<Choice>, SessionQuiz>> = runCatching {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
-        return session.getCurrentQuiz()
+        session.getCurrentQuiz()
     }
 
     fun Session.getCurrentQuiz(): Triple<Quiz, List<Choice>, SessionQuiz> {
