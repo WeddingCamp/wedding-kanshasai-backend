@@ -89,6 +89,8 @@ class StreamController(
             sessionService.findById(sessionId)
         }
 
+        val eventList = map[request.type] ?: throw InvalidArgumentException.requiredField("type")
+
         if (participant != null) {
             StreamEventResponse.newBuilder()
                 .setEventType(EventType.EVENT_TYPE_FULL_CURRENT_STATE)
@@ -141,6 +143,17 @@ class StreamController(
                 }
                 .build()
                 .let(::trySend)
+        } else if (eventList.contains(RedisEvent.CurrentState::class)) {
+            StreamEventResponse.newBuilder()
+                .setEventType(EventType.EVENT_TYPE_CURRENT_STATE)
+                .setSessionState(
+                    StreamEventResponse.SessionState.newBuilder()
+                        .setSessionState(session.state.toString())
+                        .setSimpleSessionState(session.state.toSimpleSessionState())
+                        .build(),
+                )
+                .build()
+                .let(::trySend)
         }
 
         if (session.state == SessionState.INTRODUCTION) {
@@ -154,8 +167,6 @@ class StreamController(
                 .build()
                 .let(::trySend)
         }
-
-        val eventList = map[request.type] ?: throw InvalidArgumentException.requiredField("type")
 
         eventList.forEach {
             launch {

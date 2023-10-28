@@ -1,6 +1,5 @@
 package wedding.kanshasai.backend.controller.grpc
 
-import com.amazonaws.HttpMethod
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.service.S3Service
