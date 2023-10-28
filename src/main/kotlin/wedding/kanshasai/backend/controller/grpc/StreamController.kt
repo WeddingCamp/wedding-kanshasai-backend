@@ -117,7 +117,7 @@ class StreamController(
                                     currentQuiz.second.map { choice ->
                                         StreamEventResponse.Quiz.Choice.newBuilder().let { choiceBuilder ->
                                             choiceBuilder.choiceId = choice.id.toString()
-                                            choiceBuilder.body = choice.body
+                                            choiceBuilder.body = redisEventService.parseBody(choice.body, currentQuiz.first.type)
                                             choiceBuilder.isSelectedChoice = participantAnswerService.getAnswer(
                                                 participant.id,
                                                 currentQuiz.first.id,

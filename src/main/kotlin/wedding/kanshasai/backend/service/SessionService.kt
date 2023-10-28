@@ -27,6 +27,7 @@ class SessionService(
     private val choiceRepository: ChoiceRepository,
     private val participantRepository: ParticipantRepository,
     private val participantAnswerRepository: ParticipantAnswerRepository,
+    private val s3Service: S3Service,
     private val objectMapper: ObjectMapper,
 ) {
     companion object {
@@ -182,7 +183,7 @@ class SessionService(
                 quiz.body,
                 quiz.type.toGrpcType(),
                 choiceList.map {
-                    QuizChoiceRedisEntity(it.id.toString(), it.body)
+                    QuizChoiceRedisEntity(it.id.toString(), redisEventService.parseBody(it.body, quiz.type))
                 },
                 quizNumber,
                 session.id.toString(),
@@ -211,7 +212,7 @@ class SessionService(
                 quiz.body,
                 quiz.type.toGrpcType(),
                 choiceList.map {
-                    QuizChoiceRedisEntity(it.id.toString(), it.body)
+                    QuizChoiceRedisEntity(it.id.toString(), redisEventService.parseBody(it.body, quiz.type))
                 },
                 quizNumber,
                 session.id.toString(),
@@ -240,7 +241,7 @@ class SessionService(
                 quiz.body,
                 quiz.type.toGrpcType(),
                 choiceList.map {
-                    QuizChoiceRedisEntity(it.id.toString(), it.body)
+                    QuizChoiceRedisEntity(it.id.toString(), redisEventService.parseBody(it.body, quiz.type))
                 },
                 quizNumber,
                 sessionId.toString(),
@@ -268,7 +269,7 @@ class SessionService(
                     choiceList.map {
                         QuizChoiceWithCountRedisEntity(
                             it.id.toString(),
-                            it.body,
+                            redisEventService.parseBody(it.body, quiz.type),
                             participantAnswerList.count { participantAnswer -> participantAnswer.answer == it.id.toString() },
                         )
                     },
@@ -298,7 +299,7 @@ class SessionService(
                     choiceList.map {
                         QuizChoiceWithResultRedisEntity(
                             it.id.toString(),
-                            it.body,
+                            redisEventService.parseBody(it.body, quiz.type),
                             participantAnswerList.count { participantAnswer -> participantAnswer.answer == it.id.toString() },
                             quiz.getCorrectAnswer(objectMapper).choiceIdList.contains(it.id.toString()),
                         )
