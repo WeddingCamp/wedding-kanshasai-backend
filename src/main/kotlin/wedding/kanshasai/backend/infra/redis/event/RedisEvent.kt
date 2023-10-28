@@ -84,6 +84,15 @@ interface RedisEvent {
     }
 
     @NoArg
+    data class FullCurrentState(
+        val simpleSessionState: SimpleSessionState,
+        val sessionState: String,
+        override val sessionId: String,
+    ) : RedisEvent {
+        override val eventType: EventType = EventType.EVENT_TYPE_FULL_CURRENT_STATE
+    }
+
+    @NoArg
     data class PreQuiz(
         override var quizId: String,
         override var quizBody: String,
@@ -166,6 +175,13 @@ interface RedisEvent {
         override val sessionId: String,
     ) : RedisEvent {
         override val eventType: EventType = EventType.EVENT_TYPE_RESULT_PRESENT
+    }
+
+    @NoArg
+    data class Finish(
+        override val sessionId: String,
+    ) : RedisEvent {
+        override val eventType: EventType = EventType.EVENT_TYPE_FINISH
     }
 
     @NoArg

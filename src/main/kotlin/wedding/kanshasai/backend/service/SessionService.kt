@@ -410,6 +410,7 @@ class SessionService(
                             state = nextState
                         },
                     ).getOrThrowService()
+                    redisEventService.publish(RedisEvent.Finish(sessionId.toString()))
                     redisEventService.publishState(session.state, nextState, session.id)
                     return
                 }

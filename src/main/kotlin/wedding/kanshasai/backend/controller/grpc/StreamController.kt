@@ -41,6 +41,7 @@ class StreamController(
             RedisEvent.ShowResultRankingTitle::class,
             RedisEvent.ShowResultRanking::class,
             RedisEvent.ShowResultPresent::class,
+            RedisEvent.Finish::class
         ),
         StreamType.STREAM_TYPE_PARTICIPANT to listOf(
             RedisEvent.PreQuiz::class,
@@ -48,7 +49,8 @@ class StreamController(
             RedisEvent.StartQuiz::class,
             RedisEvent.QuizResult::class,
             RedisEvent.QuizTimeUp::class,
-            RedisEvent.CurrentState::class,
+            RedisEvent.FullCurrentState::class,
+            RedisEvent.Finish::class
         ),
         StreamType.STREAM_TYPE_MANAGER to listOf(
             RedisEvent.Cover::class,
@@ -66,6 +68,7 @@ class StreamController(
             RedisEvent.ShowResultRankingTitle::class,
             RedisEvent.ShowResultRanking::class,
             RedisEvent.ShowResultPresent::class,
+            RedisEvent.Finish::class
         ),
     )
 
@@ -87,7 +90,7 @@ class StreamController(
 
         if (participant != null) {
             StreamEventResponse.newBuilder()
-                .setEventType(EventType.EVENT_TYPE_CURRENT_STATE)
+                .setEventType(EventType.EVENT_TYPE_FULL_CURRENT_STATE)
                 .setSessionState(
                     StreamEventResponse.SessionState.newBuilder()
                         .setSessionState(session.state.toString())
