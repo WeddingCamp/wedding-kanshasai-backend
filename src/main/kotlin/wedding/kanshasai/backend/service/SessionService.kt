@@ -528,7 +528,7 @@ class SessionService(
                             preDisplayCount
                         } else {
                             when (newResultState.resultStateMachine.value) {
-                                ResultState.RANKING_NORMAL -> 10.coerceAtMost(scoreList.size - 1)
+                                ResultState.RANKING_NORMAL -> 10.coerceAtMost(scoreList.size)
                                 ResultState.RANKING_TOP_8 -> 3
                                 else -> preDisplayCount + 1
                             }
