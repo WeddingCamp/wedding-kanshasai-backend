@@ -7,5 +7,5 @@ data class ParticipantQuizTimeRedisEntity(
     var participantName: String,
     var participantImageId: String,
     var time: Float,
-    var rank: Int
+    var rank: Int,
 )
