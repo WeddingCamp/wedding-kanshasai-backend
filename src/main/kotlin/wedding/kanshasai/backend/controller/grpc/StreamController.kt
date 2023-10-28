@@ -36,6 +36,7 @@ class StreamController(
             RedisEvent.QuizAnswerList::class,
             RedisEvent.QuizResult::class,
             RedisEvent.QuizSpeedRanking::class,
+            RedisEvent.CancelQuiz::class,
             RedisEvent.CurrentState::class,
             RedisEvent.ShowResultTitle::class,
             RedisEvent.ShowResultRankingTitle::class,
@@ -49,6 +50,7 @@ class StreamController(
             RedisEvent.StartQuiz::class,
             RedisEvent.QuizResult::class,
             RedisEvent.QuizTimeUp::class,
+            RedisEvent.CancelQuiz::class,
             RedisEvent.FullCurrentState::class,
             RedisEvent.Finish::class,
         ),
@@ -62,6 +64,7 @@ class StreamController(
             RedisEvent.QuizResult::class,
             RedisEvent.QuizSpeedRanking::class,
             RedisEvent.QuizTimeUp::class,
+            RedisEvent.CancelQuiz::class,
             RedisEvent.CurrentState::class,
             RedisEvent.FullCurrentState::class,
             RedisEvent.UpdateParticipant::class,
@@ -241,6 +244,8 @@ class StreamController(
                                         )
                                         .build()
                                 }
+
+                                is RedisEvent.CancelQuiz -> {}
 
                                 is RedisEvent.CurrentState -> {
                                     sessionState = this.sessionStateBuilder
