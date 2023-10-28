@@ -8,8 +8,8 @@ data class ParticipantAnswerDto(
     override var participantAnswerIdentifier: ParticipantAnswerIdentifier = ParticipantAnswerIdentifier(),
     override var answer: String = "",
     override var time: Float = 9999f,
-    override var isDeleted: Boolean = false,
     override var isCorrect: Boolean = false,
+    override var isDeleted: Boolean = false,
     override var createdAt: Timestamp = Timestamp(0),
     override var updatedAt: Timestamp = Timestamp(0),
     @Deprecated("'participantId' is deprecated. Please use 'identifier.participantId' instead.")
@@ -34,8 +34,8 @@ data class ParticipantAnswerDto(
         if (participantAnswerIdentifier != other.participantAnswerIdentifier) return false
         if (answer != other.answer) return false
         if (time != other.time) return false
-        if (isDeleted != other.isDeleted) return false
         if (isCorrect != other.isCorrect) return false
+        if (isDeleted != other.isDeleted) return false
 
         return true
     }

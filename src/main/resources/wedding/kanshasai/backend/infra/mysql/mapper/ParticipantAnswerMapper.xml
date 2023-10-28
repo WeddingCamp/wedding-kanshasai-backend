@@ -18,7 +18,7 @@
             #{entity.identifier.sessionQuizIdentifier.quizId},
             #{entity.answer},
             #{entity.time},
-            #{entity.isCorrect}
+            #{entity.isCorrect},
             #{entity.isDeleted}
         )
     </insert>
@@ -41,7 +41,7 @@
                 #{entity.identifier.sessionQuizIdentifier.quizId},
                 #{entity.answer},
                 #{entity.time},
-                #{entity.isCorrect}
+                #{entity.isCorrect},
                 #{entity.isDeleted}
             )
         </foreach>
@@ -136,8 +136,8 @@
         <id property="quizId" column="quiz_id"/>
         <result property="answer" column="answer"/>
         <result property="time" column="time"/>
-        <result property="isDeleted" column="is_deleted"/>
         <result property="isCorrect" column="is_correct"/>
+        <result property="isDeleted" column="is_deleted"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
         <association property="identifier" resultMap="participantAnswerIdentifier"/>
