@@ -13,6 +13,8 @@ import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceWithResultRedisEnt
 import wedding.kanshasai.backend.infra.redis.event.*
 import wedding.kanshasai.backend.service.*
 import wedding.kanshasai.v1.*
+import java.sql.Timestamp
+import java.util.*
 
 @GrpcService
 class StreamController(
@@ -131,7 +133,13 @@ class StreamController(
                                 )
                                 .apply {
                                     if (session.state == SessionState.QUIZ_PLAYING) {
-                                        elapsedTime = 0f // TODO: DBに開始時刻を記録して、計算する
+                                        val startAt = currentQuiz.third.startedAt?.time
+                                        elapsedTime = if (startAt == null) {
+                                            0f
+                                        } else {
+                                            val diffMillis = Timestamp.from(Date().toInstant()).time - startAt
+                                            (diffMillis / 1000).toFloat()
+                                        }
                                     }
                                 }
                                 .build()

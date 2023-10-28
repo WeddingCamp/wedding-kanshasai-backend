@@ -13,6 +13,8 @@ import wedding.kanshasai.backend.infra.redis.event.*
 import wedding.kanshasai.v1.ResultPresentType
 import wedding.kanshasai.v1.ResultRankingType
 import wedding.kanshasai.v1.ResultTitleType
+import java.sql.Timestamp
+import java.util.Date
 
 private val logger = KotlinLogging.logger {}
 
@@ -220,11 +222,17 @@ class SessionService(
     fun startQuiz(sessionId: UlidId) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
         val nextState = session.state.next(SessionState.QUIZ_PLAYING).getOrThrowService()
-        val (quiz, choiceList) = session.getCurrentQuiz()
+        val (quiz, choiceList, sessionQuiz) = session.getCurrentQuiz()
 
         sessionRepository.update(
             session.clone().apply {
                 state = nextState
+            },
+        ).getOrThrowService()
+
+        sessionQuizRepository.update(
+            sessionQuiz.clone().apply {
+                startedAt = Timestamp.from(Date().toInstant())
             },
         ).getOrThrowService()
 
