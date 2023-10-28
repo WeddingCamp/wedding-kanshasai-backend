@@ -1,6 +1,5 @@
 package wedding.kanshasai.backend.infra.mysql.dto
 
-import wedding.kanshasai.backend.domain.entity.SessionQuiz
 import wedding.kanshasai.backend.infra.mysql.dto.identifier.SessionQuizIdentifier
 import wedding.kanshasai.backend.infra.mysql.dto.identifier.StandardIdentifier
 import wedding.kanshasai.backend.infra.mysql.dto.interfaces.IQuiz
