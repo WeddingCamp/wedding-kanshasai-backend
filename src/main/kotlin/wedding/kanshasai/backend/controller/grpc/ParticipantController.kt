@@ -25,7 +25,17 @@ class ParticipantController(
     }
 
     override suspend fun getParticipant(request: GetParticipantRequest): GetParticipantResponse {
-        TODO("NOT IMPLEMENTED")
+        val participantId = grpcTool.parseUlidId(request.participantId, "participantId")
+        val participant = participantService.findById(participantId)
+
+        return GetParticipantResponse.newBuilder().let {
+            it.name = participant.name
+            it.participantId = participant.id.toString()
+            it.sessionId = participant.sessionId.toString()
+            it.imageUrl = s3Service.generatePresignedUrl(participant.imageId)
+            it.participantType = participant.type.toGrpcType()
+            it.build()
+        }
     }
 
     override suspend fun listParticipants(request: ListParticipantsRequest): ListParticipantsResponse {
