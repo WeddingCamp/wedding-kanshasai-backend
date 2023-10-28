@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.state.SessionState
+import wedding.kanshasai.backend.domain.value.QuizType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceWithCountRedisEntity
 import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceWithResultRedisEntity
@@ -117,7 +118,7 @@ class StreamController(
                                 currentQuiz.second.map { choice ->
                                     StreamEventResponse.Quiz.Choice.newBuilder().let { choiceBuilder ->
                                         choiceBuilder.choiceId = choice.id.toString()
-                                        choiceBuilder.body = choice.body
+                                        choiceBuilder.body = redisEventService.parseBody(choice.body, currentQuiz.first.type)
                                         choiceBuilder.isSelectedChoice = participantAnswerService.getAnswer(
                                             participant.id,
                                             currentQuiz.first.id,

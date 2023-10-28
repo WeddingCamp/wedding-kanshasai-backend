@@ -10,10 +10,15 @@ import org.springframework.data.redis.listener.ChannelTopic
 import org.springframework.data.redis.listener.ReactiveRedisMessageListenerContainer
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
 import org.springframework.stereotype.Service
+import wedding.kanshasai.backend.domain.entity.Choice
 import wedding.kanshasai.backend.domain.entity.Participant
 import wedding.kanshasai.backend.domain.state.SessionState
+import wedding.kanshasai.backend.domain.value.QuizType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.redis.entity.ParticipantRedisEntity
+import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceRedisEntity
+import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceWithCountRedisEntity
+import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceWithResultRedisEntity
 import wedding.kanshasai.backend.infra.redis.event.RedisEvent
 import kotlin.reflect.KClass
 
@@ -64,5 +69,10 @@ class RedisEventService(
             )
         }
         publish(RedisEvent.UpdateParticipant(list, sessionId.toString()))
+    }
+
+    fun parseBody(body: String, type: QuizType) = when (type) {
+        QuizType.SORT_IMAGE_QUIZ -> s3Service.generatePresignedUrl(body)
+        else -> body
     }
 }
