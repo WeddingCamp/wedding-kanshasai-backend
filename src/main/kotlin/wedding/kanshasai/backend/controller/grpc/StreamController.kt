@@ -227,6 +227,7 @@ class StreamController(
                                                         s3Service.generatePresignedUrl(participantQuizTime.participantImageId),
                                                     )
                                                     .setTime(participantQuizTime.time)
+                                                    .setRank(participantQuizTime.rank)
                                                     .build()
                                             },
                                         )

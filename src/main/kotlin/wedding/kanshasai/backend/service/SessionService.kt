@@ -320,12 +320,13 @@ class SessionService(
                     participantAnswerList
                         .filter { quiz.isCorrectAnswer(sessionQuiz, it.answer) }
                         .sortedBy { it.time }
-                        .map {
+                        .mapIndexed { index, it ->
                             val participant = participantRepository.findById(it.participantId).getOrThrowService()
                             ParticipantQuizTimeRedisEntity(
                                 participant.name,
                                 participant.imageId.toString(),
                                 it.time,
+                                index + 1,
                             )
                         },
                     session.id.toString(),
