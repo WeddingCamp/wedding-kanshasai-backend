@@ -40,6 +40,10 @@ class Quiz private constructor(
                 getCorrectAnswer().choiceIdList.contains(answer)
             }
 
+            QuizType.SORT_IMAGE_QUIZ -> {
+                getCorrectAnswer().choiceIdList.contains(answer)
+            }
+
             QuizType.REALTIME_FOUR_CHOICE_QUIZ -> {
                 sessionQuiz.getCorrectAnswer().choiceIdList.contains(answer)
             }
