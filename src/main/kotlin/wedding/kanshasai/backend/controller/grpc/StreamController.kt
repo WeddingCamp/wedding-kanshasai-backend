@@ -41,7 +41,7 @@ class StreamController(
             RedisEvent.ShowResultRankingTitle::class,
             RedisEvent.ShowResultRanking::class,
             RedisEvent.ShowResultPresent::class,
-            RedisEvent.Finish::class
+            RedisEvent.Finish::class,
         ),
         StreamType.STREAM_TYPE_PARTICIPANT to listOf(
             RedisEvent.PreQuiz::class,
@@ -50,7 +50,7 @@ class StreamController(
             RedisEvent.QuizResult::class,
             RedisEvent.QuizTimeUp::class,
             RedisEvent.FullCurrentState::class,
-            RedisEvent.Finish::class
+            RedisEvent.Finish::class,
         ),
         StreamType.STREAM_TYPE_MANAGER to listOf(
             RedisEvent.Cover::class,
@@ -68,7 +68,7 @@ class StreamController(
             RedisEvent.ShowResultRankingTitle::class,
             RedisEvent.ShowResultRanking::class,
             RedisEvent.ShowResultPresent::class,
-            RedisEvent.Finish::class
+            RedisEvent.Finish::class,
         ),
     )
 
