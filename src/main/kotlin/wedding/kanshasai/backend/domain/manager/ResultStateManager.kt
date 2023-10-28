@@ -1,16 +1,14 @@
 package wedding.kanshasai.backend.domain.manager
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import wedding.kanshasai.backend.domain.state.RankStateMachine
-import wedding.kanshasai.backend.domain.state.ResultRankStateMachine
-import wedding.kanshasai.backend.domain.state.ResultStateMachine
+import wedding.kanshasai.backend.domain.state.*
 import wedding.kanshasai.backend.domain.value.ResultState
 
 private val logger = KotlinLogging.logger {}
 
 class ResultStateManager private constructor(
     val resultStateMachine: ResultStateMachine,
-    val rankStateMachine: RankStateMachine,
+    val rankStateMachine: RankStateMachineInterface,
     val resultRankStateMachine: ResultRankStateMachine,
 ) {
     fun next() = runCatching {
@@ -110,7 +108,7 @@ class ResultStateManager private constructor(
         fun of(
             resultStateMachine: ResultStateMachine,
             resultRankStateMachine: ResultRankStateMachine,
-            rankStateMachine: RankStateMachine,
+            rankStateMachine: RankStateMachineInterface,
         ): ResultStateManager {
             var newResultStateMachine = resultStateMachine
             var newResultRankStateMachine = resultRankStateMachine

@@ -7,8 +7,8 @@ import wedding.kanshasai.backend.domain.exception.InvalidStateTransitionExceptio
  * Rankを管理するステートマシン
  * 機能的には一通り実装されているが、実際に使用するのは8位までを想定
  */
-class RankStateMachine private constructor(val value: Int) {
-    fun next() = runCatching {
+class RankStateMachine private constructor(override val value: Int) : RankStateMachineInterface {
+    override fun next() = runCatching {
         when {
             value == 1 -> throw InvalidStateTransitionException("Current state is last state")
             value <= 8 -> RankStateMachine(value - 1)
@@ -31,7 +31,7 @@ class RankStateMachine private constructor(val value: Int) {
         }
     }
 
-    fun back() = runCatching {
+    override fun back() = runCatching {
         when {
             value <= 7 -> RankStateMachine(value + 1)
             value <= 10 -> RankStateMachine(11)
