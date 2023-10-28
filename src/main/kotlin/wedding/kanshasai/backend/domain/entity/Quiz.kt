@@ -30,8 +30,24 @@ class Quiz private constructor(
         )
     }
 
-    fun getCorrectAnswer(objectMapper: ObjectMapper): GenericAnswer {
-        return Jackson2JsonRedisSerializer(objectMapper, GenericAnswer::class.java).deserialize(correctAnswer.toByteArray())
+    fun getCorrectAnswer(): GenericAnswer {
+        return Jackson2JsonRedisSerializer(ObjectMapper(), GenericAnswer::class.java).deserialize(correctAnswer.toByteArray())
+    }
+
+    fun isCorrectAnswer(sessionQuiz: SessionQuiz, answer: String): Boolean {
+        return when (type) {
+            QuizType.FOUR_CHOICES_QUIZ -> {
+                getCorrectAnswer().choiceIdList.contains(answer)
+            }
+
+            QuizType.REALTIME_FOUR_CHOICE_QUIZ -> {
+                sessionQuiz.getCorrectAnswer().choiceIdList.contains(answer)
+            }
+
+            else -> {
+                correctAnswer == answer
+            }
+        }
     }
 
     companion object {

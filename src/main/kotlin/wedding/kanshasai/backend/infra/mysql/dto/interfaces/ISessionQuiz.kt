@@ -7,6 +7,7 @@ interface ISessionQuiz {
     var sessionQuizIdentifier: SessionQuizIdentifier
     var isCompleted: Boolean
     var startedAt: Timestamp?
+    var sessionQuizCorrectAnswer: String?
     var isDeleted: Boolean
     var createdAt: Timestamp
     var updatedAt: Timestamp

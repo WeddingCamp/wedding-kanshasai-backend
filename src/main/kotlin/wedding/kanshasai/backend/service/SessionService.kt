@@ -1,6 +1,5 @@
 package wedding.kanshasai.backend.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 import wedding.kanshasai.backend.domain.entity.*
@@ -27,14 +26,11 @@ class SessionService(
     private val choiceRepository: ChoiceRepository,
     private val participantRepository: ParticipantRepository,
     private val participantAnswerRepository: ParticipantAnswerRepository,
-    private val s3Service: S3Service,
-    private val objectMapper: ObjectMapper,
 ) {
     companion object {
         const val MAX_INTRODUCTION_ID = 11
     }
     fun createSession(eventId: UlidId, name: String): Session {
-        // TODO: Transaction切る
         val event = eventRepository.findById(eventId).getOrThrowService()
         val quizList = quizRepository.listByEvent(event).getOrThrowService()
         val session = sessionRepository.createSession(event, name).getOrThrowService()
@@ -301,7 +297,7 @@ class SessionService(
                             it.id.toString(),
                             redisEventService.parseBody(it.body, quiz.type),
                             participantAnswerList.count { participantAnswer -> participantAnswer.answer == it.id.toString() },
-                            quiz.getCorrectAnswer(objectMapper).choiceIdList.contains(it.id.toString()),
+                            quiz.isCorrectAnswer(sessionQuiz, it.id.toString()),
                         )
                     },
                     quizNumber,
@@ -322,7 +318,7 @@ class SessionService(
                 redisEventService.publishState(currentState, nextState, session.id)
                 RedisEvent.QuizSpeedRanking(
                     participantAnswerList
-                        .filter { quiz.getCorrectAnswer(objectMapper).choiceIdList.contains(it.answer) }
+                        .filter { quiz.isCorrectAnswer(sessionQuiz, it.answer) }
                         .sortedBy { it.time }
                         .map {
                             val participant = participantRepository.findById(it.participantId).getOrThrowService()
@@ -645,6 +641,18 @@ class SessionService(
         ).getOrThrowService()
 
         redisEventService.publishState(session.state, nextState, session.id)
+    }
+
+    fun setQuizAnswer(sessionId: UlidId, quizId: UlidId, answer: String) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+        val quiz = quizRepository.findById(quizId).getOrThrowService()
+        val sessionQuiz = sessionQuizRepository.find(session, quiz).getOrThrowService()
+
+        sessionQuizRepository.update(
+            sessionQuiz.clone().also {
+                it.sessionQuizCorrectAnswer = answer
+            },
+        ).getOrThrowService()
     }
 
     fun getCurrentQuiz(sessionId: UlidId): Result<Triple<Quiz, List<Choice>, SessionQuiz>> = runCatching {

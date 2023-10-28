@@ -39,14 +39,9 @@ class RedisConfiguration(
         return RedisTemplate<String, RedisEvent>().also {
             it.connectionFactory = redisConnectionFactory()
             it.keySerializer = StringRedisSerializer()
-            it.valueSerializer = GenericJackson2JsonRedisSerializer(objectMapper())
+            it.valueSerializer = GenericJackson2JsonRedisSerializer(ObjectMapper())
             it.afterPropertiesSet()
         }
-    }
-
-    @Bean
-    fun objectMapper(): ObjectMapper {
-        return ObjectMapper()
     }
 
     @Bean
