@@ -14,7 +14,7 @@ class CommonController(
 ) : CommonServiceCoroutineImplBase() {
     override suspend fun generatePresignedUrl(request: GeneratePresignedUrlRequest): GeneratePresignedUrlResponse {
         val id = UlidId.new()
-        val url = s3Service.generatePresignedUrl(id, HttpMethod.PUT)
+        val url = s3Service.generatePresignedUrl(id)
         return GeneratePresignedUrlResponse.newBuilder()
             .setPresignedUrl(url)
             .setFileId(id.toString())
