@@ -108,7 +108,7 @@ class StreamController(
                         session.state == SessionState.QUIZ_CLOSED ||
                         session.state == SessionState.QUIZ_RESULT
                     ) {
-                        sessionService.getCurrentQuiz(session.id).onSuccess { currentQuiz->
+                        sessionService.getCurrentQuiz(session.id).onSuccess { currentQuiz ->
                             quiz = this.quizBuilder
                                 .setQuizId(currentQuiz.first.id.toString())
                                 .setBody(currentQuiz.first.body)
