@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 import net.devh.boot.grpc.server.service.GrpcService
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.state.SessionState
-import wedding.kanshasai.backend.domain.value.QuizType
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceWithCountRedisEntity
 import wedding.kanshasai.backend.infra.redis.entity.QuizChoiceWithResultRedisEntity
