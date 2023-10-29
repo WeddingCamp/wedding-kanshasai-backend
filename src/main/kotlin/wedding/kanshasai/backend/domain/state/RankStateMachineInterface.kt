@@ -5,4 +5,5 @@ interface RankStateMachineInterface {
     fun back(): Result<RankStateMachineInterface>
 
     val value: Int
+    val index: Int get() = value - 1
 }

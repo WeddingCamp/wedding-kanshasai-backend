@@ -259,22 +259,24 @@ class SessionService(
         val currentState = session.state
         val nextState = session.state.next(SessionState.QUIZ_RESULT).getOrThrowService()
         val (quiz, choiceList, sessionQuiz) = session.getCurrentQuiz()
-        val participantAnswerList = participantAnswerRepository.listBySessionQuiz(sessionQuiz).getOrThrowService()
 
         val redisEvent = when (quizResultType) {
             QuizResultType.VOTE_LIST -> {
                 val quizNumber = sessionQuizRepository.listBySession(session).getOrThrowService()
                     .count { it.second.isCompleted } + 1
 
+                val participantAnswerList = participantAnswerRepository.listBySessionQuiz(sessionQuiz).getOrThrowService()
+
                 RedisEvent.QuizAnswerList(
                     quiz.id.toString(),
                     quiz.body,
                     quiz.type.toGrpcType(),
                     choiceList.map {
+                        val choiceId = it.id.toString()
                         QuizChoiceWithCountRedisEntity(
-                            it.id.toString(),
+                            choiceId,
                             redisEventService.parseBody(it.body, quiz.type),
-                            participantAnswerList.count { participantAnswer -> participantAnswer.answer == it.id.toString() },
+                            participantAnswerList.count { pa -> pa.answer == choiceId },
                         )
                     },
                     quizNumber,
@@ -290,7 +292,8 @@ class SessionService(
                     },
                 ).getOrThrowService()
 
-                sessionQuizRepository.update(sessionQuiz.clone().apply { isCompleted = true }).getOrThrowService()
+                checkResult(quiz, sessionQuiz)
+                val participantAnswerList = participantAnswerRepository.listBySessionQuiz(sessionQuiz).getOrThrowService()
 
                 val quizNumber = sessionQuizRepository.listBySession(session).getOrThrowService()
                     .count { it.second.isCompleted }
@@ -301,11 +304,12 @@ class SessionService(
                     quiz.body,
                     quiz.type.toGrpcType(),
                     choiceList.map {
+                        val choiceId = it.id.toString()
                         QuizChoiceWithResultRedisEntity(
-                            it.id.toString(),
+                            choiceId,
                             redisEventService.parseBody(it.body, quiz.type),
-                            participantAnswerList.count { participantAnswer -> participantAnswer.answer == it.id.toString() },
-                            quiz.isCorrectAnswer(sessionQuiz, it.id.toString()),
+                            participantAnswerList.count { pa -> pa.answer == choiceId },
+                            quiz.getCorrectAnswer().choiceIdList.contains(it.id.toString()),
                         )
                     },
                     quizNumber,
@@ -321,12 +325,13 @@ class SessionService(
                     },
                 ).getOrThrowService()
 
-                sessionQuizRepository.update(sessionQuiz.clone().apply { isCompleted = true }).getOrThrowService()
+                checkResult(quiz, sessionQuiz)
+                val participantAnswerList = participantAnswerRepository.listBySessionQuiz(sessionQuiz).getOrThrowService()
 
                 redisEventService.publishState(currentState, nextState, session.id)
                 RedisEvent.QuizSpeedRanking(
                     participantAnswerList
-                        .filter { quiz.isCorrectAnswer(sessionQuiz, it.answer) }
+                        .filter { it.isCorrect }
                         .sortedBy { it.time }
                         .mapIndexed { index, it ->
                             val participant = participantRepository.findById(it.participantId).getOrThrowService()
@@ -346,6 +351,27 @@ class SessionService(
             }
         }
         redisEventService.publish(redisEvent)
+    }
+
+    private fun checkResult(quiz: Quiz, sessionQuiz: SessionQuiz) {
+        logger.info { "IS_COMPLETED: " + sessionQuiz.isCompleted }
+        if (sessionQuiz.isCompleted) return
+
+        sessionQuizRepository.update(sessionQuiz.clone().apply { isCompleted = true }).getOrThrowService()
+
+        val participantAnswerList = participantAnswerRepository.listBySessionQuiz(sessionQuiz).getOrThrowService()
+        participantAnswerList.forEach {
+            participantAnswerRepository.update(
+                it.clone().apply {
+                    isCorrect = when (quiz.type) {
+                        QuizType.FOUR_CHOICES_QUIZ -> quiz.getCorrectAnswer().choiceIdList.contains(it.answer)
+                        QuizType.SORT_IMAGE_QUIZ -> quiz.getCorrectAnswer().choiceIdList.contains(it.answer)
+                        QuizType.REALTIME_FOUR_CHOICE_QUIZ -> sessionQuiz.getCorrectAnswer().choiceIdList.contains(it.answer)
+                        else -> quiz.correctAnswer == it.answer
+                    }
+                },
+            )
+        }
     }
 
     fun cancelCurrentQuiz(sessionId: UlidId) {
@@ -375,13 +401,15 @@ class SessionService(
         val session = sessionRepository.findById(sessionId).getOrThrowService()
         val nextState = session.state.next(resultType.sessionState).getOrThrowService()
 
-        val participantList = participantRepository.listBySession(session).getOrThrowService() // TODO: 回答がない人は除外する
+        val resultList = participantRepository
+            .listBySessionWithResult(session)
+            .getOrThrowService()
 
         val resultStateMachine = ResultStateMachine.of(ResultState.RANKING_NORMAL)
         val resultStateManager = ResultStateManager.of(
             resultStateMachine,
             ResultRankStateMachine.of(ResultRankState.RANK, resultStateMachine.value.rankStateList),
-            RankStateMachine.of(participantList.size + 1),
+            RankStateMachine.of(resultList.size + 1),
         )
 
         sessionRepository.update(
@@ -396,6 +424,14 @@ class SessionService(
     }
 
     enum class RankType { NORMAL, BOOBY, JUST }
+
+    /**
+     * {fromIndex}から{length}件取得する関数
+     * {fromIndex}がリストのサイズを超えている場合は、切り落とされる
+     */
+    fun <T> List<T>.safeSubList(fromIndex: Int, length: Int): List<T> {
+        return subList(fromIndex, (fromIndex + length).coerceAtMost(size))
+    }
 
     fun nextSessionResult(sessionId: UlidId) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
@@ -429,16 +465,11 @@ class SessionService(
                 val resultList = participantRepository
                     .listBySessionWithResult(session)
                     .getOrThrowService()
-
-                val filteredResultList = resultList
                     .sortedBy { it.second.rank }
-                    .subList(
-                        newRankState.value - 1,
-                        (newRankState.value + 10 - 1).coerceAtMost(resultList.size),
-                    )
+                    .safeSubList(newRankState.index, 10)
 
                 RedisEvent.ShowResultRanking(
-                    filteredResultList.map {
+                    resultList.map {
                         ParticipantSessionScoreRedisEntity(
                             it.first.name,
                             it.second.score,
@@ -448,7 +479,7 @@ class SessionService(
                         )
                     },
                     0,
-                    10,
+                    resultList.size,
                     ResultRankingType.RESULT_RANKING_TYPE_RANK,
                     newRankState.value != 1,
                     sessionId.toString(),
@@ -480,62 +511,60 @@ class SessionService(
                         val resultList = participantRepository
                             .listBySessionWithResult(session)
                             .getOrThrowService()
-
-                        val justRank = if (resultList.size > 50) 48 else resultList.size - 10
-
-                        val filteredResultList = resultList
                             .sortedBy { it.second.rank }
-                            .map {
-                                Triple(
-                                    it.first,
-                                    it.second,
-                                    when (it.second.rank) {
-                                        resultList.size - 1 -> RankType.BOOBY
-                                        justRank -> RankType.JUST
-                                        else -> RankType.NORMAL
-                                    },
-                                )
-                            }
 
-                        val scoreList = when (newResultState.resultStateMachine.value) {
-                            ResultState.RANKING_NORMAL -> {
-                                // インデックスが0から始まるので、-1する
-                                filteredResultList.subList(
-                                    newResultState.rankStateMachine.value - 1,
-                                    (newResultState.rankStateMachine.value + 10 - 1).coerceAtMost(resultList.size),
-                                ).map {
-                                    if (it.third == RankType.BOOBY || it.third == RankType.JUST) {
-                                        it.first.name = "？？？"
-                                    }
-                                    it
-                                }
-                            }
-                            ResultState.RANKING_BOOBY -> filteredResultList.filter { it.third == RankType.BOOBY }
-                            ResultState.RANKING_JUST -> filteredResultList.filter { it.third == RankType.JUST }
-                            else -> filteredResultList.subList(0, 10.coerceAtMost(resultList.size - 1))
+                        val resultListWithType = resultList.map {
+                            Triple(
+                                it.first,
+                                it.second,
+                                when (it.second.rank) {
+                                    resultList.size - 1 -> RankType.BOOBY
+                                    48 -> RankType.JUST
+                                    else -> RankType.NORMAL
+                                },
+                            )
                         }
 
+                        val sortedResultList = when (newResultState.resultStateMachine.value) {
+                            ResultState.RANKING_NORMAL -> {
+                                resultListWithType
+                                    .safeSubList(newResultState.rankStateMachine.index, 10)
+                                    .map {
+                                        if (it.third == RankType.BOOBY || it.third == RankType.JUST) {
+                                            it.first.name = "？？？"
+                                        }
+                                        it
+                                    }
+                            }
+                            ResultState.RANKING_BOOBY -> resultListWithType.filter { it.third == RankType.BOOBY }
+                            ResultState.RANKING_JUST -> resultListWithType.filter { it.third == RankType.JUST }
+                            else -> resultListWithType.safeSubList(0, 10)
+                        }
+
+                        // 予め表示しておく数は以下に定義する
                         val preDisplayCount = when (newResultState.resultStateMachine.value) {
                             ResultState.RANKING_NORMAL -> 0
                             ResultState.RANKING_TOP_8 -> 0
-                            ResultState.RANKING_TOP_7 -> 3
-                            ResultState.RANKING_TOP_6 -> 4
-                            ResultState.RANKING_TOP_5 -> 5
-                            ResultState.RANKING_TOP_4 -> 6
-                            ResultState.RANKING_TOP_3 -> 7
-                            ResultState.RANKING_TOP_2 -> 8
-                            ResultState.RANKING_TOP_1 -> 9
+                            ResultState.RANKING_TOP_7 -> sortedResultList.size - 7
+                            ResultState.RANKING_TOP_6 -> sortedResultList.size - 6
+                            ResultState.RANKING_TOP_5 -> sortedResultList.size - 5
+                            ResultState.RANKING_TOP_4 -> sortedResultList.size - 4
+                            ResultState.RANKING_TOP_3 -> sortedResultList.size - 3
+                            ResultState.RANKING_TOP_2 -> sortedResultList.size - 2
+                            ResultState.RANKING_TOP_1 -> sortedResultList.size - 1
                             ResultState.RANKING_BOOBY -> 0
                             ResultState.RANKING_JUST -> 0
                             else -> throw InvalidStateException("Invalid ResultState.")
                         }
 
+                        // アニメーションで表示したい数はPRE_RANKの場合はpreDisplayCountと同等
+                        // それ以外の場合はResultStateで切り分ける
                         val displayCount = if (newResultState.resultRankStateMachine.value == ResultRankState.PRE_RANK) {
                             preDisplayCount
                         } else {
                             when (newResultState.resultStateMachine.value) {
-                                ResultState.RANKING_NORMAL -> 10.coerceAtMost(scoreList.size)
-                                ResultState.RANKING_TOP_8 -> 3
+                                ResultState.RANKING_NORMAL -> sortedResultList.size
+                                ResultState.RANKING_TOP_8 -> sortedResultList.size - 7
                                 else -> preDisplayCount + 1
                             }
                         }
@@ -548,7 +577,7 @@ class SessionService(
 
                         val resultState = newResultState.resultStateMachine.value
                         RedisEvent.ShowResultRanking(
-                            scoreList.map {
+                            sortedResultList.map {
                                 val isEmphasis = when {
                                     resultState == ResultState.RANKING_TOP_1 && it.second.rank == 1 -> true
                                     resultState == ResultState.RANKING_TOP_2 && it.second.rank == 2 -> true
@@ -557,7 +586,7 @@ class SessionService(
                                     resultState == ResultState.RANKING_TOP_5 && it.second.rank == 5 -> true
                                     resultState == ResultState.RANKING_TOP_6 && it.second.rank == 6 -> true
                                     resultState == ResultState.RANKING_TOP_7 && it.second.rank == 7 -> true
-                                    // 8位は7位のPRE_RANKという側面があるので7位と同等に扱う
+                                    // NOTE: 8位は7位のPRE_RANKという側面があるので7位と同等に扱う
                                     resultState == ResultState.RANKING_TOP_8 && it.second.rank == 7 -> true
                                     else -> false
                                 }

@@ -3,16 +3,35 @@
 <mapper namespace="wedding.kanshasai.backend.infra.mysql.mapper.ParticipantMapper">
 
     <insert id="insert">
+        INSERT INTO participants(id,
+                                 session_id,
+                                 name,
+                                 image_id,
+                                 type,
+                                 is_connected,
+                                 is_deleted)
+        VALUES (#{entity.identifier.id},
+                #{entity.sessionId},
+                #{entity.name},
+                #{entity.imageId},
+                #{entity.type},
+                #{entity.isConnected},
+                #{entity.isDeleted})
+    </insert>
+
+    <insert id="insertAll">
         INSERT INTO participants(
-            id,
-            session_id,
-            name,
-            image_id,
-            type,
-            is_connected,
-            is_deleted
+        id,
+        session_id,
+        name,
+        image_id,
+        type,
+        is_connected,
+        is_deleted
         )
-        VALUES (
+        VALUES
+        <foreach collection="entities" item="entity" separator=",">
+            (
             #{entity.identifier.id},
             #{entity.sessionId},
             #{entity.name},
@@ -20,153 +39,87 @@
             #{entity.type},
             #{entity.isConnected},
             #{entity.isDeleted}
-        )
-    </insert>
-
-    <insert id="insertAll">
-        INSERT INTO participants(
-            id,
-            session_id,
-            name,
-            image_id,
-            type,
-            is_connected,
-            is_deleted
-        )
-        VALUES
-        <foreach collection="entities" item="entity" separator=",">
-            (
-                #{entity.identifier.id},
-                #{entity.sessionId},
-                #{entity.name},
-                #{entity.imageId},
-                #{entity.type},
-                #{entity.isConnected},
-                #{entity.isDeleted}
             )
         </foreach>
     </insert>
 
     <select id="select" resultMap="participant">
-        SELECT
-            *
-        FROM
-            participants
-        WHERE
-            (is_deleted = false OR is_deleted = #{includeDeleted})
-        ORDER BY
-            id
+        SELECT *
+        FROM participants
+        WHERE (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY id
     </select>
 
     <select id="findById" resultMap="participant">
-        SELECT
-            *
-        FROM
-            participants
-        WHERE
-            id = #{identifier.id}
-            AND
-            (is_deleted = false OR is_deleted = #{includeDeleted})
+        SELECT *
+        FROM participants
+        WHERE id = #{identifier.id}
+          AND (is_deleted = false OR is_deleted = #{includeDeleted})
     </select>
 
     <update id="update">
         UPDATE
             participants
-        SET
-            session_id = #{entity.sessionId},
-            name = #{entity.name},
-            image_id = #{entity.imageId},
-            type = #{entity.type},
+        SET session_id   = #{entity.sessionId},
+            name         = #{entity.name},
+            image_id     = #{entity.imageId},
+            type         = #{entity.type},
             is_connected = #{entity.isConnected},
-            is_deleted = #{entity.isDeleted}
-        WHERE
-            id = #{entity.identifier.id}
-        AND
-            (is_deleted = false OR is_deleted = #{includeDeleted})
+            is_deleted   = #{entity.isDeleted}
+        WHERE id = #{entity.identifier.id}
+          AND (is_deleted = false OR is_deleted = #{includeDeleted})
     </update>
 
     <update id="deleteById">
         UPDATE
             participants
-        SET
-            is_deleted = true
-        WHERE
-            id = #{identifier.id}
-            AND
-            (is_deleted = false OR is_deleted = #{includeDeleted})
+        SET is_deleted = true
+        WHERE id = #{identifier.id}
+          AND (is_deleted = false OR is_deleted = #{includeDeleted})
     </update>
 
     <select id="listBySessionId" resultMap="participant">
-        SELECT
-            *
-        FROM
-            participants
-        WHERE
-            session_id = #{id}
-          AND
-            (is_deleted = false OR is_deleted = #{includeDeleted})
-        ORDER BY
-            id
+        SELECT *
+        FROM participants
+        WHERE session_id = #{id}
+          AND (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY id
     </select>
 
     <select id="listBySessionIdWithResult" resultMap="participantWithResult">
-        SELECT
-            result.id,
-            result.session_id,
-            result.name,
-            result.image_id,
-            result.type,
-            result.is_connected,
-            result.is_deleted,
-            result.score,
-            result.time,
-            ROW_NUMBER() OVER (ORDER BY score desc, time) as user_rank
-        from
-            (
-                SELECT
-                    p.id,
-                    p.session_id,
-                    p.name,
-                    p.image_id,
-                    p.type,
-                    p.is_connected,
-                    p.is_deleted,
-                    count(pa.is_correct) as score,
-                    sum(pa.time) as time
-                FROM
-                    participants as p
-                LEFT JOIN (
-                    SELECT
-                        pa.participant_id,
-                        pa.time,
-                        pa.answer MEMBER OF(JSON_EXTRACT(q.correct_answer, '$.choiceIdList')) as is_correct
-                    FROM
-                        participant_answers as pa
-                    LEFT JOIN
-                        quizzes q
-                        ON
-                            pa.quiz_id = q.id
-                        AND
-                            q.is_deleted = false OR q.is_deleted = #{includeDeleted}
-                    WHERE
-                        pa.session_id = #{id}
-                    AND
-                        (pa.is_deleted = false OR pa.is_deleted = #{includeDeleted})
-                    HAVING
-                        is_correct = 1
-                ) pa
-                ON
-                    p.id = pa.participant_id
-                WHERE
-                    session_id = #{id}
-                AND
-                    (is_deleted = false OR is_deleted = #{includeDeleted})
-                GROUP BY
-                    p.id
-            ) as result
-        ORDER BY
-            score desc,
-            time
+        SELECT result.id,
+               result.session_id,
+               result.name,
+               result.image_id,
+               result.type,
+               result.is_connected,
+               result.is_deleted,
+               result.score,
+               result.time,
+               ROW_NUMBER() OVER (ORDER BY score desc, time) as user_rank
+        from (SELECT p.id,
+                     p.session_id,
+                     p.name,
+                     p.image_id,
+                     p.type,
+                     p.is_connected,
+                     p.is_deleted,
+                     sum(pa.is_correct)                        as score,
+                     sum(if(pa.is_correct = true, pa.time, 0)) as time,
+                     count(pa.participant_id)                  as answer_count
+              FROM participants as p
+                       LEFT JOIN
+                   participant_answers as pa
+                   ON
+                               p.id = pa.participant_id
+                           AND
+                               (pa.is_deleted = false OR pa.is_deleted = #{includeDeleted})
+              WHERE p.session_id = #{id}
+                AND (p.is_deleted = false OR p.is_deleted = #{includeDeleted})
+              GROUP BY p.id) as result
+        WHERE result.answer_count > 0
+        ORDER BY score desc,
+                 time
     </select>
 
     <resultMap id="participant" type="wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto">
@@ -196,7 +149,8 @@
         <association property="identifier" resultMap="participantIdentifier"/>
     </resultMap>
 
-    <resultMap id="participantIdentifier" type="wedding.kanshasai.backend.infra.mysql.dto.identifier.StandardIdentifier">
+    <resultMap id="participantIdentifier"
+               type="wedding.kanshasai.backend.infra.mysql.dto.identifier.StandardIdentifier">
         <id property="id" column="id"/>
     </resultMap>
 </mapper>

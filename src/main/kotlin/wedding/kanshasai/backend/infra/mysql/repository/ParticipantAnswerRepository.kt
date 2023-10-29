@@ -69,4 +69,8 @@ class ParticipantAnswerRepository(
             sessionQuiz.quizId.toByteArray(),
         ).map(ParticipantAnswer::of)
     }
+
+    fun update(participantAnswer: ParticipantAnswer): Result<Unit> = runCatching {
+        update(participantAnswerMapper, participantAnswer.toDto())
+    }
 }

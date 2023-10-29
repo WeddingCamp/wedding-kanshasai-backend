@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS
     current_quiz_result_id INTEGER NULL,
 
     result_state_id INTEGER NOT NULL DEFAULT 1,
-    result_rank_state_id INTEGER NOT NULL DEFAULT 1,
+    result_rank_state_id INTEGER NOT NULL DEFAULT 0,
     result_rank INTEGER NOT NULL DEFAULT 100,
 
     is_cover_visible BOOLEAN NOT NULL DEFAULT false,
@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS
     quiz_id BINARY(16) NOT NULL,
     answer TEXT NOT NULL,
     time FLOAT NOT NULL,
+    is_correct BOOLEAN NOT NULL DEFAUlT false,
     is_deleted BOOLEAN NOT NULL DEFAUlT false,
     created_at DATETIME NOT NULL DEFAUlT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAUlT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

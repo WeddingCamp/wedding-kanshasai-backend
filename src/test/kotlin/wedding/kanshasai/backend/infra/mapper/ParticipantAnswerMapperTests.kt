@@ -45,6 +45,7 @@ class ParticipantAnswerMapperTests : MapperCRUDTest<ParticipantAnswerMapper, Par
                         participantAnswerDto.copy().apply {
                             answer = testTool.uuid
                             time = (Math.random() * 10).toFloat()
+                            isCorrect = testTool.trueOrFalse
                             isDeleted = testTool.trueOrFalse
                         },
                     )

@@ -118,21 +118,67 @@ class ResultStateManager private constructor(
             if (resultStateMachine.value == ResultState.RANKING_NORMAL && rankStateMachine.value <= 8) {
                 logger.warn { "ResultState has been corrected to the appropriate ResultState based on RankState." }
                 newResultStateMachine = when (rankStateMachine.value) {
-                    8 -> ResultStateMachine.of(ResultState.RANKING_TOP_8)
-                    7 -> ResultStateMachine.of(ResultState.RANKING_TOP_7)
-                    6 -> ResultStateMachine.of(ResultState.RANKING_TOP_6)
-                    5 -> ResultStateMachine.of(ResultState.RANKING_TOP_5)
-                    4 -> ResultStateMachine.of(ResultState.RANKING_TOP_4)
-                    3 -> ResultStateMachine.of(ResultState.RANKING_BOOBY)
-                    2 -> ResultStateMachine.of(ResultState.RANKING_TOP_2)
-                    1 -> ResultStateMachine.of(ResultState.RANKING_TOP_1)
+                    8 -> {
+                        newResultRankStateMachine = ResultRankStateMachine.of(
+                            ResultState.RANKING_TOP_8.rankStateList.last(),
+                            ResultState.RANKING_TOP_8.rankStateList,
+                        )
+                        ResultStateMachine.of(ResultState.RANKING_TOP_8)
+                    }
+                    7 -> {
+                        newResultRankStateMachine = ResultRankStateMachine.of(
+                            ResultState.RANKING_TOP_7.rankStateList.last(),
+                            ResultState.RANKING_TOP_7.rankStateList,
+                        )
+                        ResultStateMachine.of(ResultState.RANKING_TOP_7)
+                    }
+                    6 -> {
+                        newResultRankStateMachine = ResultRankStateMachine.of(
+                            ResultState.RANKING_TOP_6.rankStateList.last(),
+                            ResultState.RANKING_TOP_6.rankStateList,
+                        )
+                        ResultStateMachine.of(ResultState.RANKING_TOP_6)
+                    }
+                    5 -> {
+                        newResultRankStateMachine = ResultRankStateMachine.of(
+                            ResultState.RANKING_TOP_5.rankStateList.last(),
+                            ResultState.RANKING_TOP_5.rankStateList,
+                        )
+                        ResultStateMachine.of(ResultState.RANKING_TOP_5)
+                    }
+                    4 -> {
+                        newResultRankStateMachine = ResultRankStateMachine.of(
+                            ResultState.RANKING_TOP_4.rankStateList.last(),
+                            ResultState.RANKING_TOP_4.rankStateList,
+                        )
+                        ResultStateMachine.of(ResultState.RANKING_TOP_4)
+                    }
+                    3 -> {
+                        newResultRankStateMachine = ResultRankStateMachine.of(
+                            ResultState.RANKING_BOOBY.rankStateList.last(),
+                            ResultState.RANKING_BOOBY.rankStateList,
+                        )
+                        ResultStateMachine.of(ResultState.RANKING_BOOBY)
+                    }
+                    2 -> {
+                        newResultRankStateMachine = ResultRankStateMachine.of(
+                            ResultState.RANKING_TOP_2.rankStateList.last(),
+                            ResultState.RANKING_TOP_2.rankStateList,
+                        )
+                        ResultStateMachine.of(ResultState.RANKING_TOP_2)
+                    }
+                    1 -> {
+                        newResultRankStateMachine = ResultRankStateMachine.of(
+                            ResultState.RANKING_TOP_1.rankStateList.last(),
+                            ResultState.RANKING_TOP_1.rankStateList,
+                        )
+                        ResultStateMachine.of(ResultState.RANKING_TOP_1)
+                    }
                     else -> throw IllegalArgumentException("RankState must be greater than or equal to 1.")
                 }
-            }
-
-            // ResultRankStateがResultStateが定義しているRankStateListに含まれていない場合は、ResultRankStateを初期化する
-            // これでResultStateとResultRankStateの整合性が取れる
-            if (!resultStateMachine.value.rankStateList.contains(resultRankStateMachine.value)) {
+            } else if (!resultStateMachine.value.rankStateList.contains(resultRankStateMachine.value)) {
+                // ResultRankStateがResultStateが定義しているRankStateListに含まれていない場合は、ResultRankStateを初期化する
+                // これでResultStateとResultRankStateの整合性が取れる
                 val target = resultStateMachine.value.rankStateList.first()
                 logger.warn {
                     "rankState(${resultRankStateMachine.value}) must be in rankStateList(${resultStateMachine.value.rankStateList.joinTo(

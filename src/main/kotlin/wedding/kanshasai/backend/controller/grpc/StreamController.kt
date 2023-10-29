@@ -127,8 +127,8 @@ class StreamController(
                                             ).getOrNull()?.answer == choice.id.toString()
 
                                             if (session.state == SessionState.QUIZ_RESULT) {
-                                                choiceBuilder.isCorrectChoice = currentQuiz.first
-                                                    .isCorrectAnswer(currentQuiz.third, choice.id.toString())
+                                                choiceBuilder.isCorrectChoice = currentQuiz.first.getCorrectAnswer()
+                                                    .choiceIdList.contains(choice.id.toString())
                                             }
                                             choiceBuilder.build()
                                         }

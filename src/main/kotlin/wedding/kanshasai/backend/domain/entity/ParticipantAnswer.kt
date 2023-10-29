@@ -2,6 +2,8 @@ package wedding.kanshasai.backend.domain.entity
 
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.dto.ParticipantAnswerDto
+import wedding.kanshasai.backend.infra.mysql.dto.identifier.ParticipantAnswerIdentifier
+import wedding.kanshasai.backend.infra.mysql.dto.identifier.SessionQuizIdentifier
 import wedding.kanshasai.backend.infra.mysql.dto.interfaces.IParticipantAnswer
 import java.sql.Timestamp
 
@@ -11,6 +13,7 @@ class ParticipantAnswer private constructor(
     val participantId: UlidId,
     val answer: String,
     var time: Float,
+    var isCorrect: Boolean,
     var isDeleted: Boolean,
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
@@ -22,6 +25,7 @@ class ParticipantAnswer private constructor(
             participantId,
             answer,
             time,
+            isCorrect,
             isDeleted,
             createdAt,
             updatedAt,
@@ -29,11 +33,16 @@ class ParticipantAnswer private constructor(
     }
 
     fun toDto(): ParticipantAnswerDto = ParticipantAnswerDto(
-        sessionId = sessionId.toByteArray(),
-        quizId = quizId.toByteArray(),
-        participantId = participantId.toByteArray(),
+        participantAnswerIdentifier = ParticipantAnswerIdentifier(
+            sessionQuizIdentifier = SessionQuizIdentifier(
+                sessionId = sessionId.toByteArray(),
+                quizId = quizId.toByteArray(),
+            ),
+            participantId = participantId.toByteArray(),
+        ),
         answer = answer,
         time = time,
+        isCorrect = isCorrect,
         isDeleted = isDeleted,
         createdAt = createdAt,
         updatedAt = updatedAt,
@@ -47,6 +56,7 @@ class ParticipantAnswer private constructor(
                 UlidId.of(participantAnswerDto.participantAnswerIdentifier.participantId),
                 participantAnswerDto.answer,
                 participantAnswerDto.time,
+                participantAnswerDto.isCorrect,
                 participantAnswerDto.isDeleted,
                 participantAnswerDto.createdAt,
                 participantAnswerDto.updatedAt,
