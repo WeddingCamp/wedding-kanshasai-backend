@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS
     current_quiz_result_id INTEGER NULL,
 
     result_state_id INTEGER NOT NULL DEFAULT 1,
-    result_rank_state_id INTEGER NOT NULL DEFAULT 1,
+    result_rank_state_id INTEGER NOT NULL DEFAULT 0,
     result_rank INTEGER NOT NULL DEFAULT 100,
 
     is_cover_visible BOOLEAN NOT NULL DEFAULT false,

@@ -2,6 +2,8 @@ package wedding.kanshasai.backend.domain.entity
 
 import wedding.kanshasai.backend.domain.value.UlidId
 import wedding.kanshasai.backend.infra.mysql.dto.ParticipantAnswerDto
+import wedding.kanshasai.backend.infra.mysql.dto.identifier.ParticipantAnswerIdentifier
+import wedding.kanshasai.backend.infra.mysql.dto.identifier.SessionQuizIdentifier
 import wedding.kanshasai.backend.infra.mysql.dto.interfaces.IParticipantAnswer
 import java.sql.Timestamp
 
@@ -31,9 +33,13 @@ class ParticipantAnswer private constructor(
     }
 
     fun toDto(): ParticipantAnswerDto = ParticipantAnswerDto(
-        sessionId = sessionId.toByteArray(),
-        quizId = quizId.toByteArray(),
-        participantId = participantId.toByteArray(),
+        participantAnswerIdentifier = ParticipantAnswerIdentifier(
+            sessionQuizIdentifier = SessionQuizIdentifier(
+                sessionId = sessionId.toByteArray(),
+                quizId = quizId.toByteArray()
+            ),
+            participantId = participantId.toByteArray(),
+        ),
         answer = answer,
         time = time,
         isCorrect = isCorrect,
