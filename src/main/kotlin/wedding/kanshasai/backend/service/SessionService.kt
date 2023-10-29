@@ -355,7 +355,7 @@ class SessionService(
 
     private fun checkResult(quiz: Quiz, sessionQuiz: SessionQuiz) {
         logger.info { "IS_COMPLETED: " + sessionQuiz.isCompleted }
-        if(sessionQuiz.isCompleted) return
+        if (sessionQuiz.isCompleted) return
 
         sessionQuizRepository.update(sessionQuiz.clone().apply { isCompleted = true }).getOrThrowService()
 
@@ -528,13 +528,13 @@ class SessionService(
                         val sortedResultList = when (newResultState.resultStateMachine.value) {
                             ResultState.RANKING_NORMAL -> {
                                 resultListWithType
-                                   .safeSubList(newResultState.rankStateMachine.index, 10)
-                                   .map {
-                                       if (it.third == RankType.BOOBY || it.third == RankType.JUST) {
-                                           it.first.name = "？？？"
-                                       }
-                                       it
-                                   }
+                                    .safeSubList(newResultState.rankStateMachine.index, 10)
+                                    .map {
+                                        if (it.third == RankType.BOOBY || it.third == RankType.JUST) {
+                                            it.first.name = "？？？"
+                                        }
+                                        it
+                                    }
                             }
                             ResultState.RANKING_BOOBY -> resultListWithType.filter { it.third == RankType.BOOBY }
                             ResultState.RANKING_JUST -> resultListWithType.filter { it.third == RankType.JUST }

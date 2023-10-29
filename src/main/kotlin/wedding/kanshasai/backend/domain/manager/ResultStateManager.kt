@@ -121,56 +121,56 @@ class ResultStateManager private constructor(
                     8 -> {
                         newResultRankStateMachine = ResultRankStateMachine.of(
                             ResultState.RANKING_TOP_8.rankStateList.last(),
-                            ResultState.RANKING_TOP_8.rankStateList
+                            ResultState.RANKING_TOP_8.rankStateList,
                         )
                         ResultStateMachine.of(ResultState.RANKING_TOP_8)
                     }
                     7 -> {
                         newResultRankStateMachine = ResultRankStateMachine.of(
                             ResultState.RANKING_TOP_7.rankStateList.last(),
-                            ResultState.RANKING_TOP_7.rankStateList
+                            ResultState.RANKING_TOP_7.rankStateList,
                         )
                         ResultStateMachine.of(ResultState.RANKING_TOP_7)
                     }
                     6 -> {
                         newResultRankStateMachine = ResultRankStateMachine.of(
                             ResultState.RANKING_TOP_6.rankStateList.last(),
-                            ResultState.RANKING_TOP_6.rankStateList
+                            ResultState.RANKING_TOP_6.rankStateList,
                         )
                         ResultStateMachine.of(ResultState.RANKING_TOP_6)
                     }
                     5 -> {
                         newResultRankStateMachine = ResultRankStateMachine.of(
                             ResultState.RANKING_TOP_5.rankStateList.last(),
-                            ResultState.RANKING_TOP_5.rankStateList
+                            ResultState.RANKING_TOP_5.rankStateList,
                         )
                         ResultStateMachine.of(ResultState.RANKING_TOP_5)
                     }
                     4 -> {
                         newResultRankStateMachine = ResultRankStateMachine.of(
                             ResultState.RANKING_TOP_4.rankStateList.last(),
-                            ResultState.RANKING_TOP_4.rankStateList
+                            ResultState.RANKING_TOP_4.rankStateList,
                         )
                         ResultStateMachine.of(ResultState.RANKING_TOP_4)
                     }
                     3 -> {
                         newResultRankStateMachine = ResultRankStateMachine.of(
                             ResultState.RANKING_BOOBY.rankStateList.last(),
-                            ResultState.RANKING_BOOBY.rankStateList
+                            ResultState.RANKING_BOOBY.rankStateList,
                         )
                         ResultStateMachine.of(ResultState.RANKING_BOOBY)
                     }
                     2 -> {
                         newResultRankStateMachine = ResultRankStateMachine.of(
                             ResultState.RANKING_TOP_2.rankStateList.last(),
-                            ResultState.RANKING_TOP_2.rankStateList
+                            ResultState.RANKING_TOP_2.rankStateList,
                         )
                         ResultStateMachine.of(ResultState.RANKING_TOP_2)
                     }
                     1 -> {
                         newResultRankStateMachine = ResultRankStateMachine.of(
                             ResultState.RANKING_TOP_1.rankStateList.last(),
-                            ResultState.RANKING_TOP_1.rankStateList
+                            ResultState.RANKING_TOP_1.rankStateList,
                         )
                         ResultStateMachine.of(ResultState.RANKING_TOP_1)
                     }

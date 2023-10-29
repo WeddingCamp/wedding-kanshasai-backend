@@ -36,7 +36,7 @@ class ParticipantAnswer private constructor(
         participantAnswerIdentifier = ParticipantAnswerIdentifier(
             sessionQuizIdentifier = SessionQuizIdentifier(
                 sessionId = sessionId.toByteArray(),
-                quizId = quizId.toByteArray()
+                quizId = quizId.toByteArray(),
             ),
             participantId = participantId.toByteArray(),
         ),
