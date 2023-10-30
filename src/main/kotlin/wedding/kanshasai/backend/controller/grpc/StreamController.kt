@@ -203,11 +203,11 @@ class StreamController(
                                 is RedisEvent.ShowProfile -> {
                                     if (participant != null) {
                                         profile = this.profileBuilder
-                                           .setParticipantName(participant.name)
-                                           .setParticipantImageUrl(
-                                               s3Service.generatePresignedUrl(participant.imageId),
-                                           )
-                                           .build()
+                                            .setParticipantName(participant.name)
+                                            .setParticipantImageUrl(
+                                                s3Service.generatePresignedUrl(participant.imageId),
+                                            )
+                                            .build()
                                     }
                                 }
 
