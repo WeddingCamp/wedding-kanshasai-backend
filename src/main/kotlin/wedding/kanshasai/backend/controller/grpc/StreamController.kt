@@ -45,6 +45,7 @@ class StreamController(
             RedisEvent.Finish::class,
         ),
         StreamType.STREAM_TYPE_PARTICIPANT to listOf(
+            RedisEvent.ShowProfile::class,
             RedisEvent.PreQuiz::class,
             RedisEvent.ShowQuiz::class,
             RedisEvent.StartQuiz::class,
@@ -58,6 +59,7 @@ class StreamController(
         StreamType.STREAM_TYPE_MANAGER to listOf(
             RedisEvent.Cover::class,
             RedisEvent.Introduction::class,
+            RedisEvent.ShowProfile::class,
             RedisEvent.PreQuiz::class,
             RedisEvent.ShowQuiz::class,
             RedisEvent.StartQuiz::class,
@@ -196,6 +198,17 @@ class StreamController(
                                         .setIsFirst(redisEvent.isFirst)
                                         .setIsLast(redisEvent.isLast)
                                         .build()
+                                }
+
+                                is RedisEvent.ShowProfile -> {
+                                    if (participant != null) {
+                                        profile = this.profileBuilder
+                                           .setParticipantName(participant.name)
+                                           .setParticipantImageUrl(
+                                               s3Service.generatePresignedUrl(participant.imageId),
+                                           )
+                                           .build()
+                                    }
                                 }
 
                                 is RedisEvent.AbstractQuizRedisEvent<*> -> {

@@ -661,6 +661,20 @@ class SessionService(
         redisEventService.publish(redisEvent)
     }
 
+    fun showProfile(sessionId: UlidId) {
+        val session = sessionRepository.findById(sessionId).getOrThrowService()
+
+        if(session.state != SessionState.INTRODUCTION) {
+            throw InvalidStateException("Session state is not INTRODUCTION.")
+        }
+
+        redisEventService.publish(
+            RedisEvent.ShowProfile(
+                session.id.toString(),
+            ),
+        )
+    }
+
     fun finishQuiz(sessionId: UlidId) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
 

@@ -194,6 +194,14 @@ class SessionController(
         return ShowNextSessionResultRankingResponse.newBuilder().build()
     }
 
+    override suspend fun showProfile(request: ShowProfileRequest): ShowProfileResponse {
+        val sessionId = grpcTool.parseUlidId(request.sessionId, "sessionId")
+
+        sessionService.showProfile(sessionId)
+
+        return ShowProfileResponse.newBuilder().build()
+    }
+
     override suspend fun showSessionResultRanking(request: ShowSessionResultRankingRequest): ShowSessionResultRankingResponse {
         TODO("NOT IMPLEMENTED")
     }
