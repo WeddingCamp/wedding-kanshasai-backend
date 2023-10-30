@@ -34,6 +34,15 @@ class Quiz private constructor(
         return Jackson2JsonRedisSerializer(ObjectMapper(), GenericAnswer::class.java).deserialize(correctAnswer.toByteArray())
     }
 
+    fun isCorrectAnswer(sessionQuiz: SessionQuiz, answer: String): Boolean {
+        return when (type) {
+            QuizType.FOUR_CHOICES_QUIZ -> getCorrectAnswer().choiceIdList.contains(answer)
+            QuizType.SORT_IMAGE_QUIZ -> getCorrectAnswer().choiceIdList.contains(answer)
+            QuizType.REALTIME_FOUR_CHOICE_QUIZ -> sessionQuiz.getCorrectAnswer().choiceIdList.contains(answer)
+            else -> correctAnswer == answer
+        }
+    }
+
     companion object {
         fun of(quizDto: IQuiz): Quiz {
             return Quiz(

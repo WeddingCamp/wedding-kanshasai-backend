@@ -309,7 +309,7 @@ class SessionService(
                             choiceId,
                             redisEventService.parseBody(it.body, quiz.type),
                             participantAnswerList.count { pa -> pa.answer == choiceId },
-                            quiz.getCorrectAnswer().choiceIdList.contains(it.id.toString()),
+                            quiz.isCorrectAnswer(sessionQuiz, it.id.toString()),
                         )
                     },
                     quizNumber,
@@ -363,12 +363,7 @@ class SessionService(
         participantAnswerList.forEach {
             participantAnswerRepository.update(
                 it.clone().apply {
-                    isCorrect = when (quiz.type) {
-                        QuizType.FOUR_CHOICES_QUIZ -> quiz.getCorrectAnswer().choiceIdList.contains(it.answer)
-                        QuizType.SORT_IMAGE_QUIZ -> quiz.getCorrectAnswer().choiceIdList.contains(it.answer)
-                        QuizType.REALTIME_FOUR_CHOICE_QUIZ -> sessionQuiz.getCorrectAnswer().choiceIdList.contains(it.answer)
-                        else -> quiz.correctAnswer == it.answer
-                    }
+                    isCorrect = quiz.isCorrectAnswer(sessionQuiz, it.answer)
                 },
             )
         }
