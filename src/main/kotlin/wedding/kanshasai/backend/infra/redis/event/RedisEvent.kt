@@ -39,6 +39,13 @@ interface RedisEvent {
     }
 
     @NoArg
+    data class ShowProfile(
+        override val sessionId: String,
+    ) : RedisEvent {
+        override val eventType: EventType = EventType.EVENT_TYPE_SHOW_PROFILE
+    }
+
+    @NoArg
     data class StartQuiz(
         override var quizId: String,
         override var quizBody: String,
