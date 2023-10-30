@@ -629,8 +629,8 @@ class SessionService(
                             }
                             ResultRankState.DUMMY_TITLE_MESSAGE -> {
                                 when (newResultState.resultStateMachine.value) {
-                                    ResultState.RANKING_BOOBY -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_1
-                                    ResultState.RANKING_JUST -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_2
+                                    ResultState.RANKING_JUST -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_1
+                                    ResultState.RANKING_BOOBY -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_2
                                     else -> ResultTitleType.RESULT_TITLE_TYPE_RANK
                                 }
                             }
