@@ -57,13 +57,13 @@ enum class ResultState(
         override val backState get() = RANKING_TOP_5
     },
     RANKING_TOP_4_7_PRESENT(60) {
-        override val nextStateList get() = listOf(RANKING_BOOBY)
+        override val nextStateList get() = listOf(RANKING_JUST)
         override val rankStateList get() = listOf(ResultRankState.PRESENT)
-        override val nextState get() = RANKING_BOOBY
+        override val nextState get() = RANKING_JUST
         override val backState get() = RANKING_TOP_4
     },
-    RANKING_BOOBY(70) {
-        override val nextStateList get() = listOf(RANKING_JUST)
+    RANKING_JUST(70) {
+        override val nextStateList get() = listOf(RANKING_BOOBY)
         override val rankStateList
             get() = listOf(
                 ResultRankState.DUMMY_TITLE,
@@ -73,10 +73,10 @@ enum class ResultState(
                 ResultRankState.RANK,
                 ResultRankState.PRESENT,
             )
-        override val nextState get() = RANKING_JUST
+        override val nextState get() = RANKING_BOOBY
         override val backState get() = RANKING_TOP_4_7_PRESENT
     },
-    RANKING_JUST(80) {
+    RANKING_BOOBY(80) {
         override val nextStateList get() = listOf(RANKING_TOP_3)
         override val rankStateList
             get() = listOf(
@@ -88,7 +88,7 @@ enum class ResultState(
                 ResultRankState.PRESENT,
             )
         override val nextState get() = RANKING_TOP_3
-        override val backState get() = RANKING_BOOBY
+        override val backState get() = RANKING_JUST
     },
     RANKING_TOP_3(90) {
         override val nextStateList get() = listOf(RANKING_TOP_2)
@@ -100,7 +100,7 @@ enum class ResultState(
                 ResultRankState.PRESENT,
             )
         override val nextState get() = RANKING_TOP_2
-        override val backState get() = RANKING_JUST
+        override val backState get() = RANKING_BOOBY
     },
     RANKING_TOP_2(100) {
         override val nextStateList get() = listOf(RANKING_TOP_1)
