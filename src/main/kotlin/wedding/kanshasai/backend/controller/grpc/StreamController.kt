@@ -51,6 +51,7 @@ class StreamController(
             RedisEvent.QuizResult::class,
             RedisEvent.QuizTimeUp::class,
             RedisEvent.CancelQuiz::class,
+            RedisEvent.ShowResultTitle::class,
             RedisEvent.FullCurrentState::class,
             RedisEvent.Finish::class,
         ),
