@@ -22,6 +22,7 @@ class ParticipantController(
         sessionId = participant.sessionId.toString()
         imageUrl = s3Service.generatePresignedUrl(participant.imageId)
         participantType = participant.type.toGrpcType()
+        isConnected = participant.isConnected
     }
 
     override suspend fun getParticipant(request: GetParticipantRequest): GetParticipantResponse {
