@@ -386,6 +386,14 @@ class SessionService(
             },
         ).getOrThrowService()
 
+        sessionQuizRepository.update(
+            sessionQuiz.clone().apply {
+                isCompleted = false
+                startedAt = null
+                sessionQuizCorrectAnswer = null
+            },
+        ).getOrThrowService()
+
         participantAnswerRepository.deleteBySessionQuiz(sessionQuiz).getOrThrowService()
 
         redisEventService.publish(RedisEvent.CancelQuiz(sessionId.toString()))
