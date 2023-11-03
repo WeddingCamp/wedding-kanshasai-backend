@@ -511,7 +511,7 @@ class SessionService(
                     else -> resultListWithType.safeSubList(0, 10)
                 }
 
-                if (sortedResultList.isEmpty()) {
+                if (session.resultState.resultStateMachine.value == ResultState.RANKING_NORMAL && sortedResultList.isEmpty()) {
                     startSessionResult(session.id, ResultType.FINAL)
                     throw InvalidStateException("ResultList is empty.")
                 }
