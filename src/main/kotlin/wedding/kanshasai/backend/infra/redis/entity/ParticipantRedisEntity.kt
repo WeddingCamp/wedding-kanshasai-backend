@@ -9,5 +9,6 @@ data class ParticipantRedisEntity(
     var name: String,
     var imageUrl: String,
     var participantType: ParticipantType,
-    val connected: Boolean,
+    var connected: Boolean,
+    var isAnswered: Boolean = false,
 )
