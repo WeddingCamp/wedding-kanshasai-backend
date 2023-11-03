@@ -141,8 +141,8 @@ interface RedisEvent {
 
     @NoArg
     data class UpdateParticipant(
-        var participantList: List<ParticipantRedisEntity>,
-        override val sessionId: String,
+            var participantList: List<ParticipantRedisEntity>,
+            override val sessionId: String,
     ) : RedisEvent {
         override val eventType: EventType = EventType.EVENT_TYPE_UPDATE_PARTICIPANT
     }

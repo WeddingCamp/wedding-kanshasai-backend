@@ -18,6 +18,7 @@ import java.util.*
 
 @GrpcService
 class StreamController(
+    private val sessionQuizService: SessionQuizService,
     private val sessionService: SessionService,
     private val participantService: ParticipantService,
     private val participantAnswerService: ParticipantAnswerService,
@@ -169,6 +170,57 @@ class StreamController(
                 .let(::trySend)
         }
 
+        if (request.type == StreamType.STREAM_TYPE_MANAGER) {
+            val participantList = participantService.listParticipantsBySessionId(session.id)
+            StreamEventResponse.newBuilder()
+                .setEventType(EventType.EVENT_TYPE_PRE_QUIZ)
+                .setSessionState(
+                    StreamEventResponse.SessionState.newBuilder()
+                        .setSessionState(session.state.toString())
+                        .setSimpleSessionState(session.state.toSimpleSessionState())
+                        .build(),
+                )
+                .addAllParticipants(
+                    participantList.map {
+                        StreamEventResponse.Participant.newBuilder()
+                            .setParticipantId(it.id.toString())
+                            .setName(it.name)
+                            .setImageUrl(s3Service.generatePresignedUrl(it.imageId))
+                            .setParticipantType(it.type.toGrpcType())
+                            .setIsConnected(it.isConnected)
+                            .setIsAnswered(false)
+                            .build()
+                    }
+                )
+                .build()
+                .let(::trySend)
+
+            val quizList = sessionQuizService.listQuizBySessionId(session.id)
+            StreamEventResponse.newBuilder()
+                .setEventType(EventType.EVENT_TYPE_UPDATE_PARTICIPANT)
+                .setSessionState(
+                    StreamEventResponse.SessionState.newBuilder()
+                        .setSessionState(session.state.toString())
+                        .setSimpleSessionState(session.state.toSimpleSessionState())
+                        .build(),
+                )
+                .addAllParticipants(
+                    participantList.map {
+                        StreamEventResponse.Participant.newBuilder()
+                            .setParticipantId(it.id.toString())
+                            .setName(it.name)
+                            .setImageUrl(s3Service.generatePresignedUrl(it.imageId))
+                            .setParticipantType(it.type.toGrpcType())
+                            .setIsConnected(it.isConnected)
+                            .setIsAnswered(false)
+                            .build()
+                    }
+                )
+                .build()
+                .let(::trySend)
+
+        }
+
         if (session.state == SessionState.INTRODUCTION) {
             val url = qrCodeService.generateQrCodeUrl(session)
             StreamEventResponse.newBuilder()
@@ -282,6 +334,7 @@ class StreamController(
                                                 .setImageUrl(it.imageUrl)
                                                 .setParticipantType(it.participantType)
                                                 .setIsConnected(it.connected)
+                                                .setIsAnswered(true)
                                                 .build()
                                         },
                                     )

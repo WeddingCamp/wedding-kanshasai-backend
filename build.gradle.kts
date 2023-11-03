@@ -46,7 +46,7 @@ dependencies {
 
     // gRPC
     implementation("net.devh:grpc-spring-boot-starter:2.14.0.RELEASE")
-    implementation("wedding.kanshasai:protobuf:1.4.4")
+    implementation("wedding.kanshasai:protobuf:1.4.5")
 
     // QR Code
     implementation("io.github.g0dkar:qrcode-kotlin-jvm:3.3.0")
