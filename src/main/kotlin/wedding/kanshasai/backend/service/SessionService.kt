@@ -484,7 +484,8 @@ class SessionService(
                     .sortedBy { it.second.rank }
 
                 if (resultList.isEmpty()) {
-                    startSessionResult(session.id, ResultType.INTERIM)
+                    startSessionResult(session.id, ResultType.FINAL)
+                    throw InvalidStateException("ResultList is empty.")
                 }
 
                 val resultListWithType = resultList.map {
