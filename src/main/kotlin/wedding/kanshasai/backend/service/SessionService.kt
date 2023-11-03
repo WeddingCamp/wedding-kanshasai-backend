@@ -451,7 +451,7 @@ class SessionService(
             .sortedBy { it.second.rank }
             .safeSubList(session.resultState.rankStateMachine.index, 10)
 
-        if(resultList.isEmpty()) {
+        if (resultList.isEmpty()) {
             startSessionResult(session.id, ResultType.INTERIM)
             throw InvalidStateException("ResultList is empty.")
         }
@@ -483,7 +483,7 @@ class SessionService(
                     .getOrThrowService()
                     .sortedBy { it.second.rank }
 
-                if(resultList.isEmpty()) {
+                if (resultList.isEmpty()) {
                     startSessionResult(session.id, ResultType.INTERIM)
                 }
 
