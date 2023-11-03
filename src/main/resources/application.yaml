@@ -1,5 +1,6 @@
 grpc.server.port: 6565
-frontend.url: ${FRONTEND_URL:http://localhost:8080}
+frontend:
+  url: ${FRONTEND_URL:http://localhost:8080}
 
 spring:
   profiles.active: default
