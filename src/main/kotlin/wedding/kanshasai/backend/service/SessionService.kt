@@ -483,11 +483,6 @@ class SessionService(
                     .getOrThrowService()
                     .sortedBy { it.second.rank }
 
-                if (resultList.isEmpty()) {
-                    startSessionResult(session.id, ResultType.FINAL)
-                    throw InvalidStateException("ResultList is empty.")
-                }
-
                 val resultListWithType = resultList.map {
                     Triple(
                         it.first,
@@ -514,6 +509,11 @@ class SessionService(
                     ResultState.RANKING_BOOBY -> resultListWithType.filter { it.third == RankType.BOOBY }
                     ResultState.RANKING_JUST -> resultListWithType.filter { it.third == RankType.JUST }
                     else -> resultListWithType.safeSubList(0, 10)
+                }
+
+                if (sortedResultList.isEmpty()) {
+                    startSessionResult(session.id, ResultType.FINAL)
+                    throw InvalidStateException("ResultList is empty.")
                 }
 
                 // 予め表示しておく数は以下に定義する
