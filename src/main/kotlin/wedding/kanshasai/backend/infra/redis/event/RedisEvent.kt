@@ -159,6 +159,7 @@ interface RedisEvent {
     data class ShowResultRankingTitle(
         var rank: Int,
         var resultTitleType: ResultTitleType,
+        var actualResultTitleType: ResultTitleType,
         override val sessionId: String,
     ) : RedisEvent {
         override val eventType: EventType = EventType.EVENT_TYPE_RESULT_RANKING_TITLE
