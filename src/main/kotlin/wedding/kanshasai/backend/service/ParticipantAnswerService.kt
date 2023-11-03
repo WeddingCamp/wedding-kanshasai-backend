@@ -17,7 +17,7 @@ class ParticipantAnswerService(
     private val redisEventService: RedisEventService,
     private val participantRepository: ParticipantRepository,
     private val participantAnswerRepository: ParticipantAnswerRepository,
-    private val s3Service: S3Service
+    private val s3Service: S3Service,
 ) {
     fun getAnswer(participantId: UlidId, quizId: UlidId) = runCatching {
         val participant = participantRepository.findById(participantId).getOrThrowService()
@@ -26,7 +26,7 @@ class ParticipantAnswerService(
 
         participantAnswerRepository.find(session, quiz, participant).getOrThrowService()
     }
-    fun setAnswer(participantId: UlidId, quizId: UlidId, answer: String, time: Float)  {
+    fun setAnswer(participantId: UlidId, quizId: UlidId, answer: String, time: Float) {
         val participant = participantRepository.findById(participantId).getOrThrowService()
         val quiz = quizRepository.findById(quizId).getOrThrowService()
         val session = sessionRepository.findById(participant.sessionId).getOrThrowService()
@@ -57,16 +57,16 @@ class ParticipantAnswerService(
             RedisEvent.UpdateParticipant(
                 participantMap.map {
                     ParticipantRedisEntity(
-                            participantId = it.first.id.toString(),
-                            name = it.first.name,
-                            imageUrl = s3Service.generatePresignedUrl(it.first.imageId),
-                            participantType = it.first.type.toGrpcType(),
-                            connected = it.first.isConnected,
-                            isAnswered = it.second != null
+                        participantId = it.first.id.toString(),
+                        name = it.first.name,
+                        imageUrl = s3Service.generatePresignedUrl(it.first.imageId),
+                        participantType = it.first.type.toGrpcType(),
+                        connected = it.first.isConnected,
+                        isAnswered = it.second != null,
                     )
                 },
-                session.id.toString()
-            )
+                session.id.toString(),
+            ),
         )
     }
 }

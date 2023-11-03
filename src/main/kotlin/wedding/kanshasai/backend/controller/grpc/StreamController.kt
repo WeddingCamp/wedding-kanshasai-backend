@@ -184,7 +184,7 @@ class StreamController(
                             .setIsConnected(it.isConnected)
                             .setIsAnswered(false)
                             .build()
-                    }
+                    },
                 )
                 .build()
                 .let(::trySend)

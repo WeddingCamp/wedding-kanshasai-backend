@@ -10,5 +10,5 @@ data class ParticipantRedisEntity(
     var imageUrl: String,
     var participantType: ParticipantType,
     var connected: Boolean,
-    var isAnswered: Boolean = false
+    var isAnswered: Boolean = false,
 )
