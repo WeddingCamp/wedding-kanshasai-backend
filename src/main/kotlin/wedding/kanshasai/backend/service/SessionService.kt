@@ -82,8 +82,8 @@ class SessionService(
                 introductionId,
                 introductionId <= 1,
                 introductionId >= MAX_INTRODUCTION_ID,
-                sessionId.toString(),
                 url,
+                sessionId.toString(),
             ),
         )
     }
@@ -101,15 +101,15 @@ class SessionService(
             throw InvalidStateException("Introduction is already first.")
         }
 
-        var url = qrCodeService.generateQrCodeUrl(session)
+        val url = qrCodeService.generateQrCodeUrl(session)
         sessionRepository.update(session.clone().apply { currentIntroductionId = introductionId }).getOrThrowService()
         redisEventService.publish(
             RedisEvent.Introduction(
                 introductionId,
                 introductionId <= 1,
                 introductionId >= MAX_INTRODUCTION_ID,
-                sessionId.toString(),
                 url,
+                sessionId.toString(),
             ),
         )
     }
