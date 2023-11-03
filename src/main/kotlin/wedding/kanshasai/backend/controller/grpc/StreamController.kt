@@ -22,6 +22,7 @@ class StreamController(
     private val participantService: ParticipantService,
     private val participantAnswerService: ParticipantAnswerService,
     private val s3Service: S3Service,
+    private val qrCodeService: QrCodeService,
     private val grpcTool: GrpcTool,
     private val redisEventService: RedisEventService,
 ) : StreamServiceGrpcKt.StreamServiceCoroutineImplBase() {
@@ -169,11 +170,13 @@ class StreamController(
         }
 
         if (session.state == SessionState.INTRODUCTION) {
+            val url = qrCodeService.generateQrCodeUrl(session)
             StreamEventResponse.newBuilder()
                 .setEventType(EventType.EVENT_TYPE_INTRODUCTION)
                 .setIntroductionEvent(
                     StreamEventResponse.IntroductionEvent.newBuilder()
                         .setIntroductionId(session.currentIntroductionId)
+                        .setQrCodeImageUrl(url)
                         .build(),
                 )
                 .build()
