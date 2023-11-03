@@ -29,6 +29,7 @@ class SessionService(
     private val choiceRepository: ChoiceRepository,
     private val participantRepository: ParticipantRepository,
     private val participantAnswerRepository: ParticipantAnswerRepository,
+    private val qrCodeService: QrCodeService,
 ) {
     companion object {
         const val MAX_INTRODUCTION_ID = 11
@@ -74,12 +75,14 @@ class SessionService(
             throw InvalidStateException("Introduction is already last.")
         }
 
+        val url = qrCodeService.generateQrCodeUrl(session)
         sessionRepository.update(session.clone().apply { currentIntroductionId = introductionId }).getOrThrowService()
         redisEventService.publish(
             RedisEvent.Introduction(
                 introductionId,
                 introductionId <= 1,
                 introductionId >= MAX_INTRODUCTION_ID,
+                url,
                 sessionId.toString(),
             ),
         )
@@ -98,12 +101,14 @@ class SessionService(
             throw InvalidStateException("Introduction is already first.")
         }
 
+        val url = qrCodeService.generateQrCodeUrl(session)
         sessionRepository.update(session.clone().apply { currentIntroductionId = introductionId }).getOrThrowService()
         redisEventService.publish(
             RedisEvent.Introduction(
                 introductionId,
                 introductionId <= 1,
                 introductionId >= MAX_INTRODUCTION_ID,
+                url,
                 sessionId.toString(),
             ),
         )
