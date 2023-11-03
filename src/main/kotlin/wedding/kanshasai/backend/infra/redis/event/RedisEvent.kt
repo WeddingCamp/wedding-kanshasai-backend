@@ -33,6 +33,7 @@ interface RedisEvent {
         var introductionId: Int,
         var isFirst: Boolean,
         var isLast: Boolean,
+        var qrCodeImageUrl: String,
         override val sessionId: String,
     ) : RedisEvent {
         override val eventType: EventType = EventType.EVENT_TYPE_INTRODUCTION

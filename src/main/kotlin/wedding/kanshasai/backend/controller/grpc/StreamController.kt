@@ -201,6 +201,7 @@ class StreamController(
                                         .setIntroductionId(redisEvent.introductionId)
                                         .setIsFirst(redisEvent.isFirst)
                                         .setIsLast(redisEvent.isLast)
+                                        .setQrCodeImageUrl(redisEvent.qrCodeImageUrl)
                                         .build()
                                 }
 
