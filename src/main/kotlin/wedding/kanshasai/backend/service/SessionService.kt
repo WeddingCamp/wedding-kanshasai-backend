@@ -751,7 +751,7 @@ class SessionService(
     fun showProfile(sessionId: UlidId) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
 
-        if (session.state != SessionState.INTRODUCTION) {
+        if (session.state != SessionState.INTRODUCTION && session.state != SessionState.QUIZ_WAITING) {
             throw InvalidStateException("Session state is not INTRODUCTION.")
         }
 
