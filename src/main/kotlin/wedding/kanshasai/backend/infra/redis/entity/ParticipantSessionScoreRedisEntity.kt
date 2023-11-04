@@ -5,6 +5,7 @@ import wedding.kanshasai.backend.annotation.NoArg
 @NoArg
 data class ParticipantSessionScoreRedisEntity(
     var participantName: String,
+    var participantNameRuby: String,
     var score: Int,
     var isEmphasis: Boolean,
     var rank: Int,

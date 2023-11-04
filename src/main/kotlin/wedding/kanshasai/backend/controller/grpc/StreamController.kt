@@ -231,6 +231,7 @@ class StreamController(
                                     if (participant != null) {
                                         profile = this.profileBuilder
                                             .setParticipantName(participant.name)
+                                            .setParticipantNameRuby(participant.nameRuby)
                                             .setParticipantImageUrl(
                                                 s3Service.generatePresignedUrl(participant.imageId),
                                             )
@@ -275,6 +276,7 @@ class StreamController(
                                             redisEvent.participantQuizTimeList.map { participantQuizTime ->
                                                 StreamEventResponse.SpeedRanking.ParticipantQuizTime.newBuilder()
                                                     .setParticipantName(participantQuizTime.participantName)
+                                                    .setParticipantNameRuby(participantQuizTime.participantNameRuby)
                                                     .setParticipantImageUrl(
                                                         s3Service.generatePresignedUrl(participantQuizTime.participantImageId),
                                                     )
@@ -331,6 +333,7 @@ class StreamController(
                                             redisEvent.participantSessionScoreList.map { participantSessionScore ->
                                                 StreamEventResponse.ResultRanking.ParticipantSessionScore.newBuilder()
                                                     .setParticipantName(participantSessionScore.participantName)
+                                                    .setParticipantNameRuby(participantSessionScore.participantNameRuby)
                                                     .setScore(participantSessionScore.score)
                                                     .setIsEmphasis(participantSessionScore.isEmphasis)
                                                     .setRank(participantSessionScore.rank)
