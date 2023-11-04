@@ -7,6 +7,7 @@ import wedding.kanshasai.v1.ParticipantType
 data class ParticipantRedisEntity(
     var participantId: String,
     var name: String,
+    var nameRuby: String,
     var imageUrl: String,
     var participantType: ParticipantType,
     var connected: Boolean,

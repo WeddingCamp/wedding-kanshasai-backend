@@ -22,9 +22,9 @@ class ParticipantService(
         return participantRepository.listBySession(session).getOrThrowService()
     }
 
-    fun createParticipant(sessionId: UlidId, name: String, imageId: UlidId?, type: ParticipantType): Participant {
+    fun createParticipant(sessionId: UlidId, name: String, nameRuby: String, imageId: UlidId?, type: ParticipantType): Participant {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
-        val participant = participantRepository.createParticipant(session, name, imageId, type).getOrThrowService()
+        val participant = participantRepository.createParticipant(session, name, nameRuby, imageId, type).getOrThrowService()
 
         publishParticipantList(sessionId)
 

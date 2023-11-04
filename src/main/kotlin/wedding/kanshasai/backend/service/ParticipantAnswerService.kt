@@ -59,6 +59,7 @@ class ParticipantAnswerService(
                     ParticipantRedisEntity(
                         participantId = it.first.id.toString(),
                         name = it.first.name,
+                        nameRuby = it.first.nameRuby,
                         imageUrl = s3Service.generatePresignedUrl(it.first.imageId),
                         participantType = it.first.type.toGrpcType(),
                         connected = it.first.isConnected,

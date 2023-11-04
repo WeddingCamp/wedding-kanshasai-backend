@@ -58,6 +58,7 @@ class RedisEventService(
             ParticipantRedisEntity(
                 participantId = it.id.toString(),
                 name = it.name,
+                nameRuby = it.nameRuby,
                 imageUrl = s3Service.generatePresignedUrl(it.imageId),
                 participantType = it.type.toGrpcType(),
                 connected = it.isConnected,

@@ -7,6 +7,7 @@ interface IParticipant {
     var participantIdentifier: StandardIdentifier
     var sessionId: ByteArray
     var name: String
+    var nameRuby: String
     var imageId: ByteArray?
     var type: Int
     var isConnected: Boolean
