@@ -21,6 +21,6 @@ enum class ResultRankState(
         override val nextStateList get() = listOf(TITLE)
     },
     TITLE(50) {
-        override val nextStateList get() = listOf(PRE_RANK)
+        override val nextStateList get() = listOf(PRE_RANK, RANK)
     },
 }

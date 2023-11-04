@@ -194,9 +194,6 @@ class SessionService(
             ),
         )
 
-        val participantList = participantRepository.listBySession(session).getOrThrowService()
-        redisEventService.publishParticipantList(participantList, sessionId)
-
         redisEventService.publishState(session.state, nextState, session.id)
     }
 
@@ -371,13 +368,14 @@ class SessionService(
         sessionQuizRepository.update(sessionQuiz.clone().apply { isCompleted = true }).getOrThrowService()
 
         val participantAnswerList = participantAnswerRepository.listBySessionQuiz(sessionQuiz).getOrThrowService()
-        participantAnswerList.forEach {
-            participantAnswerRepository.update(
-                it.clone().apply {
-                    isCorrect = quiz.isCorrectAnswer(sessionQuiz, it.answer)
-                },
-            )
-        }
+        participantAnswerRepository.updateAll(
+            true,
+            participantAnswerList.filter { quiz.isCorrectAnswer(sessionQuiz, it.answer) },
+        ).getOrThrowService()
+        participantAnswerRepository.updateAll(
+            false,
+            participantAnswerList.filter { !quiz.isCorrectAnswer(sessionQuiz, it.answer) },
+        ).getOrThrowService()
     }
 
     fun cancelCurrentQuiz(sessionId: UlidId) {
@@ -751,7 +749,7 @@ class SessionService(
     fun showProfile(sessionId: UlidId) {
         val session = sessionRepository.findById(sessionId).getOrThrowService()
 
-        if (session.state != SessionState.INTRODUCTION) {
+        if (session.state != SessionState.INTRODUCTION && session.state != SessionState.QUIZ_WAITING) {
             throw InvalidStateException("Session state is not INTRODUCTION.")
         }
 

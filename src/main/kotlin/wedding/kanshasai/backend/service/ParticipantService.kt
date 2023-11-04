@@ -26,8 +26,7 @@ class ParticipantService(
         val session = sessionRepository.findById(sessionId).getOrThrowService()
         val participant = participantRepository.createParticipant(session, name, nameRuby, imageId, type).getOrThrowService()
 
-        publishParticipantList(sessionId)
-
+        redisEventService.publishParticipant(participant)
         return participant
     }
 
@@ -38,11 +37,7 @@ class ParticipantService(
                 this.isConnected = isConnected
             },
         ).getOrThrowService()
-        publishParticipantList(participant.sessionId)
-    }
 
-    private fun publishParticipantList(sessionId: UlidId) {
-        val participantList = listParticipantsBySessionId(sessionId)
-        redisEventService.publishParticipantList(participantList, sessionId)
+        redisEventService.publishParticipant(participantRepository.findById(participantId).getOrThrowService())
     }
 }

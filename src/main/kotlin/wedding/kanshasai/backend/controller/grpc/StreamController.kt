@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import net.devh.boot.grpc.server.service.GrpcService
+import wedding.kanshasai.backend.domain.entity.Participant
+import wedding.kanshasai.backend.domain.entity.Session
 import wedding.kanshasai.backend.domain.exception.InvalidArgumentException
 import wedding.kanshasai.backend.domain.state.SessionState
 import wedding.kanshasai.backend.domain.value.UlidId
@@ -82,7 +84,66 @@ class StreamController(
         ),
     )
 
+    private fun generateFullCurrentState(session: Session, participant: Participant): StreamEventResponse {
+        return StreamEventResponse.newBuilder()
+            .setEventType(EventType.EVENT_TYPE_FULL_CURRENT_STATE)
+            .setSessionState(
+                StreamEventResponse.SessionState.newBuilder()
+                    .setSessionState(session.state.toString())
+                    .setSimpleSessionState(session.state.toSimpleSessionState())
+                    .build(),
+            )
+            .apply {
+                if (
+                    session.state == SessionState.QUIZ_WAITING ||
+                    session.state == SessionState.QUIZ_SHOWING ||
+                    session.state == SessionState.QUIZ_PLAYING ||
+                    session.state == SessionState.QUIZ_CLOSED ||
+                    session.state == SessionState.QUIZ_RESULT
+                ) {
+                    sessionService.getCurrentQuiz(session.id).onSuccess { currentQuiz ->
+                        quiz = this.quizBuilder
+                            .setQuizId(currentQuiz.first.id.toString())
+                            .setBody(currentQuiz.first.body)
+                            .setQuizType(currentQuiz.first.type.toGrpcType())
+                            .addAllChoices(
+                                currentQuiz.second.map { choice ->
+                                    StreamEventResponse.Quiz.Choice.newBuilder().let { choiceBuilder ->
+                                        choiceBuilder.choiceId = choice.id.toString()
+                                        choiceBuilder.body = redisEventService.parseBody(choice.body, currentQuiz.first.type)
+                                        choiceBuilder.isSelectedChoice = participantAnswerService.getAnswer(
+                                            participant.id,
+                                            currentQuiz.first.id,
+                                        ).getOrNull()?.answer == choice.id.toString()
+
+                                        if (session.state == SessionState.QUIZ_RESULT) {
+                                            choiceBuilder.isCorrectChoice = currentQuiz.first
+                                                .isCorrectAnswer(currentQuiz.third, choice.id.toString())
+                                        }
+                                        choiceBuilder.build()
+                                    }
+                                },
+                            )
+                            .apply {
+                                if (session.state == SessionState.QUIZ_PLAYING) {
+                                    val startAt = currentQuiz.third.startedAt?.time
+                                    elapsedTime = if (startAt == null) {
+                                        0f
+                                    } else {
+                                        val diffMillis = Timestamp.from(Date().toInstant()).time - startAt
+                                        (diffMillis / 1000).toFloat()
+                                    }
+                                }
+                            }
+                            .build()
+                    }
+                }
+            }
+            .build()
+    }
+
     override fun streamEvent(request: StreamEventRequest): Flow<StreamEventResponse> = callbackFlow {
+        // 参加者を取得
         val participant = if (listOf(StreamType.STREAM_TYPE_PARTICIPANT).contains(request.type)) {
             val participantId = grpcTool.parseUlidId(request.participantId, "participantId")
             participantService.setConnected(participantId, true)
@@ -91,6 +152,7 @@ class StreamController(
             null
         }
 
+        // セッションを取得
         val session = if (participant != null) {
             sessionService.findById(participant.sessionId)
         } else {
@@ -100,64 +162,13 @@ class StreamController(
 
         val eventList = map[request.type] ?: throw InvalidArgumentException.requiredField("type")
 
+        // 種別がPARTICIPANTだった場合FullCurrentStateを送信
         if (participant != null) {
-            StreamEventResponse.newBuilder()
-                .setEventType(EventType.EVENT_TYPE_FULL_CURRENT_STATE)
-                .setSessionState(
-                    StreamEventResponse.SessionState.newBuilder()
-                        .setSessionState(session.state.toString())
-                        .setSimpleSessionState(session.state.toSimpleSessionState())
-                        .build(),
-                )
-                .apply {
-                    if (
-                        session.state == SessionState.QUIZ_WAITING ||
-                        session.state == SessionState.QUIZ_SHOWING ||
-                        session.state == SessionState.QUIZ_PLAYING ||
-                        session.state == SessionState.QUIZ_CLOSED ||
-                        session.state == SessionState.QUIZ_RESULT
-                    ) {
-                        sessionService.getCurrentQuiz(session.id).onSuccess { currentQuiz ->
-                            quiz = this.quizBuilder
-                                .setQuizId(currentQuiz.first.id.toString())
-                                .setBody(currentQuiz.first.body)
-                                .setQuizType(currentQuiz.first.type.toGrpcType())
-                                .addAllChoices(
-                                    currentQuiz.second.map { choice ->
-                                        StreamEventResponse.Quiz.Choice.newBuilder().let { choiceBuilder ->
-                                            choiceBuilder.choiceId = choice.id.toString()
-                                            choiceBuilder.body = redisEventService.parseBody(choice.body, currentQuiz.first.type)
-                                            choiceBuilder.isSelectedChoice = participantAnswerService.getAnswer(
-                                                participant.id,
-                                                currentQuiz.first.id,
-                                            ).getOrNull()?.answer == choice.id.toString()
+            generateFullCurrentState(session, participant).let(::trySend)
+        }
 
-                                            if (session.state == SessionState.QUIZ_RESULT) {
-                                                choiceBuilder.isCorrectChoice = currentQuiz.first
-                                                    .isCorrectAnswer(currentQuiz.third, choice.id.toString())
-                                            }
-                                            choiceBuilder.build()
-                                        }
-                                    },
-                                )
-                                .apply {
-                                    if (session.state == SessionState.QUIZ_PLAYING) {
-                                        val startAt = currentQuiz.third.startedAt?.time
-                                        elapsedTime = if (startAt == null) {
-                                            0f
-                                        } else {
-                                            val diffMillis = Timestamp.from(Date().toInstant()).time - startAt
-                                            (diffMillis / 1000).toFloat()
-                                        }
-                                    }
-                                }
-                                .build()
-                        }
-                    }
-                }
-                .build()
-                .let(::trySend)
-        } else if (eventList.contains(RedisEvent.CurrentState::class)) {
+        // 種別がPARTICIPANT以外でCurrentStateが含まれている場合送信
+        if (participant == null && eventList.contains(RedisEvent.CurrentState::class)) {
             StreamEventResponse.newBuilder()
                 .setEventType(EventType.EVENT_TYPE_CURRENT_STATE)
                 .setSessionState(
@@ -170,7 +181,8 @@ class StreamController(
                 .let(::trySend)
         }
 
-        if (request.type == StreamType.STREAM_TYPE_MANAGER) {
+        // 最初は参加者を全員送信
+        if (eventList.contains(RedisEvent.UpdateParticipant::class)) {
             val participantList = participantService.listParticipantsBySessionId(session.id)
             StreamEventResponse.newBuilder()
                 .setEventType(EventType.EVENT_TYPE_UPDATE_PARTICIPANT)

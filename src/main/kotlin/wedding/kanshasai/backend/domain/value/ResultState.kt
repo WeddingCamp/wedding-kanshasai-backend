@@ -69,7 +69,6 @@ enum class ResultState(
                 ResultRankState.DUMMY_TITLE,
                 ResultRankState.DUMMY_TITLE_MESSAGE,
                 ResultRankState.TITLE,
-                ResultRankState.PRE_RANK,
                 ResultRankState.RANK,
                 ResultRankState.PRESENT,
             )
@@ -83,7 +82,6 @@ enum class ResultState(
                 ResultRankState.DUMMY_TITLE,
                 ResultRankState.DUMMY_TITLE_MESSAGE,
                 ResultRankState.TITLE,
-                ResultRankState.PRE_RANK,
                 ResultRankState.RANK,
                 ResultRankState.PRESENT,
             )

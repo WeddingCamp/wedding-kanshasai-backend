@@ -83,11 +83,30 @@
             is_deleted = #{entity.isDeleted}
         WHERE
             participant_id = #{entity.identifier.participantId}
-            AND
+          AND
             session_id = #{entity.identifier.sessionQuizIdentifier.sessionId}
-            AND
+          AND
             quiz_id = #{entity.identifier.sessionQuizIdentifier.quizId}
-            AND
+          AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
+    <update id="updateAll">
+        UPDATE
+            participant_answers
+        SET
+            is_correct = #{isCorrect}
+        WHERE
+            (
+            <foreach collection="participantIdList" item="pid" separator=" OR ">
+            participant_id = #{pid}
+            </foreach>
+            )
+          AND
+            session_id = #{sessionId}
+          AND
+            quiz_id = #{quizId}
+          AND
             (is_deleted = false OR is_deleted = #{includeDeleted})
     </update>
 
