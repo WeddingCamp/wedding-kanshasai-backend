@@ -175,7 +175,13 @@ class ParticipantRepositoryTests {
             }
             return
         }
-        val createdParticipant = participantRepository.createParticipant(session, participantName, participantNameRuby, imageId, type).getOrThrow()
+        val createdParticipant = participantRepository.createParticipant(
+            session,
+            participantName,
+            participantNameRuby,
+            imageId,
+            type,
+        ).getOrThrow()
         assertEquals(participantName, createdParticipant.name)
         assertEquals(session.id, createdParticipant.sessionId)
         assertEquals(imageId, createdParticipant.imageId)
