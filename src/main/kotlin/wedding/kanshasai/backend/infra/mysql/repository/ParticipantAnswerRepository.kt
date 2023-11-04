@@ -1,6 +1,5 @@
 package wedding.kanshasai.backend.infra.mysql.repository
 
-import org.springframework.data.repository.query.parser.Part
 import org.springframework.stereotype.Repository
 import wedding.kanshasai.backend.domain.constant.Table
 import wedding.kanshasai.backend.domain.entity.*
