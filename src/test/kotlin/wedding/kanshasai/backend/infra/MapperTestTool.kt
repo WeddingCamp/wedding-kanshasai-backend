@@ -90,6 +90,7 @@ class MapperTestTool {
             participantId.toStandardIdentifier(),
             sessionDto.sessionIdentifier.id,
             "Participant_$participantId",
+            "Participant_Ruby_$participantId",
             imageId?.toByteArray() ?: maybeNull(UlidId.new().toByteArray()),
             ParticipantType.values.random().toNumber(),
         )
