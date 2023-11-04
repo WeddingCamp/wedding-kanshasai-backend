@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wedding.kanshasai.backend.infra.mysql.mapper.SessionQuizMapper">
+
+    <insert id="insert">
+        INSERT INTO session_quizzes(
+            session_id,
+            quiz_id,
+            is_completed,
+            started_at,
+            correct_answer,
+            is_deleted
+        )
+        VALUES (
+            #{entity.identifier.sessionId},
+            #{entity.identifier.quizId},
+            #{entity.isCompleted},
+            #{entity.startedAt},
+            #{entity.sessionQuizCorrectAnswer},
+            #{entity.isDeleted}
+        )
+    </insert>
+
+    <insert id="insertAll">
+        INSERT INTO session_quizzes(
+            session_id,
+            quiz_id,
+            is_completed,
+            started_at,
+            correct_answer,
+            is_deleted
+        )
+        VALUES
+        <foreach collection="entities" item="entity" separator=",">
+            (
+                #{entity.identifier.sessionId},
+                #{entity.identifier.quizId},
+                #{entity.isCompleted},
+                #{entity.startedAt},
+                #{entity.sessionQuizCorrectAnswer},
+                #{entity.isDeleted}
+            )
+        </foreach>
+    </insert>
+
+    <select id="select" resultMap="sessionQuiz">
+        SELECT
+            *
+        FROM
+            session_quizzes
+        WHERE
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY
+            session_id, quiz_id
+    </select>
+
+    <select id="findById" resultMap="sessionQuiz">
+        SELECT
+            *
+        FROM
+            session_quizzes
+        WHERE
+            session_id = #{identifier.sessionId}
+            AND
+            quiz_id = #{identifier.quizId}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </select>
+
+    <update id="update">
+        UPDATE
+            session_quizzes
+        SET
+            is_completed = #{entity.isCompleted},
+            started_at = #{entity.startedAt},
+            correct_answer = #{entity.sessionQuizCorrectAnswer},
+            is_deleted = #{entity.isDeleted}
+        WHERE
+            session_id = #{entity.identifier.sessionId}
+            AND
+            quiz_id = #{entity.identifier.quizId}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
+    <update id="deleteById">
+        UPDATE
+            session_quizzes
+        SET
+            is_deleted = true
+        WHERE
+            session_id = #{identifier.sessionId}
+            AND
+            quiz_id = #{identifier.quizId}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
+    <select id="listBySessionId" resultMap="quizWithStatus">
+        SELECT
+            q.id AS quiz_id,
+            q.event_id,
+            q.body,
+            q.correct_answer,
+            q.type,
+            sq.session_id,
+            sq.is_completed,
+            sq.correct_answer as sq_correct_answer,
+            sq.started_at
+        FROM
+            quizzes q
+        LEFT JOIN
+            session_quizzes sq
+        ON
+            q.id = sq.quiz_id
+        WHERE
+            sq.session_id = #{sessionId}
+            AND
+            (q.is_deleted = false OR q.is_deleted = #{includeDeleted})
+        ORDER BY
+            q.id
+    </select>
+
+    <resultMap id="sessionQuiz" type="wedding.kanshasai.backend.infra.mysql.dto.SessionQuizDto">
+        <id property="sessionId" column="session_id"/>
+        <id property="quizId" column="quiz_id"/>
+        <result property="isCompleted" column="is_completed"/>
+        <result property="startedAt" column="started_at"/>
+        <result property="sessionQuizCorrectAnswer" column="correct_answer"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="identifier" resultMap="sessionQuizIdentifier"/>
+    </resultMap>
+
+    <resultMap id="quizWithStatus" type="wedding.kanshasai.backend.infra.mysql.dto.QuizWithStatusDto">
+        <id property="sessionId" column="session_id"/>
+        <id property="quizId" column="quiz_id"/>
+        <result property="eventId" column="event_id"/>
+        <result property="body" column="body"/>
+        <result property="correctAnswer" column="correct_answer"/>
+        <result property="type" column="type"/>
+        <result property="isCompleted" column="is_completed"/>
+        <result property="startedAt" column="started_at"/>
+        <result property="sessionQuizCorrectAnswer" column="sq_correct_answer"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="quizIdentifier" resultMap="quizIdentifier"/>
+        <association property="sessionQuizIdentifier" resultMap="sessionQuizIdentifier"/>
+    </resultMap>
+
+    <resultMap id="quizIdentifier" type="wedding.kanshasai.backend.infra.mysql.dto.identifier.StandardIdentifier">
+        <id property="id" column="quiz_id"/>
+    </resultMap>
+
+    <resultMap id="sessionQuizIdentifier" type="wedding.kanshasai.backend.infra.mysql.dto.identifier.SessionQuizIdentifier">
+        <result property="sessionId" column="session_id"/>
+        <result property="quizId" column="quiz_id"/>
+    </resultMap>
+</mapper>

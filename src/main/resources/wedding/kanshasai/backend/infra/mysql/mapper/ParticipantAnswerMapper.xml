@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wedding.kanshasai.backend.infra.mysql.mapper.ParticipantAnswerMapper">
+
+    <insert id="insert">
+        INSERT INTO participant_answers(
+            participant_id,
+            session_id,
+            quiz_id,
+            answer,
+            time,
+            is_correct,
+            is_deleted
+        )
+        VALUES (
+            #{entity.identifier.participantId},
+            #{entity.identifier.sessionQuizIdentifier.sessionId},
+            #{entity.identifier.sessionQuizIdentifier.quizId},
+            #{entity.answer},
+            #{entity.time},
+            #{entity.isCorrect},
+            #{entity.isDeleted}
+        )
+    </insert>
+
+    <insert id="insertAll">
+        INSERT INTO participant_answers(
+            participant_id,
+            session_id,
+            quiz_id,
+            answer,
+            time,
+            is_correct,
+            is_deleted
+        )
+        VALUES
+        <foreach collection="entities" item="entity" separator=",">
+            (
+                #{entity.identifier.participantId},
+                #{entity.identifier.sessionQuizIdentifier.sessionId},
+                #{entity.identifier.sessionQuizIdentifier.quizId},
+                #{entity.answer},
+                #{entity.time},
+                #{entity.isCorrect},
+                #{entity.isDeleted}
+            )
+        </foreach>
+    </insert>
+
+    <select id="select" resultMap="participantAnswer">
+        SELECT
+            *
+        FROM
+            participant_answers
+        WHERE
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY
+            participant_id, session_id, quiz_id
+    </select>
+
+    <select id="findById" resultMap="participantAnswer">
+        SELECT
+            *
+        FROM
+            participant_answers
+        WHERE
+            participant_id = #{identifier.participantId}
+            AND
+            session_id = #{identifier.sessionQuizIdentifier.sessionId}
+            AND
+            quiz_id = #{identifier.sessionQuizIdentifier.quizId}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </select>
+
+    <update id="update">
+        UPDATE
+            participant_answers
+        SET
+            answer = #{entity.answer},
+            time = #{entity.time},
+            is_correct = #{entity.isCorrect},
+            is_deleted = #{entity.isDeleted}
+        WHERE
+            participant_id = #{entity.identifier.participantId}
+            AND
+            session_id = #{entity.identifier.sessionQuizIdentifier.sessionId}
+            AND
+            quiz_id = #{entity.identifier.sessionQuizIdentifier.quizId}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
+    <update id="deleteById">
+        UPDATE
+            participant_answers
+        SET
+            is_deleted = true
+        WHERE
+            participant_id = #{identifier.participantId}
+            AND
+            session_id = #{identifier.sessionQuizIdentifier.sessionId}
+            AND
+            quiz_id = #{identifier.sessionQuizIdentifier.quizId}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
+    <select id="listBySessionIdAndQuizId" resultMap="participantAnswer">
+        SELECT
+            *
+        FROM
+            participant_answers
+        WHERE
+            session_id = #{sessionId}
+          AND
+            quiz_id = #{quizId}
+          AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY
+            participant_id
+    </select>
+
+    <delete id="deleteBySessionIdAndQuizId">
+        DELETE FROM
+            participant_answers
+        WHERE
+            session_id = #{sessionId}
+          AND
+            quiz_id = #{quizId}
+    </delete>
+
+    <resultMap id="participantAnswer" type="wedding.kanshasai.backend.infra.mysql.dto.ParticipantAnswerDto">
+        <id property="participantId" column="participant_id"/>
+        <id property="sessionId" column="session_id"/>
+        <id property="quizId" column="quiz_id"/>
+        <result property="answer" column="answer"/>
+        <result property="time" column="time"/>
+        <result property="isCorrect" column="is_correct"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="identifier" resultMap="participantAnswerIdentifier"/>
+    </resultMap>
+
+    <resultMap id="participantAnswerIdentifier" type="wedding.kanshasai.backend.infra.mysql.dto.identifier.ParticipantAnswerIdentifier">
+        <result property="participantId" column="participant_id"/>
+        <association property="sessionQuizIdentifier" resultMap="wedding.kanshasai.backend.infra.mysql.mapper.SessionQuizMapper.sessionQuizIdentifier"/>
+    </resultMap>
+</mapper>

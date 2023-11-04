@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wedding.kanshasai.backend.infra.mysql.mapper.ParticipantMapper">
+
+    <insert id="insert">
+        INSERT INTO participants(id,
+                                 session_id,
+                                 name,
+                                 name_ruby,
+                                 image_id,
+                                 type,
+                                 is_connected,
+                                 is_deleted)
+        VALUES (#{entity.identifier.id},
+                #{entity.sessionId},
+                #{entity.name},
+                #{entity.nameRuby},
+                #{entity.imageId},
+                #{entity.type},
+                #{entity.isConnected},
+                #{entity.isDeleted})
+    </insert>
+
+    <insert id="insertAll">
+        INSERT INTO participants(
+        id,
+        session_id,
+        name,
+        name_ruby,
+        image_id,
+        type,
+        is_connected,
+        is_deleted
+        )
+        VALUES
+        <foreach collection="entities" item="entity" separator=",">
+            (
+            #{entity.identifier.id},
+            #{entity.sessionId},
+            #{entity.name},
+            #{entity.nameRuby},
+            #{entity.imageId},
+            #{entity.type},
+            #{entity.isConnected},
+            #{entity.isDeleted}
+            )
+        </foreach>
+    </insert>
+
+    <select id="select" resultMap="participant">
+        SELECT *
+        FROM participants
+        WHERE (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY id
+    </select>
+
+    <select id="findById" resultMap="participant">
+        SELECT *
+        FROM participants
+        WHERE id = #{identifier.id}
+          AND (is_deleted = false OR is_deleted = #{includeDeleted})
+    </select>
+
+    <update id="update">
+        UPDATE
+            participants
+        SET session_id   = #{entity.sessionId},
+            name         = #{entity.name},
+            name_ruby    = #{entity.nameRuby},
+            image_id     = #{entity.imageId},
+            type         = #{entity.type},
+            is_connected = #{entity.isConnected},
+            is_deleted   = #{entity.isDeleted}
+        WHERE id = #{entity.identifier.id}
+          AND (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
+    <update id="deleteById">
+        UPDATE
+            participants
+        SET is_deleted = true
+        WHERE id = #{identifier.id}
+          AND (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
+    <select id="listBySessionId" resultMap="participant">
+        SELECT *
+        FROM participants
+        WHERE session_id = #{id}
+          AND (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY id
+    </select>
+
+    <select id="listBySessionIdWithResult" resultMap="participantWithResult">
+        SELECT result.id,
+               result.session_id,
+               result.name,
+               result.name_ruby,
+               result.image_id,
+               result.type,
+               result.is_connected,
+               result.is_deleted,
+               result.score,
+               result.time,
+               ROW_NUMBER() OVER (ORDER BY score desc, time) as user_rank
+        from (SELECT p.id,
+                     p.session_id,
+                     p.name,
+                     p.name_ruby,
+                     p.image_id,
+                     p.type,
+                     p.is_connected,
+                     p.is_deleted,
+                     sum(pa.is_correct)                        as score,
+                     sum(if(pa.is_correct = true, pa.time, 0)) as time,
+                     count(pa.participant_id)                  as answer_count
+              FROM participants as p
+                       LEFT JOIN
+                   participant_answers as pa
+                   ON
+                               p.id = pa.participant_id
+                           AND
+                               (pa.is_deleted = false OR pa.is_deleted = #{includeDeleted})
+              WHERE p.session_id = #{id}
+                AND (p.is_deleted = false OR p.is_deleted = #{includeDeleted})
+              GROUP BY p.id) as result
+        WHERE result.answer_count > 0
+        ORDER BY score desc,
+                 time
+    </select>
+
+    <resultMap id="participant" type="wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto">
+        <result property="sessionId" column="session_id"/>
+        <result property="name" column="name"/>
+        <result property="nameRuby" column="name_ruby"/>
+        <result property="imageId" column="image_id"/>
+        <result property="type" column="type"/>
+        <result property="isConnected" column="is_connected"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="identifier" resultMap="participantIdentifier"/>
+    </resultMap>
+
+    <resultMap id="participantWithResult" type="wedding.kanshasai.backend.infra.mysql.dto.ParticipantWithResultDto">
+        <result property="sessionId" column="session_id"/>
+        <result property="name" column="name"/>
+        <result property="nameRuby" column="name_ruby"/>
+        <result property="imageId" column="image_id"/>
+        <result property="type" column="type"/>
+        <result property="isConnected" column="is_connected"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="score" column="score"/>
+        <result property="time" column="time"/>
+        <result property="rank" column="user_rank"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="identifier" resultMap="participantIdentifier"/>
+    </resultMap>
+
+    <resultMap id="participantIdentifier"
+               type="wedding.kanshasai.backend.infra.mysql.dto.identifier.StandardIdentifier">
+        <id property="id" column="id"/>
+    </resultMap>
+</mapper>

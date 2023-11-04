@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wedding.kanshasai.backend.infra.mysql.mapper.QuizMapper">
+
+    <insert id="insert">
+        INSERT INTO quizzes(
+            id,
+            event_id,
+            body,
+            correct_answer,
+            type,
+            is_deleted
+        )
+        VALUES (
+            #{entity.identifier.id},
+            #{entity.eventId},
+            #{entity.body},
+            #{entity.correctAnswer},
+            #{entity.type},
+            #{entity.isDeleted}
+        )
+    </insert>
+
+    <insert id="insertAll">
+        INSERT INTO quizzes(
+            id,
+            event_id,
+            body,
+            correct_answer,
+            type,
+            is_deleted
+        )
+        VALUES
+        <foreach collection="entities" item="entity" separator=",">
+            (
+                #{entity.identifier.id},
+                #{entity.eventId},
+                #{entity.body},
+                #{entity.correctAnswer},
+                #{entity.type},
+                #{entity.isDeleted}
+            )
+        </foreach>
+    </insert>
+
+    <select id="select" resultMap="quiz">
+        SELECT
+            *
+        FROM
+            quizzes
+        WHERE
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY
+            id
+    </select>
+
+    <select id="findById" resultMap="quiz">
+        SELECT
+            *
+        FROM
+            quizzes
+        WHERE
+            id = #{identifier.id}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </select>
+
+    <update id="update">
+        UPDATE
+            quizzes
+        SET
+            event_id = #{entity.eventId},
+            body = #{entity.body},
+            correct_answer = #{entity.correctAnswer},
+            type = #{entity.type},
+            is_deleted = #{entity.isDeleted}
+        WHERE
+            id = #{entity.identifier.id}
+        AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
+    <update id="deleteById">
+        UPDATE
+            quizzes
+        SET
+            is_deleted = true
+        WHERE
+            id = #{identifier.id}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+    </update>
+
+    <select id="listByEventId" resultMap="quiz">
+        SELECT
+            *
+        FROM
+            quizzes
+        WHERE
+            event_id = #{id}
+            AND
+            (is_deleted = false OR is_deleted = #{includeDeleted})
+        ORDER BY
+            id
+    </select>
+
+    <resultMap id="quiz" type="wedding.kanshasai.backend.infra.mysql.dto.QuizDto">
+        <result property="eventId" column="event_id"/>
+        <result property="body" column="body"/>
+        <result property="correctAnswer" column="correct_answer"/>
+        <result property="type" column="type"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="identifier" resultMap="quizIdentifier"/>
+    </resultMap>
+
+    <resultMap id="quizIdentifier" type="wedding.kanshasai.backend.infra.mysql.dto.identifier.StandardIdentifier">
+        <id property="id" column="id"/>
+    </resultMap>
+</mapper>

@@ -1,0 +1,52 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+    <springProfile name="default,test">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="CONSOLE_REQUEST"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="prd,dev">
+        <root level="INFO">
+            <appender-ref ref="JSON"/>
+            <appender-ref ref="STASH"/>
+        </root>
+    </springProfile>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="wedding.kanshasai.backend.configration.logback.RequestLogFilter">
+            <isRequest>false</isRequest>
+        </filter>
+        <encoder>
+            <pattern>%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd'T'HH:mm:ss.SSS}}) %highlight(%-5level) [%thread] %cyan(%logger{15}) - %msg %yellow(%mdc{request-id}) %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CONSOLE_REQUEST" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="wedding.kanshasai.backend.configration.logback.RequestLogFilter">
+            <isRequest>true</isRequest>
+        </filter>
+        <encoder>
+            <pattern>
+                %clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd'T'HH:mm:ss.SSS}}) %highlight(%-5level) [%thread] %cyan(%logger{15}) - %msg %yellow(%mdc{request-id}) %n    %kvp%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>${LOG_DESTINATION}</destination>
+
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+
+    <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+
+    <logger name="wedding.kanshasai.backend">
+        <level value="debug"/>
+    </logger>
+</configuration>

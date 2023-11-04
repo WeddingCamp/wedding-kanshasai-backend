@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wedding.kanshasai.backend.infra.mapper.TruncateMapper">
+    <update id="truncate">
+        SET REFERENTIAL_INTEGRITY FALSE;
+        TRUNCATE TABLE events;
+        TRUNCATE TABLE quizzes;
+        TRUNCATE TABLE choices;
+        TRUNCATE TABLE participants;
+        TRUNCATE TABLE participant_answers;
+        TRUNCATE TABLE sessions;
+        TRUNCATE TABLE session_quizzes;
+        SET REFERENTIAL_INTEGRITY TRUE;
+    </update>
+</mapper>
