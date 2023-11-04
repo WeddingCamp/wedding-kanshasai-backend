@@ -46,26 +46,19 @@ class ParticipantAnswerService(
 
         participantAnswerRepository.createParticipantAnswer(session, quiz, participant, answer, time).getOrThrowService()
 
-        val participantList = participantRepository.listBySession(session).getOrThrowService()
-        val participantAnswerList = participantAnswerRepository.listBySessionQuiz(sessionQuiz).getOrThrowService()
-
-        val participantMap = participantList.map { p ->
-            p to participantAnswerList.find { it.participantId == p.id }
-        }
-
         redisEventService.publish(
             RedisEvent.UpdateParticipant(
-                participantMap.map {
+                listOf(
                     ParticipantRedisEntity(
-                        participantId = it.first.id.toString(),
-                        name = it.first.name,
-                        nameRuby = it.first.nameRuby,
-                        imageUrl = s3Service.generatePresignedUrl(it.first.imageId),
-                        participantType = it.first.type.toGrpcType(),
-                        connected = it.first.isConnected,
-                        isAnswered = it.second != null,
+                        participantId = participant.id.toString(),
+                        name = participant.name,
+                        nameRuby = participant.nameRuby,
+                        imageUrl = s3Service.generatePresignedUrl(participant.imageId),
+                        participantType = participant.type.toGrpcType(),
+                        connected = participant.isConnected,
+                        isAnswered = true,
                     )
-                },
+                ),
                 session.id.toString(),
             ),
         )

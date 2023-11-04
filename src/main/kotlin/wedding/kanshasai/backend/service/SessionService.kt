@@ -194,9 +194,6 @@ class SessionService(
             ),
         )
 
-        val participantList = participantRepository.listBySession(session).getOrThrowService()
-        redisEventService.publishParticipantList(participantList, sessionId)
-
         redisEventService.publishState(session.state, nextState, session.id)
     }
 

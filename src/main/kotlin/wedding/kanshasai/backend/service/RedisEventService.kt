@@ -52,19 +52,18 @@ class RedisEventService(
         publish(RedisEvent.CurrentState(nextState.toSimpleSessionState(), nextState.toString(), sessionId.toString()))
     }
 
-    fun publishParticipantList(participantList: List<Participant>, sessionId: UlidId) {
-        logger.info { "Publish participant list" }
-        val list = participantList.map {
+    fun publishParticipant(participant: Participant) {
+        val list = listOf(
             ParticipantRedisEntity(
-                participantId = it.id.toString(),
-                name = it.name,
-                nameRuby = it.nameRuby,
-                imageUrl = s3Service.generatePresignedUrl(it.imageId),
-                participantType = it.type.toGrpcType(),
-                connected = it.isConnected,
+                participantId = participant.id.toString(),
+                name = participant.name,
+                nameRuby = participant.nameRuby,
+                imageUrl = s3Service.generatePresignedUrl(participant.imageId),
+                participantType = participant.type.toGrpcType(),
+                connected = participant.isConnected,
             )
-        }
-        publish(RedisEvent.UpdateParticipant(list, sessionId.toString()))
+        )
+        publish(RedisEvent.UpdateParticipant(list, participant.sessionId.toString()))
     }
 
     fun parseBody(body: String, type: QuizType) = when (type) {
