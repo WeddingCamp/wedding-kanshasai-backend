@@ -368,13 +368,14 @@ class SessionService(
         sessionQuizRepository.update(sessionQuiz.clone().apply { isCompleted = true }).getOrThrowService()
 
         val participantAnswerList = participantAnswerRepository.listBySessionQuiz(sessionQuiz).getOrThrowService()
-        participantAnswerList.forEach {
-            participantAnswerRepository.update(
-                it.clone().apply {
-                    isCorrect = quiz.isCorrectAnswer(sessionQuiz, it.answer)
-                },
-            )
-        }
+        participantAnswerRepository.updateAll(
+            true,
+            participantAnswerList.filter { quiz.isCorrectAnswer(sessionQuiz, it.answer) },
+        ).getOrThrowService()
+        participantAnswerRepository.updateAll(
+            false,
+            participantAnswerList.filter { !quiz.isCorrectAnswer(sessionQuiz, it.answer) },
+        ).getOrThrowService()
     }
 
     fun cancelCurrentQuiz(sessionId: UlidId) {

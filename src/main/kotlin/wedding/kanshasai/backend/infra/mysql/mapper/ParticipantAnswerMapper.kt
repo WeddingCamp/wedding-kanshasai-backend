@@ -17,4 +17,12 @@ interface ParticipantAnswerMapper : MapperCRUDBase<ParticipantAnswerIdentifier, 
         @Param("sessionId") sessionId: ByteArray,
         @Param("quizId") quizId: ByteArray,
     ): Int
+
+    fun updateAll(
+        @Param("isCorrect") isCorrect: Boolean,
+        @Param("participantIdList") participantIdList: List<ByteArray>,
+        @Param("sessionId") sessionId: ByteArray,
+        @Param("quizId") quizId: ByteArray,
+        @Param("includeDeleted") includeDeleted: Boolean = false,
+    ): Int
 }
