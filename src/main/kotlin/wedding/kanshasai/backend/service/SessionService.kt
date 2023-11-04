@@ -470,7 +470,7 @@ class SessionService(
                 ParticipantSessionScoreRedisEntity(
                     it.first.name,
                     it.second.score,
-                    false,
+                    it.second.rank == 1,
                     it.second.rank,
                     it.second.time,
                 )
