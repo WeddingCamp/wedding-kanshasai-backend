@@ -61,7 +61,7 @@ class RedisEventService(
                 imageUrl = s3Service.generatePresignedUrl(participant.imageId),
                 participantType = participant.type.toGrpcType(),
                 connected = participant.isConnected,
-            )
+            ),
         )
         publish(RedisEvent.UpdateParticipant(list, participant.sessionId.toString()))
     }

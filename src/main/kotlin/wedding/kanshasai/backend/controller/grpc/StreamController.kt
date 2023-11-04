@@ -148,7 +148,9 @@ class StreamController(
             val participantId = grpcTool.parseUlidId(request.participantId, "participantId")
             participantService.setConnected(participantId, true)
             participantService.findById(participantId)
-        } else null
+        } else {
+            null
+        }
 
         // セッションを取得
         val session = if (participant != null) {

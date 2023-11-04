@@ -57,7 +57,7 @@ class ParticipantAnswerService(
                         participantType = participant.type.toGrpcType(),
                         connected = participant.isConnected,
                         isAnswered = true,
-                    )
+                    ),
                 ),
                 session.id.toString(),
             ),
