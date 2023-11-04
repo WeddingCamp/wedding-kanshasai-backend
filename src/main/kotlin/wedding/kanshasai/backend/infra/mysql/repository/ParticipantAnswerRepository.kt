@@ -73,4 +73,22 @@ class ParticipantAnswerRepository(
     fun update(participantAnswer: ParticipantAnswer): Result<Unit> = runCatching {
         update(participantAnswerMapper, participantAnswer.toDto())
     }
+
+    fun updateAll(
+        isCorrect: Boolean,
+        participantAnswerList: List<ParticipantAnswer>,
+        includeDeleted: Boolean = false,
+    ): Result<Unit> = runCatching {
+        if (participantAnswerList.isEmpty()) return@runCatching
+        val sessionId = participantAnswerList.first().sessionId
+        val quizId = participantAnswerList.first().quizId
+
+        participantAnswerMapper.updateAll(
+            isCorrect,
+            participantAnswerList.map { it.participantId.toByteArray() },
+            sessionId.toByteArray(),
+            quizId.toByteArray(),
+            includeDeleted,
+        )
+    }
 }
