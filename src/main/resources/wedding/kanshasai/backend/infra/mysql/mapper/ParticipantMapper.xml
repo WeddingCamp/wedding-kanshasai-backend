@@ -6,6 +6,7 @@
         INSERT INTO participants(id,
                                  session_id,
                                  name,
+                                 name_ruby,
                                  image_id,
                                  type,
                                  is_connected,
@@ -13,6 +14,7 @@
         VALUES (#{entity.identifier.id},
                 #{entity.sessionId},
                 #{entity.name},
+                #{entity.nameRuby},
                 #{entity.imageId},
                 #{entity.type},
                 #{entity.isConnected},
@@ -24,6 +26,7 @@
         id,
         session_id,
         name,
+        name_ruby,
         image_id,
         type,
         is_connected,
@@ -35,6 +38,7 @@
             #{entity.identifier.id},
             #{entity.sessionId},
             #{entity.name},
+            #{entity.nameRuby},
             #{entity.imageId},
             #{entity.type},
             #{entity.isConnected},
@@ -62,6 +66,7 @@
             participants
         SET session_id   = #{entity.sessionId},
             name         = #{entity.name},
+            name_ruby    = #{entity.nameRuby},
             image_id     = #{entity.imageId},
             type         = #{entity.type},
             is_connected = #{entity.isConnected},
@@ -90,6 +95,7 @@
         SELECT result.id,
                result.session_id,
                result.name,
+               result.name_ruby,
                result.image_id,
                result.type,
                result.is_connected,
@@ -100,6 +106,7 @@
         from (SELECT p.id,
                      p.session_id,
                      p.name,
+                     p.name_ruby,
                      p.image_id,
                      p.type,
                      p.is_connected,
@@ -125,6 +132,7 @@
     <resultMap id="participant" type="wedding.kanshasai.backend.infra.mysql.dto.ParticipantDto">
         <result property="sessionId" column="session_id"/>
         <result property="name" column="name"/>
+        <result property="nameRuby" column="name_ruby"/>
         <result property="imageId" column="image_id"/>
         <result property="type" column="type"/>
         <result property="isConnected" column="is_connected"/>
@@ -137,6 +145,7 @@
     <resultMap id="participantWithResult" type="wedding.kanshasai.backend.infra.mysql.dto.ParticipantWithResultDto">
         <result property="sessionId" column="session_id"/>
         <result property="name" column="name"/>
+        <result property="nameRuby" column="name_ruby"/>
         <result property="imageId" column="image_id"/>
         <result property="type" column="type"/>
         <result property="isConnected" column="is_connected"/>

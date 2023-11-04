@@ -8,6 +8,7 @@ data class ParticipantWithResultDto(
     override var participantIdentifier: StandardIdentifier = StandardIdentifier(byteArrayOf()),
     override var sessionId: ByteArray = byteArrayOf(),
     override var name: String = "",
+    override var nameRuby: String = "",
     override var imageId: ByteArray? = null,
     override var type: Int = 0,
     override var isConnected: Boolean = false,
@@ -33,6 +34,7 @@ data class ParticipantWithResultDto(
         if (participantIdentifier != other.participantIdentifier) return false
         if (!sessionId.contentEquals(other.sessionId)) return false
         if (name != other.name) return false
+        if (nameRuby != other.nameRuby) return false
         if (!imageId.contentEquals(other.imageId)) return false
         if (type != other.type) return false
         if (isConnected != other.isConnected) return false

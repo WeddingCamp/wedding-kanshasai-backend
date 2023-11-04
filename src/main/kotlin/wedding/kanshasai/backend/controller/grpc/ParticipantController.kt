@@ -18,6 +18,7 @@ class ParticipantController(
     fun ListParticipantsResponse.Participant.Builder.setParticipant(participant: Participant):
         ListParticipantsResponse.Participant.Builder = apply {
         name = participant.name
+        nameRuby = participant.nameRuby
         participantId = participant.id.toString()
         sessionId = participant.sessionId.toString()
         imageUrl = s3Service.generatePresignedUrl(participant.imageId)
@@ -31,6 +32,7 @@ class ParticipantController(
 
         return GetParticipantResponse.newBuilder().let {
             it.name = participant.name
+            it.nameRuby = participant.nameRuby
             it.participantId = participant.id.toString()
             it.sessionId = participant.sessionId.toString()
             it.imageUrl = s3Service.generatePresignedUrl(participant.imageId)
@@ -73,10 +75,11 @@ class ParticipantController(
         }
 
         val type = ParticipantType.of(request.participantType.number)
-        val participant = participantService.createParticipant(sessionId, request.name, imageId, type)
+        val participant = participantService.createParticipant(sessionId, request.name, request.nameRuby, imageId, type)
 
         return CreateParticipantResponse.newBuilder().let {
             it.name = participant.name
+            it.nameRuby = participant.nameRuby
             it.participantId = participant.id.toString()
             it.sessionId = participant.sessionId.toString()
             it.imageUrl = s3Service.generatePresignedUrl(participant.imageId)

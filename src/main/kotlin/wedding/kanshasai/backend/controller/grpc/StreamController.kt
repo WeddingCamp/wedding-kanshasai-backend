@@ -179,6 +179,7 @@ class StreamController(
                         StreamEventResponse.Participant.newBuilder()
                             .setParticipantId(it.id.toString())
                             .setName(it.name)
+                            .setNameRuby(it.nameRuby)
                             .setImageUrl(s3Service.generatePresignedUrl(it.imageId))
                             .setParticipantType(it.type.toGrpcType())
                             .setIsConnected(it.isConnected)
@@ -230,6 +231,7 @@ class StreamController(
                                     if (participant != null) {
                                         profile = this.profileBuilder
                                             .setParticipantName(participant.name)
+                                            .setParticipantNameRuby(participant.nameRuby)
                                             .setParticipantImageUrl(
                                                 s3Service.generatePresignedUrl(participant.imageId),
                                             )
@@ -274,6 +276,7 @@ class StreamController(
                                             redisEvent.participantQuizTimeList.map { participantQuizTime ->
                                                 StreamEventResponse.SpeedRanking.ParticipantQuizTime.newBuilder()
                                                     .setParticipantName(participantQuizTime.participantName)
+                                                    .setParticipantNameRuby(participantQuizTime.participantNameRuby)
                                                     .setParticipantImageUrl(
                                                         s3Service.generatePresignedUrl(participantQuizTime.participantImageId),
                                                     )
@@ -300,6 +303,7 @@ class StreamController(
                                             StreamEventResponse.Participant.newBuilder()
                                                 .setParticipantId(it.participantId)
                                                 .setName(it.name)
+                                                .setNameRuby(it.nameRuby)
                                                 .setImageUrl(it.imageUrl)
                                                 .setParticipantType(it.participantType)
                                                 .setIsConnected(it.connected)
@@ -329,6 +333,7 @@ class StreamController(
                                             redisEvent.participantSessionScoreList.map { participantSessionScore ->
                                                 StreamEventResponse.ResultRanking.ParticipantSessionScore.newBuilder()
                                                     .setParticipantName(participantSessionScore.participantName)
+                                                    .setParticipantNameRuby(participantSessionScore.participantNameRuby)
                                                     .setScore(participantSessionScore.score)
                                                     .setIsEmphasis(participantSessionScore.isEmphasis)
                                                     .setRank(participantSessionScore.rank)

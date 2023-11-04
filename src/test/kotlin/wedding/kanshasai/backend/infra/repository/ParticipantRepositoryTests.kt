@@ -160,6 +160,7 @@ class ParticipantRepositoryTests {
         testCaseName: String,
         session: Session,
         participantName: String,
+        participantNameRuby: String,
         imageId: UlidId?,
         type: ParticipantType,
         throwable: Class<T>?,
@@ -170,11 +171,17 @@ class ParticipantRepositoryTests {
         }
         if (throwable != null) {
             assertThrows(throwable) {
-                participantRepository.createParticipant(session, participantName, imageId, type).getOrThrow()
+                participantRepository.createParticipant(session, participantName, participantNameRuby, imageId, type).getOrThrow()
             }
             return
         }
-        val createdParticipant = participantRepository.createParticipant(session, participantName, imageId, type).getOrThrow()
+        val createdParticipant = participantRepository.createParticipant(
+            session,
+            participantName,
+            participantNameRuby,
+            imageId,
+            type,
+        ).getOrThrow()
         assertEquals(participantName, createdParticipant.name)
         assertEquals(session.id, createdParticipant.sessionId)
         assertEquals(imageId, createdParticipant.imageId)
@@ -196,6 +203,7 @@ class ParticipantRepositoryTests {
                 "正常系 正しいname、imageIdを渡すと参加者レコードが挿入され、参加者が返される",
                 Session.of(sessionDto),
                 "participant_name",
+                "participant_name_ruby",
                 UlidId.new(),
                 ParticipantType.values.random(),
                 null,
@@ -205,6 +213,7 @@ class ParticipantRepositoryTests {
                 "正常系 正しいnameのみを渡すと参加者レコードが挿入され、参加者が返される",
                 Session.of(sessionDto),
                 "participant_name",
+                "participant_name_ruby",
                 null,
                 ParticipantType.values.random(),
                 null,
@@ -214,6 +223,7 @@ class ParticipantRepositoryTests {
                 "正常系 既に存在するnameとユニークなimageIdを渡すと参加者レコードが挿入され、参加者が返される",
                 Session.of(sessionDto),
                 participantDto.name,
+                participantDto.nameRuby,
                 UlidId.new(),
                 ParticipantType.values.random(),
                 null,
@@ -223,6 +233,7 @@ class ParticipantRepositoryTests {
                 "正常系 既に存在するnameと既に存在するimageIdを渡すと参加者レコードが挿入され、参加者が返される",
                 Session.of(sessionDto),
                 participantDto.name,
+                participantDto.nameRuby,
                 participantDto.imageId?.let(UlidId::of),
                 ParticipantType.values.random(),
                 null,
@@ -231,6 +242,7 @@ class ParticipantRepositoryTests {
             arguments(
                 "異常系 nameに空文字を渡すとInvalidArgumentExceptionが投げられる",
                 Session.of(sessionDto),
+                "",
                 "",
                 null,
                 ParticipantType.values.random(),
@@ -241,6 +253,7 @@ class ParticipantRepositoryTests {
                 "異常系 nameに空文字かつDBに存在しないイベントを渡すとInvalidArgumentExceptionが投げられる",
                 Session.of(SessionDto(UlidId.new().toStandardIdentifier(), eventDto.eventIdentifier.id)),
                 "",
+                "",
                 null,
                 ParticipantType.values.random(),
                 InvalidArgumentException::class.java,
@@ -250,6 +263,7 @@ class ParticipantRepositoryTests {
                 "異常系 DBへの挿入に失敗するとDatabaseExceptionが投げられる",
                 Session.of(sessionDto),
                 "participant_name",
+                "participant_name_ruby",
                 null,
                 ParticipantType.values.random(),
                 DatabaseException::class.java,

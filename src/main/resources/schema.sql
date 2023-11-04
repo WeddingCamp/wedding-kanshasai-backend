@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS
     id BINARY(16) NOT NULL,
     session_id BINARY(16) NOT NULL,
     name VARCHAR(100) NOT NULL,
+    name_ruby VARCHAR(100) NOT NULL,
     image_id BINARY(16) NULL,
     type INTEGER NOT NULL DEFAUlT 0,
     is_connected BOOLEAN NOT NULL DEFAUlT false,

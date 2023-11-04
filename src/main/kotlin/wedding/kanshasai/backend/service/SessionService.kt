@@ -347,6 +347,7 @@ class SessionService(
                             val participant = participantRepository.findById(it.participantId).getOrThrowService()
                             ParticipantQuizTimeRedisEntity(
                                 participant.name,
+                                participant.nameRuby,
                                 participant.imageId.toString(),
                                 it.time,
                                 index + 1,
@@ -469,6 +470,7 @@ class SessionService(
             resultList.map {
                 ParticipantSessionScoreRedisEntity(
                     it.first.name,
+                    it.first.nameRuby,
                     it.second.score,
                     it.second.rank == 1,
                     it.second.rank,
@@ -576,6 +578,7 @@ class SessionService(
                         }
                         ParticipantSessionScoreRedisEntity(
                             it.first.name,
+                            it.first.nameRuby,
                             it.second.score,
                             isEmphasis,
                             it.second.rank,
