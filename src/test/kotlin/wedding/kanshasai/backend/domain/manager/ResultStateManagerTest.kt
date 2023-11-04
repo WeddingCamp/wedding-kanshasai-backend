@@ -73,13 +73,11 @@ class ResultStateManagerTest {
             Triple(ResultState.RANKING_JUST, ResultRankState.DUMMY_TITLE, 8),
             Triple(ResultState.RANKING_JUST, ResultRankState.DUMMY_TITLE_MESSAGE, 8),
             Triple(ResultState.RANKING_JUST, ResultRankState.TITLE, 8),
-            Triple(ResultState.RANKING_JUST, ResultRankState.PRE_RANK, 8),
             Triple(ResultState.RANKING_JUST, ResultRankState.RANK, 8),
             Triple(ResultState.RANKING_JUST, ResultRankState.PRESENT, 8),
             Triple(ResultState.RANKING_BOOBY, ResultRankState.DUMMY_TITLE, 8),
             Triple(ResultState.RANKING_BOOBY, ResultRankState.DUMMY_TITLE_MESSAGE, 8),
             Triple(ResultState.RANKING_BOOBY, ResultRankState.TITLE, 8),
-            Triple(ResultState.RANKING_BOOBY, ResultRankState.PRE_RANK, 8),
             Triple(ResultState.RANKING_BOOBY, ResultRankState.RANK, 8),
             Triple(ResultState.RANKING_BOOBY, ResultRankState.PRESENT, 8),
             Triple(ResultState.RANKING_TOP_3, ResultRankState.TITLE, 8),
@@ -202,10 +200,6 @@ class ResultStateManagerTest {
                     Triple(ResultState.RANKING_JUST, ResultRankState.DUMMY_TITLE, 8),
                 ),
                 Arguments.arguments(
-                    Triple(ResultState.RANKING_JUST, ResultRankState.PRE_RANK, 8),
-                    Triple(ResultState.RANKING_JUST, ResultRankState.DUMMY_TITLE, 8),
-                ),
-                Arguments.arguments(
                     Triple(ResultState.RANKING_JUST, ResultRankState.RANK, 8),
                     Triple(ResultState.RANKING_JUST, ResultRankState.DUMMY_TITLE, 8),
                 ),
@@ -223,10 +217,6 @@ class ResultStateManagerTest {
                 ),
                 Arguments.arguments(
                     Triple(ResultState.RANKING_BOOBY, ResultRankState.TITLE, 8),
-                    Triple(ResultState.RANKING_BOOBY, ResultRankState.DUMMY_TITLE, 8),
-                ),
-                Arguments.arguments(
-                    Triple(ResultState.RANKING_BOOBY, ResultRankState.PRE_RANK, 8),
                     Triple(ResultState.RANKING_BOOBY, ResultRankState.DUMMY_TITLE, 8),
                 ),
                 Arguments.arguments(
