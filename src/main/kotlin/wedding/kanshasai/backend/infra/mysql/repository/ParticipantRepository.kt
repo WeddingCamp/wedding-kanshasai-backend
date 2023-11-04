@@ -34,7 +34,13 @@ class ParticipantRepository(
         }
     }
 
-    fun createParticipant(session: Session, name: String, nameRuby: String, imageId: UlidId?, type: ParticipantType): Result<Participant> = runCatching {
+    fun createParticipant(
+        session: Session,
+        name: String,
+        nameRuby: String,
+        imageId: UlidId?,
+        type: ParticipantType,
+    ): Result<Participant> = runCatching {
         if (name.isEmpty()) throw InvalidArgumentException.empty("name")
 
         val participantId = UlidId.new()
