@@ -48,6 +48,7 @@ class ParticipantController(
         val participantList = participantService.listParticipantsBySessionId(sessionId)
         val grpcParticipantList = participantList
             .filter { participantType == null || it.type == participantType }
+            .sortedBy { it.nameRuby }
             .map { participant ->
                 ListParticipantsResponse.Participant.newBuilder()
                     .setParticipant(participant)
