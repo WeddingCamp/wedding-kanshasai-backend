@@ -606,32 +606,39 @@ class SessionService(
                 )
             }
             ResultRankState.TITLE, ResultRankState.DUMMY_TITLE, ResultRankState.DUMMY_TITLE_MESSAGE -> {
-                val resultTitleType = when (session.resultState.resultRankStateMachine.value) {
+                val resultTitleTypePair = when (session.resultState.resultRankStateMachine.value) {
                     ResultRankState.DUMMY_TITLE -> {
                         // ダミータイトルは常にRANK
-                        ResultTitleType.RESULT_TITLE_TYPE_RANK
+                        ResultTitleType.RESULT_TITLE_TYPE_RANK to when (session.resultState.resultStateMachine.value) {
+                            ResultState.RANKING_JUST -> ResultTitleType.RESULT_TITLE_TYPE_JUST
+                            ResultState.RANKING_BOOBY -> ResultTitleType.RESULT_TITLE_TYPE_BOOBY
+                            else -> ResultTitleType.RESULT_TITLE_TYPE_RANK
+                        }
                     }
                     ResultRankState.DUMMY_TITLE_MESSAGE -> {
-                        when (session.resultState.resultStateMachine.value) {
+                        val type = when (session.resultState.resultStateMachine.value) {
                             ResultState.RANKING_JUST -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_1
                             ResultState.RANKING_BOOBY -> ResultTitleType.RESULT_TITLE_TYPE_RANK_DUMMY_2
                             else -> ResultTitleType.RESULT_TITLE_TYPE_RANK
                         }
+                        type to type
                     }
                     ResultRankState.TITLE -> {
-                        when (session.resultState.resultStateMachine.value) {
+                        val type = when (session.resultState.resultStateMachine.value) {
                             ResultState.RANKING_BOOBY -> ResultTitleType.RESULT_TITLE_TYPE_BOOBY
                             ResultState.RANKING_JUST -> ResultTitleType.RESULT_TITLE_TYPE_JUST
                             ResultState.RANKING_TOP_3 -> ResultTitleType.RESULT_TITLE_TYPE_RANK_ACTUAL
                             else -> ResultTitleType.RESULT_TITLE_TYPE_RANK
                         }
+                        type to type
                     }
                     else -> throw InvalidStateException("Invalid ResultRankState.")
                 }
 
                 RedisEvent.ShowResultRankingTitle(
                     session.resultState.rank,
-                    resultTitleType,
+                    resultTitleTypePair.first,
+                    resultTitleTypePair.second,
                     session.id.toString(),
                 )
             }

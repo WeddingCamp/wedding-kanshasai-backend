@@ -319,6 +319,7 @@ class StreamController(
                                     resultRankingTitle = this.resultRankingTitleBuilder
                                         .setRank(redisEvent.rank)
                                         .setResultTitleType(redisEvent.resultTitleType)
+                                        .setActualResultTitleType(redisEvent.actualResultTitleType)
                                         .build()
                                 }
 
